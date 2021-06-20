@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Home</li>
+          <li class="breadcrumb-item">
+            <a href="#">Admin</a>
+          </li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <!-- Breadcrumb Menu-->
+   
+        </ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		  <div align="center">
+		  	<img th:src="@{/img/prueba.png}" alt="Logo Banco Exterior" width="20%" height="80%">
+		  </div>
+		  <hr><br> 
+		  <div class="row">
+		    <div class="col-sm-6 col-md-4">
+		      <div class="card text-white bg-primary">
+		        <div class="card-header">
+		          Misión
+		        </div>
+		        <div class="card-body">
+		          Promovemos relaciones de alto valor con nuestros clientes, mediante una oferta integral de productos y servicios rentables, apoy&aacute;ndonos en tecnolog&iacute;a de punta, procesos eficientes y un equipo profesional capacitado y comprometido.
+		        </div>
+		      </div>
+		    </div><!--/.col-->
+		    <div class="col-sm-6 col-md-4">
+		      <div class="card text-white bg-primary">
+		        <div class="card-header">
+		          Visión
+		        </div>
+		        <div class="card-body">
+		          Ser reconocidos como una organizaci&oacute;n l&iacute;der, enfocada en la excelencia del negocio, responsable con la sociedad, y que garantice la plena satisfacci&oacute;n de sus clientes, colaboradores y accionistas.<br>
+		        </div>
+		      </div>
+		    </div><!--/.col-->
+		    <div class="col-sm-6 col-md-4">
+		      <div class="card text-white bg-primary">
+		        <div class="card-header">
+		          Ejemplaridad
+		        </div>
+		        <div class="card-body">
+		          Demostramos a trav&eacute;s de nuestro comportamiento que somos ejemplo de los principios y valores del Grupo, siendo coherentes en nuestra relaci&oacute;n con clientes, accionistas, colaboradores y sociedad en general.
+		        </div>
+		      </div>
+		    </div><!--/.col-->
+		  </div><!--/.row-->
+
+
+	</div>
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

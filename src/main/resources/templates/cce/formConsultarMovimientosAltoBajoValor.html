@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Home</li>
+          <li class="breadcrumb-item">
+            <a href="#">Admin</a>
+          </li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <!-- Breadcrumb Menu-->
+   
+        </ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="card">
+		      <div class="card-header">
+		        <strong>Consulta de Movimientos</strong>
+		      </div>
+		      <div class="card-body">
+		        <form  th:action = "@{/ccetransacciones/procesarConsultaMovimientosAltoBajoValorPageable}"   method="get" th:object="${cceTransaccionDto}"   class="form-horizontal">
+		          <div th:if="${listaError != null}" class="alert alert-danger" role="alert">
+		            		Por favor corrija los siguientes errores:
+		            		<!-- 
+		            		<ul>
+		            			<li th:each="err : ${#fields.errors('*')}"  th:text="${err}"></li>
+		            		</ul> -->
+		            		<ul>
+		            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
+		            		</ul>
+		            	</div>
+
+		         
+		          <div class="form-group row">
+			            <label class="col-sm-5 col-form-label" for="codTransaccion">Tipo Transaccion:</label>
+			            <div class="col-sm-3">
+			              <select  class="form-control" th:field="*{codTransaccion}"  name="codTransaccion">
+			                <option value = "">----Selecionar Tipo Transaccion----</option>
+			                <option value = "5724" >Credito Inmediato Recibido</option>
+			                <option value = "5723" >Credito Inmediato Enviado</option>
+			                <option value = "5728" >Alto valor Recibido</option>
+			                <option value = "5727" >Alto Valor Enviado</option>
+			              </select>
+			            </div>
+			          </div>
+			      <div class="form-group row">
+			            <label class="col-sm-5 col-form-label" for="bancoDestino">Banco Beneficiario:</label>
+			            <div class="col-sm-3">
+			              <select  class="form-control" th:field="*{bancoDestino}"  name="bancoDestino">
+					                <option value = "">----Selecionar Banco----</option>
+					                <option value = "0001" >Banco Central de Venezuela</option>
+			                		<option value = "0174" >Banplus</option>
+					              </select>
+			            </div>
+			          </div>  
+			      <!--     
+			      <div class="form-group row">
+			            <label class="col-sm-5 col-form-label" for="tipoIdentificacion">Tipo Identificacion:</label>
+			            <div class="col-sm-3">
+			              <select  class="form-control" th:field="*{tipoIdentificacion}" name="tipoIdentificacion" >
+			                <option value = "">----Selecionar Tipo Identificacion----</option>
+			                <option value = "V" >Venezonalo</option>
+			                <option value = "E" >Extranjero</option>
+			                <option value = "P" >Pasaporte</option>
+			                <option value = "G" >Gobierno</option>
+			                <option value = "C" >Cooperativa</option>
+			              </select>
+			            </div>
+			      </div> -->
+			      <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="numeroIdentificacion">Rif/CI del Ordenante:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{numeroIdentificacion}" id="numeroIdentificacion" name="numeroIdentificacion">
+			              
+			            </div>
+			          </div>      
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Fecha Desde:</label>
+		            <div class="col-sm-3">
+		              <input type="date" class="form-control" th:field="*{fechaDesde}" name="fechaDesde" id="fechaDesde" placeholder="Fecha desde">
+		            </div>
+		          </div>
+		          
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Fecha Hasta:</label>
+		            <div class="col-sm-3">
+		              <input type="date" class="form-control" th:field="*{fechaHasta}" name="fechaHasta" id="fechaHasta" placeholder="Fecha hasta">
+		            </div>
+		          </div>
+		          
+		          <div class="card-footer">
+		        	<button type="submit" class="btn btn-sm btn-primary"><i class="far fa-circle"></i> Aceptar</button>
+			        <a   class="btn btn-sm btn-danger" role="button" th:href="@{/}"><i class="fa fa-ban"></i>Cancelar</a>
+		      	  </div>
+		        </form>
+		      </div>
+		      
+		    </div>
+		  </div><!--/.col--> <!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

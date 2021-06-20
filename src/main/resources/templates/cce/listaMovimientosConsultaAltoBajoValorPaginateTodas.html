@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Home</li>
+          <li class="breadcrumb-item">
+            <a href="#">Admin</a>
+          </li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <!-- Breadcrumb Menu-->
+   
+        </ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="row">
+		      <div class="col-lg-1-12">
+		        <div class="card">
+		          <div class="card-header">
+		            <i class="fa fa-align-justify"></i> Listado de Movimientos Consulta
+		            <p align="right"></p>
+		          </div><!--/.card-header-->
+		          <div class="card-body">
+		          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+	          	
+	          			<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
+		            <table class="table">
+		              <thead>
+		                <tr>
+		                  <th>Referencia SGLBTR</th>
+		                  <th>Referencia IBS</th>
+		                  <th>Cta. Ordenante</th>
+		                  <th>Cta. Beneficiario</th>
+		                  <th>Monto</th>
+		                  <th>Fecha Modificacion</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                <tr th:each = "transaccion: ${listaTransacciones}">
+		                  <td th:text="${transaccion.endtoendId}"></td>
+		                  <td th:text="${transaccion.referencia}"></td>
+		                  <td th:text="${transaccion.cuentaOrigen}"></td>
+		                  <td th:text="${transaccion.cuentaDestino}"></td>
+		                  <td th:text="${transaccion.monto}"></td>
+		                  <td th:text="${transaccion.fechaModificacion}"></td>
+		                  
+		                </tr>
+		              </tbody>
+		            </table>
+		            <nav th:if="${listaTransacciones.totalPages > 0}" aria-label="Page navigation example" > 
+		            	<ul class="pagination justify-content-center">         
+		            		<li class="page-item" th:classappend="${listaTransacciones.number == 0 ? 'disabled' : ''}">
+		            			<a th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate(page=${listaTransacciones.number - 1})}" class="page-link">Anterior</a>
+		            		</li> 
+		            		<li class="page-item">
+								<a class="page-link"  th:text="${'Pagina '+ (listaTransacciones.number + 1) + ' - '+ (listaTransacciones.totalPages)}" th:title="${'Page '+ listaTransacciones.number}" data-toggle="tooltip"></a>
+							</li>
+		            		<li class="page-item" th:classappend="${listaTransacciones.number == (listaTransacciones.totalPages - 1) ? 'disabled' : ''}">
+		            			<a th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate(page=${listaTransacciones.number + 1})}" class="page-link">Siguiente</a>
+		            		</li>  
+		            	</ul> 
+		            </nav> 
+		         <!--  
+		            <nav th:if="${listaTransacciones.totalPages > 0}" aria-label="Page navigation example" >
+						<ul class="pagination justify-content-center">
+							<li class="page-item" th:classappend="${listaTransacciones.number == 0 ? 'disabled' : ''}">
+								<a th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate(page=${listaTransacciones.number - 1})}" class="page-link">Anterior</a>
+							</li>
+							
+							<li class="page-item" th:classappend="${i eq listaTransacciones.number + 1} ? 'active'" th:each="i : ${#numbers.sequence( 1, listaTransacciones.totalPages, 1)}">
+								<a class="page-link" th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate?page={tmpPag} (tmpPag=${i-1}) }" th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
+							</li>
+							<li class="page-item" th:classappend="${listaTransacciones.number == (listaTransacciones.totalPages - 1) ? 'disabled' : ''}">
+								<a th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate(page=${listaTransacciones.number + 1})}" class="page-link">Siguiente</a>
+							</li>
+						</ul>
+					</nav> 
+					-->
+				
+					
+					
+		          </div><!--/.card-body-->
+		        </div><!--/.card-->
+		      </div><!--/.col-lg-1-12-->
+		    </div><!--/.row-->    
+		  </div><!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>
