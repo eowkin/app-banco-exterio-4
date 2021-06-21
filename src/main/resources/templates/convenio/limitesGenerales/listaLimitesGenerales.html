@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="row">
+		      <div class="col-lg-1-12">
+		        <div class="card">
+		          <div class="card-header">
+		            <i class="fa fa-align-justify"></i> Listado de Limites Generales
+		            <p align="right"></p>
+		            <div class="my-2 text-right">
+         					<form th:action="@{/limitesGenerales/search}"  th:object="${limitesGeneralesSearch}"  method="get" class="form-inline">
+        						<input type="text"  class="form-control mb-3"  th:field="*{codMoneda}" maxlength="3" placeholder="Escriba una búsqueda" >&nbsp;
+            					<button type="submit" class="btn btn-primary mb-3">Buscar por codigo moneda</button>            
+          					</form>
+        			</div>
+		            <div class="my-2 text-right">
+		              <a class="btn btn-primary" th:href="@{/limitesGenerales/formLimitesGenerales}" title="Crear nueva Tasa" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Limites Generales</a>
+		            </div>
+		          </div><!--/.card-header-->
+		          <div class="card-body">
+		          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+		          	<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
+		          	<div class="table-responsive">
+		          		<!--
+  						<table class=".table-responsive{-sm|-md|-lg|-xl}">
+    					-->	
+    					<table class="table">
+					              <thead>
+					                <tr>
+					                  <th>Codigo Moneda</th>
+					                    <th>Tipo Transaccion</th>
+					                    <th>Tipo Cliente</th>
+					                   <!--  
+					                    <th>Monto Min</th>
+					                    <th>Monto Max</th>
+					                    <th>Monto Tope</th>
+					                    <th>Monto Men</th>
+					                    <th>Monto Diario</th>
+					                    <th>Monto Banco</th>
+					                    -->  
+					                    <th>Codigo Usuario</th>
+					                    <!--  
+					                    <th>Flag Activo</th>-->
+					                    <th>Fecha Modificacion</th>
+					                    <th>Detalle</th>
+					                    <th>Editar</th>
+					                    <th>Activar/Inactivar</th>
+					                </tr>
+					              </thead>
+					              <tbody>
+					                <tr th:each = "limitesGenerales: ${listaLimitesGenerales}">
+					                  <td th:text="${limitesGenerales.codMoneda}"></td>
+					                  <td>
+					                  	<span th:if="${limitesGenerales.tipoTransaccion == 'V'}">Venta</span>
+					                  	<span th:if="${limitesGenerales.tipoTransaccion == 'C'}">Compra</span>
+					                  </td>
+					                  <td>
+					                  	<span th:if="${limitesGenerales.tipoCliente == 'N'}">Natural</span>
+					                  	<span th:if="${limitesGenerales.tipoCliente == 'J'}">Juridico</span>
+					                  </td>  
+					                  <!--  
+					                  <td th:text="${limitesGenerales.montoMin}"></td>
+					                  <td th:text="${limitesGenerales.montoMax}"></td>
+					                  <td th:text="${limitesGenerales.montoTope}"></td>
+					                  <td th:text="${limitesGenerales.montoMensual}"></td>
+					                  <td th:text="${limitesGenerales.montoDiario}"></td>
+					                  <td th:text="${limitesGenerales.montoBanco}"></td>
+					                  -->  
+					                  <td th:text="${limitesGenerales.codUsuario}"></td>
+					                  <!-- 
+					                  <td>
+				                		<span class="badge badge-primary" th:if="${limitesGenerales.flagActivo}">Activo</span>
+				                		<span class="badge badge-danger" th:unless="${limitesGenerales.flagActivo }">Desactivo</span>
+				                	  </td> -->
+					               	  <td th:text="${limitesGenerales.fechaModificacion}"></td>
+					                  <td>
+			                      		<a  class="btn btn-info" th:href="@{/limitesGenerales/detalle/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Detalle el registro."><i class="fas fa-search" aria-hidden="true"></i></a>
+			                    	  </td>
+			                    	  
+					                  <td th:if="${limitesGenerales.flagActivo}">
+			                      		<a  class="btn btn-primary" th:href="@{/limitesGenerales/edit/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Editar el registro."><i class="fas fa-edit" aria-hidden="true"></i></a>
+			                    	  </td>
+			                    	  <td th:unless="${limitesGenerales.flagActivo }">
+		                      			<button type="submit" class="btn btn-primary" disabled="disabled"><i class="fas fa-edit" aria-hidden="true"></i></button>
+		                    		  </td>
+			                          <td th:if="${limitesGenerales.flagActivo}">
+			                          	<label class="switch switch-pill switch-primary">
+										  <input th:onclick="|window.location.href='@{/limitesGenerales/desactivar/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }'|"  type="checkbox" class="switch-input"  checked>
+										  <span class="switch-slider"></span>
+										</label>
+										<!--  
+			                   		    <a  onclick="return confirm('¿Estas seguro de desactivar?')" th:href="@{/limitesGenerales/desactivar/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" class="btn btn-danger" role="button" title="Desactivar el registro.">Desactivar</a>
+			                   		    -->
+				                      </td>
+			                          <td th:unless="${limitesGenerales.flagActivo }"> 
+			                    	    <label class="switch switch-pill switch-secondary">
+										  <input th:onclick="|window.location.href='@{/limitesGenerales/activar/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }'|" type="checkbox" class="switch-input" checked>
+										  <span class="switch-slider"></span>
+										</label>
+			                    	    <!--
+			                    	    <a  onclick="return confirm('¿Estas seguro de activar?')" class="btn btn-primary" th:href="@{/limitesGenerales/activar/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Activar el registro.">Activar</a>
+			                    	    -->
+			                  	      </td>
+					                </tr>
+					              </tbody>
+					             
+  						</table>
+					</div>
+		            
+		          </div><!--/.card-body-->
+		        </div><!--/.card-->
+		      </div><!--/.col-lg-1-12-->
+		    </div><!--/.row-->    
+		  </div><!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

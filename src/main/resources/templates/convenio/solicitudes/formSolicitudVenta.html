@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="card">
+		      <div class="card-header">
+		        <strong>Procesar Solicitud Venta</strong>
+		      </div>
+		      <div class="card-body">
+		        <form  th:action = "@{/solicitudes/guardarProcesarVenta}"   method="post" th:object="${movimiento}"   class="form-horizontal">
+		          <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
+		            		Por favor corrija los siguientes errores:
+		            		<!-- 
+		            		<ul>
+		            			<li th:each="err : ${#fields.errors('*')}"  th:text="${err}"></li>
+		            		</ul> -->
+		            		<ul>
+		            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
+		            		</ul>
+		            	</div>
+		          
+		          <div class="form-group row">
+		          	<input type="hidden" th:field="*{codOperacion}">
+		          	<input type="hidden" th:field="*{codMoneda}">
+		          	<input type="hidden" th:field="*{tasaCliente}">
+		          	<input type="hidden" th:field="*{montoDivisa}">
+		          	<input type="hidden" th:field="*{paginaActual}">
+		            <label class="col-sm-5 col-form-label" for="input-large">Codigo Operacion:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="codOperacion" name="codOperacion" th:field="*{codOperacion}" placeholder="Codigo Operacion" required="required" disabled="disabled">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Codigo Moneda:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="codMoneda" name="codMoneda" th:field="*{codMoneda}" placeholder="Codigo Moneda" required="required" disabled="disabled">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Tipo de Cambio:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="tasaCliente" name="tasaCliente" th:field="*{tasaCliente}" placeholder="Tipo de Cambio" required="required" disabled="disabled">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Monto Divisa:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="montoDivisa" name="montoDivisa" th:field="*{montoDivisa}" placeholder="Monto Divisas" required="required" disabled="disabled">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Tipo pacto:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="tipoPacto" name="tipoPacto" th:field="*{tipoPacto}" placeholder="Tipo Pacto" required="required">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Tipo de Cambio Banco:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="tasaOperacion" name="tasaOperacion" th:field="*{tasaOperacion}" placeholder="Tipo de Cambio Nueva" required="required">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Fecha Liquidacion:</label>
+		            <div class="col-sm-6">
+		              <input type="date" class="form-control" th:field="*{fecha}" name="fecha" id="fecha" placeholder="Fecha de publicacion" required="required">
+		            </div>
+		          </div>
+		          
+		          
+		          <div class="card-footer">
+		        	<button type="submit" class="btn btn-sm btn-success"><i class="far fa-circle"></i> Aprobar</button>
+					<a class="btn btn-sm btn-primary" th:href="@{/solicitudes/listaSolicitudesMovimientosPorAprobarVentas/{page} (page=${paginaActual})}" title="Volver a lista limites" role="button">Volver</a>
+		      	  </div>
+		        </form>
+		      </div>
+		      
+		    </div>
+		  </div><!--/.col-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="card">
+		      <div class="card-header">
+		        <strong>Editar Tasa</strong>
+		      </div>
+		      <div class="card-body">
+		        <form  th:action = "@{/tasas/guardar}"   method="post" th:object="${tasa}"   class="form-horizontal">
+		          <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
+		            		Por favor corrija los siguientes errores:
+		            		<!-- 
+		            		<ul>
+		            			<li th:each="err : ${#fields.errors('*')}"  th:text="${err}"></li>
+		            		</ul> -->
+		            		<ul>
+		            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
+		            		</ul>
+		            	</div>
+		          <div class="form-group row">
+		          		<input type="hidden" th:field="*{codMonedaOrigen}">
+		          		<input type="hidden" th:field="*{codMonedaDestino}">
+		          		<input type="hidden" th:field="*{tipoOperacion}">
+			          	
+		            <label class="col-sm-5 col-form-label" for="codMonedaOrigen">Codigo Moneda Origen:</label>
+		            <div class="col-sm-6">
+		            	<input type="text" class="form-control" id="codMonedaOrigen" name="codMonedaOrigen" th:field="*{codMonedaOrigen}" placeholder="Codigo de la moneda origen" required="required" disabled="disabled">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="codMonedaDestino">Codigo Moneda Destino:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="codMonedaDestino" name="codMonedaDestino" th:field="*{codMonedaDestino}" placeholder="Codigo de la moneda origen" required="required" disabled="disabled">
+		   	        </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="tipoOperacion">Tipo Operacion:</label>
+		            <div class="col-sm-6">
+		              <select  class="form-control"  name="tipoOperacion" th:field="*{tipoOperacion}" required="required" disabled="disabled">
+		                <option value = "">----Selecionar Tipo----</option>
+		                <option value = 0>Mercado Internacional</option>
+		                <option value = 1>Mesa Cambio</option>
+		                <option value = 2>Intervencion</option>
+		                <option value = 3>Menudeo</option>
+		              </select>
+		              
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Monto Tasa Compra:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control" id="montoTasaCompra" name="montoTasaCompra" th:field="*{montoTasaCompra}" placeholder="Monto tasa compra" required="required">
+		            </div>
+		          </div>
+		          <div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="input-large">Monto Tasa Venta:</label>
+		            <div class="col-sm-6">
+		              <input type="text" class="form-control"  id="montoTasaVenta" name="montoTasaVenta" th:field="*{montoTasaVenta}" placeholder="Monto tasa venta" required="required">
+		            </div>
+		          </div>
+		          <div class="card-footer">
+		        	<button type="submit" class="btn btn-sm btn-primary"><i class="far fa-circle"></i> Aceptar</button>
+					<a   class="btn btn-sm btn-danger" role="button" th:href="@{/tasas/index}"><i class="fa fa-ban"></i>Cancelar</a>
+		      	  </div>
+		        </form>
+		      </div>
+		      
+		    </div>
+		  </div><!--/.col-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

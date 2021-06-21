@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+			  <div class="row">
+			    <div class="col-lg-1-12">
+			      <div class="card">
+			        <div class="card-header">
+			          <i class="fa fa-align-justify"></i> Listado de Monedas
+			          <p align="right"></p>
+			          	<form th:action="@{/monedas/searchCodigo}"  th:object="${monedaSearch}"  method="get" class="form-inline">
+		        						<input type="text"  class="form-control mb-3"  th:field="*{codMoneda}" maxlength="3" placeholder="Escriba una búsqueda" >&nbsp;
+		            					<button type="submit" class="btn btn-primary mb-3">Buscar por codigo moneda</button>            
+		          		</form>
+			        </div><!--/.card-header-->
+			        <div class="card-body">
+			          <div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+				            		Ocurrio los siguientes errores:
+				            		<ul>
+				            			<li th:text="${mensajeError}"></li>
+				            		</ul>
+				            	</div>
+			          	
+			          <div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>	
+			          <table class="table">
+			            <thead>
+			              <tr>
+			                <th>Codigo Moneda</th>
+			                <th>Descripcion</th>
+			                <th>Cod. Usuario</th>
+			                <th>Fecha Modificacion</th>
+			                <th>Activar/Inactivar</th>
+			              </tr>
+			            </thead>
+			            <tbody>
+			              <tr th:each = "moneda: ${listMonedas}">
+			                <td th:text="${moneda.codMoneda}"></td>
+			                <td th:text="${moneda.descripcion}"></td>
+			                <td th:text="${moneda.codUsuario}"></td>
+			                <td th:text="${moneda.fechaModificacion}"></td>
+			               	<td th:if="${moneda.flagActivo}">
+			               		<label class="switch switch-pill switch-primary">
+								  <input th:onclick="|window.location.href='@{/monedas/desactivar/{codMoneda} (codMoneda=${moneda.codMoneda}) }'|"  type="checkbox" class="switch-input"  checked>
+								  <span class="switch-slider"></span>
+								</label>
+								<!--  
+		                   		<a  onclick="return confirm('¿Estas seguro de desactivar la moneda?')" th:href="@{/monedas/desactivar/{codMoneda} (codMoneda=${moneda.codMoneda}) }" class="btn btn-danger" role="button" title="Desactivar el registro.">Desactivar</a>
+		                   		-->
+			                </td>
+		                    <td th:unless="${moneda.flagActivo }"> 
+		                    	<label class="switch switch-pill switch-secondary">
+								  <input th:onclick="|window.location.href='@{/monedas/activar/{codMoneda} (codMoneda=${moneda.codMoneda}) }'|" type="checkbox" class="switch-input" checked>
+								  <span class="switch-slider"></span>
+								</label>
+		                    	<!--
+		                    	<a  onclick="return confirm('¿Estas seguro de activar la moneda?')" class="btn btn-primary" th:href="@{/monedas/activar/{codMoneda} (codMoneda=${moneda.codMoneda}) }" role="button" title="Editar el registro.">Activar</a>
+		                    	-->
+		                  	</td>
+			              </tr>
+			            </tbody>
+			          </table> 
+			        </div><!--/.card-body-->
+			      </div><!--/.card-->
+			    </div><!--/.col-lg-1-12-->
+			  </div><!--/.row-->    
+			</div><!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

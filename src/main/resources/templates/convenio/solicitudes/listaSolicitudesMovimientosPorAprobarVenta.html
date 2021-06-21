@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		 
+				  <div class="row">
+				    <div class="col-sm-3 col-md-3">
+				      <div class="card text-white bg-primary">
+				        <div class="card-header">
+							   Ofertas del Día
+				        </div>
+				       <div class="card-body">
+				       	  <table class="table">
+						      <tbody>
+						      	<tr style="border: hidden">	
+				              		<td align="left">Monto en Dólares:</td>
+							        <td align="right">[[${ventaAcumuladoUSD.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Euros:</td>
+							        <td align="right">[[${ventaAcumuladoEUR.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Bs:</td>
+							        <td align="right">[[${montoBsTotalVenta}]]</td>
+							    </tr>  
+							  </tbody>
+						  </table> 
+						</div>
+				      </div>
+				    </div><!--/.col-->
+				    <div class="col-sm-3 col-md-3">
+				      <div class="card text-white bg-primary">
+				        <div class="card-header">
+							   Demanda del Día
+				        </div>
+				       <div class="card-body">
+				       	  <table class="table">
+						      <tbody>
+						      	<tr style="border: hidden">	
+				              		<td align="left">Monto en Dólares:</td>
+							        <td align="right">[[${compraAcumuladoUSD.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Euros:</td>
+							        <td align="right">[[${compraAcumuladoEUR.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Bs:</td>
+							        <td align="right">[[${montoBsTotalCompra}]]</td>
+							    </tr>  
+							  </tbody>
+						  </table>	
+						</div>
+				      </div>
+				    </div><!--/.col-->
+				    <div class="col-sm-3 col-md-3">
+				      <div class="card text-white bg-primary">
+				        <div class="card-header">
+							   Ofertas por Aprobar
+				        </div>
+				       <div class="card-body">
+				       	  <table class="table">
+						      <tbody>
+						      	<tr style="border: hidden">	
+				              		<td align="left">Monto en Dólares:</td>
+							        <td align="right">[[${ventaPorAprobarUSD.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Euros:</td>
+							        <td align="right">[[${ventaPorAprobarEUR.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Bs:</td>
+							        <td align="right">[[${montoBsTotalPorAprobarVenta}]]</td>
+							    </tr>  
+							  </tbody>
+						  </table>		   
+						</div>
+				      </div>
+				    </div><!--/.col-->
+				    <div class="col-sm-3 col-md-3">
+				      <div class="card text-white bg-primary">
+				        <div class="card-header">
+							   Demandas por Aprobar
+				        </div>
+				       <div class="card-body">
+				       	  <table class="table">
+						      <tbody>
+						      	<tr style="border: hidden">	
+				              		<td align="left">Monto en Dólares:</td>
+							        <td align="right">[[${compraPorAprobarUSD.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Euros:</td>
+							        <td align="right">[[${compraPorAprobarEUR.monto}]]</td>
+							    </tr>
+							    <tr style="border: hidden">	
+				              		<td align="left">Monto en Bs:</td>
+							        <td align="right">[[${montoBsTotalPorAprobarCompra}]]</td>
+							    </tr>  
+							  </tbody>
+						  </table>	
+						</div>
+				      </div>
+				    </div><!--/.col-->
+				  </div><!--/.row-->
+
+
+	
+     	  		
+     	  
+     	  	<table class="table table-responsive">
+		               
+		              <tbody>
+		                <tr>
+		                  <td>
+		                  			<div class="card">
+							          <div class="card-header">
+							            <i class="fa fa-align-justify"></i> Listado Movimientos <b>Ofertas</b> por Aprobar
+							            
+							          </div><!--/.card-header-->
+							          <div class="card-body">
+							          	<div th:if="${mensajeErrorVenta != null}" class="alert alert-danger" role="alert">
+							            		Ocurrio los siguientes errores:
+							            		<ul>
+							            			<li th:text="${mensajeErrorVenta}"></li>
+							            		</ul>
+							            	</div>
+						          	
+						          			<div th:if="${mensajeVenta != null}" class="alert alert-success" th:text="${mensajeVenta}" role="alert"></div>
+							            <table class="table">
+							              <thead>
+							                <tr>
+							                  <th>Cod. Operacion</th>
+							                  <th>Cod. Moneda</th>
+							                  <th>Monto Divisa</th>
+							                  <th>Tipo de Cambio</th>
+							                  <th></th>
+							                  <th></th>
+							                  <th></th>
+							                </tr>
+							              </thead>
+							              <tbody>
+							                <tr th:each = "movimiento: ${listaMovimientosVenta}">
+							                  <td th:text="${movimiento.codOperacion}"></td>
+							                  <td th:text="${movimiento.codMoneda}"></td>
+							                  <td th:text="${movimiento.montoDivisa}"></td>
+							                  <td th:text="${movimiento.tasaCliente}"></td>
+							                  <td>
+							                  	<a onclick="return confirm('¿Estas seguro de aprobar la solicitud de Venta (Oferta)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarVenta/{codOperacion}/{page} (codOperacion=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fas fa-check" aria-hidden="true"></i></a>
+							                  </td>
+							                  <td>
+							                  	<a  class="btn btn-primary" th:href="@{/solicitudes/procesarVenta/{id}/{page} (id=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Procesar Solicitud."><i class="fas fa-sync" aria-hidden="true"></i></a>
+							                  </td>
+							                  <td>
+							                  	<a onclick="return confirm('¿Estas seguro de rechazar la solicitud de Venta? (Oferta)')" class="btn btn-danger" th:href="@{/solicitudes/rechazarVenta/{codOperacion}/{page} (codOperacion=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Rechazar Solicitud."><i class="fas fa-times" aria-hidden="true"></i></a>
+							                  </td>	
+							                </tr>
+							                
+							              </tbody>
+							            </table>
+							           
+							           <nav th:if="${datosPaginacionVenta.totalPaginas > 0}" aria-label="Page navigation example" > 
+							            	<ul class="pagination justify-content-center">         
+							            		<li class="page-item" th:classappend="${datosPaginacionVenta.paginaActual == 1 ? 'disabled' : ''}">
+							            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosPorAprobarVentas/{page}  (page=${datosPaginacionVenta.paginaActual - 1})}" class="page-link">Anterior</a>
+							            		</li> 
+							            		<li class="page-item">
+													<a class="page-link"  th:text="${'Pagina '+ datosPaginacionVenta.paginaActual + ' - '+ datosPaginacionVenta.totalPaginas}" th:title="${'Page '+ datosPaginacionVenta.paginaActual}" data-toggle="tooltip"></a>
+												</li>
+							            		<li class="page-item" th:classappend="${datosPaginacionVenta.paginaActual == (datosPaginacionVenta.totalPaginas) ? 'disabled' : ''}">
+							            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosPorAprobarVentas/{page}  (page=${datosPaginacionVenta.paginaActual + 1})}" class="page-link">Siguiente</a>
+							            		</li>  
+							            	</ul> 
+							            </nav> 
+							            
+							            
+							          
+							            
+							            
+							             
+							          </div><!--/.card-body-->
+							        </div><!--/.card-->
+							        
+							      
+		                  	
+		                  </td>
+		                  <td>
+		                  		<div class="card">
+							          <div class="card-header">
+							            <i class="fa fa-align-justify"></i> Listado Movimientos <b>Demandas</b>  por Aprobar
+							            
+							          </div><!--/.card-header-->
+							          <div class="card-body">
+							          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+							            		Ocurrio los siguientes errores:
+							            		<ul>
+							            			<li th:text="${mensajeError}"></li>
+							            		</ul>
+							            	</div>
+						          	
+						          			<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
+							            <table class="table">
+							              <thead>
+							                <tr>
+							                  <th>Cod. Operacion</th>
+							                  <th>Cod. Moneda</th>
+							              	  <th>Monto Divisa</th>
+							                  <th>Tipo de Cambio</th>
+							                  <th></th>
+							                  <th></th>
+							                  <th></th> 
+							                </tr>
+							              </thead>
+							              <tbody>
+							                <tr th:each = "movimientoCompra: ${listaMovimientosCompra}">
+							                  <td th:text="${movimientoCompra.codOperacion}"></td>
+							                  <td th:text="${movimientoCompra.codMoneda}"></td>
+							                  <td th:text="${movimientoCompra.montoDivisa}"></td>
+							                  <td th:text="${movimientoCompra.tasaCliente}"></td>
+							                  <td>
+							                  	<a  onclick="return confirm('¿Estas seguro de aprobar la solicitud de Compra (Demanda)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarCompra/{codOperacion}/{page} (codOperacion=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fas fa-check" aria-hidden="true"></i></a>
+							                  </td>
+							                  <td>
+							                  	<a  class="btn btn-primary" th:href="@{/solicitudes/procesarCompra/{id}/{page} (id=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }"  role="button" title="Procesar Solicitud."><i class="fas fa-sync" aria-hidden="true"></i></a>
+							                  </td>							
+							                  <td>
+							                  	<a onclick="return confirm('¿Estas seguro de rechazar la solicitud de Compra? (Demanda)')" class="btn btn-danger" th:href="@{/solicitudes/rechazarCompra/{codOperacion}/{page} (codOperacion=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }" role="button" title="Rechazar Solicitud."><i class="fas fa-times" aria-hidden="true"></i></a>
+							                  </td>		             
+							                </tr>
+							              </tbody>
+							            </table>
+							            
+							            
+							            
+							            <nav th:if="${datosPaginacionCompra.totalPaginas > 0}" aria-label="Page navigation example" > 
+							            	<ul class="pagination justify-content-center">         
+							            		<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == 1 ? 'disabled' : ''}">
+							            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosPorAprobarCompra/{page}  (page=${datosPaginacionCompra.paginaActual - 1})}" class="page-link">Anterior</a>
+							            		</li> 
+							            		<li class="page-item">
+													<a class="page-link"  th:text="${'Pagina  '+ datosPaginacionCompra.paginaActual + ' - '+ datosPaginacionCompra.totalPaginas}" th:title="${'Page '+ datosPaginacionCompra.paginaActual}" data-toggle="tooltip"></a>
+												</li>
+							            		<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == (datosPaginacionCompra.totalPaginas) ? 'disabled' : ''}">
+							            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosPorAprobarCompra/{page}  (page=${datosPaginacionCompra.paginaActual + 1})}" class="page-link">Siguiente</a>
+							            		</li>  
+							            	</ul> 
+							            </nav>
+							            
+							           
+							            
+							             
+							          </div><!--/.card-body-->
+							        </div><!--/.card-->
+		                  	
+		                  </td>	
+		                  </tr>
+     	  			  </tbody>
+		    </table>	
+     	  
+     	  	
+		  	
+		  
+		  	
+		  
+     	  
+     	  </div>
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

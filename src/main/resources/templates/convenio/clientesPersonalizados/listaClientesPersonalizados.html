@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="row">
+		      <div class="col-lg-1-12">
+		        <div class="card">
+		          <div class="card-header">
+		            <i class="fa fa-align-justify"></i> Listado de Clientes Personalizados
+		            <p align="right"></p>
+		            <div class="my-2 text-right">
+         					<form th:action="@{/clientesPersonalizados/searchNroIdCliente}"  th:object="${clientesPersonalizadosSearch}"  method="get" class="form-inline">
+        						<input type="text"  class="form-control mb-3"  th:field="*{nroIdCliente}" maxlength="16" placeholder="Escriba una búsqueda" >&nbsp;
+            					<button type="submit" class="btn btn-primary mb-3">Buscar por Nro. IdCliente</button>            
+          					</form>
+        			</div>
+        			<div class="my-2 text-right">
+         					<form th:action="@{/clientesPersonalizados/search}"  th:object="${clientesPersonalizadosSearch}"  method="get" class="form-inline">
+        						<input type="text"  class="form-control mb-3"  th:field="*{codigoIbs}" maxlength="10" placeholder="Escriba una búsqueda" >&nbsp;
+            					<button type="submit" class="btn btn-primary mb-3">Buscar por codigo ibs</button>            
+          					</form>
+        			</div>
+		            <div class="my-2 text-right">
+		              <a class="btn btn-primary" th:href="@{/clientesPersonalizados/formClientePersonalizadoBuscar}" title="Crear Cliente Personalizado" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Cliente Personalizado</a>
+		            </div>
+		          </div><!--/.card-header-->
+		          <div class="card-body">
+		          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+	          	
+	          			<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>	
+		            <table class="table">
+		              <thead>
+		                <tr>
+		                  <th>Codigo Ibs</th>
+		                  <th>Nro. IdCliente</th>
+		                  <th>Nombre/Razon Social</th>
+		                  <th>Cod. Usuario</th>
+		                  <th>Fecha Modificacion</th>
+		                  <th>Ver</th>
+		                  <th>Activar/Inactivar</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                <tr th:each = "cliente: ${listaClientesPersonalizados}">
+		                  <td th:text="${cliente.codigoIbs}"></td>
+		                  <td th:text="${cliente.nroIdCliente}"></td>
+		                  <td th:text="${cliente.nombreRif}"></td>
+		                  <td th:text="${cliente.codUsuario}"></td>
+		                  <td th:text="${cliente.fechaModificacion}"></td>
+		                  <td th:if="${cliente.flagActivo}">
+		                      <a  class="btn btn-info" th:href="@{/clientesPersonalizados/verLimites/{codigoIbs} (codigoIbs=${cliente.codigoIbs}) }" role="button" title="Ver limites."><i class="fas fa-search" aria-hidden="true"></i></a>
+		                  </td>
+		                  <td th:unless="${cliente.flagActivo}">
+		                      <button type="submit" class="btn btn-info" disabled="disabled"><i class="fas fa-search" aria-hidden="true"></i></button>
+		                      
+		                  </td>
+		                  <td th:if="${cliente.flagActivo}">
+		                  		<label class="switch switch-pill switch-primary">
+								  <input th:onclick="|window.location.href='@{/clientesPersonalizados/desactivar/{codigoIbs}/{page} (codigoIbs=${cliente.codigoIbs}, page=${datosPaginacion.paginaActual}) }'|"  type="checkbox" class="switch-input"  checked>
+								  <span class="switch-slider"></span>
+								</label>
+								<!-- <label class="switch switch-pill switch-label switch-outline-primary-alt">
+								  <input th:onclick="|window.location.href='@{/clientesPersonalizados/desactivar/{codigoIbs} (codigoIbs=${cliente.codigoIbs}) }'|" type="checkbox" class="switch-input" checked>
+								  <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+								</label>
+								
+		                   		<a  onclick="return confirm('¿Estas seguro de desactivar el cliente?')" th:href="@{/clientesPersonalizados/desactivar/{codigoIbs} (codigoIbs=${cliente.codigoIbs}) }" class="btn btn-danger" role="button" title="Desactivar el registro.">Desactivar</a>
+		                   		 -->
+			              </td>
+		                  <td th:unless="${cliente.flagActivo }">
+		                  		<label class="switch switch-pill switch-secondary">
+								  <input th:onclick="|window.location.href='@{/clientesPersonalizados/activar/{codigoIbs}/{page} (codigoIbs=${cliente.codigoIbs}, page=${datosPaginacion.paginaActual}) }'|" type="checkbox" class="switch-input" checked>
+								  <span class="switch-slider"></span>
+								</label>
+								<!--<label class="switch switch-pill switch-label switch-outline-primary-alt">
+								  <input th:onclick="|window.location.href='@{/clientesPersonalizados/activar/{codigoIbs} (codigoIbs=${cliente.codigoIbs}) }'|" type="checkbox" class="switch-input">
+								  <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+								</label> 
+		                    	
+		                    	<a  onclick="return confirm('¿Estas seguro de activar el cliente?')" th:href="@{/clientesPersonalizados/activar/{codigoIbs} (codigoIbs=${cliente.codigoIbs}) }" class="btn btn-primary"  role="button" title="Activar el registro.">Activar</a>
+		                    	-->
+		                   </td>
+		                </tr>
+		              </tbody>
+		            </table> 
+		            
+		             <nav th:if="${datosPaginacion.totalPaginas > 0}" aria-label="Page navigation example" > 
+		            	<ul class="pagination justify-content-center">         
+		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == 1 ? 'disabled' : ''}">
+		            			<a th:href="@{/clientesPersonalizados/index/{page}  (page=${datosPaginacion.paginaActual - 1})}" class="page-link">Anterior</a>
+		            		</li> 
+		            		<li class="page-item">
+								<a class="page-link"  th:text="${'Pagina '+ datosPaginacion.paginaActual + ' -  '+ datosPaginacion.totalPaginas}" th:title="${'Page '+ datosPaginacion.paginaActual}" data-toggle="tooltip"></a>
+							</li>
+		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == (datosPaginacion.totalPaginas) ? 'disabled' : ''}">
+		            			<a th:href="@{/clientesPersonalizados/index/{page}  (page=${datosPaginacion.paginaActual + 1})}" class="page-link">Siguiente</a>
+		            		</li>  
+		            	</ul> 
+		            </nav>
+		            
+		            
+		          </div><!--/.card-body-->
+		        </div><!--/.card-->
+		      </div><!--/.col-lg-1-12-->
+		    </div><!--/.row-->    
+		  </div><!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

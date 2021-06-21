@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <ul class="nav nav-tabs" id="myTab" role="tablist">
+		  <li class="nav-item">
+		    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-expanded="true">Oferta (Venta)</a>
+		  </li>
+		  <li class="nav-item">
+		    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile">Demanda (Compra)</a>
+		  </li>
+		</ul>
+		<div class="tab-content" id="myTabContent">
+		  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+		  	<h4>Venta</h4>
+		  	<div class="animated fadeIn">
+		    <div class="row">
+		      <div class="col-lg-1-12">
+		        <div class="card">
+		          <div class="card-header">
+		            <i class="fa fa-align-justify"></i> Listado Movimientos Venta
+		           <p align="right"></p>
+		            <div class="my-2">
+         					<form th:action="@{/solicitudes/searchEstatus}"  th:object="${movimientoSearch}"  method="get" class="form-horizontal">
+        						<div class="form-group row">
+						            <label class="col-sm-2 col-form-label" for="estatus">Estatus:</label>
+						            <div class="col-sm-3">
+						              <select  class="form-control" th:field="*{estatus}"  name="estatus">
+								                <option value = "-1">----Selecionar Estatus----</option>
+								                <option value = "0" >Por Aprobar</option>
+								                <option value = "1" >Aprobada Automática</option>
+								                <option value = "2" >Aprobada Funcional</option>
+								                <option value = "3" >Rechazada Automática</option>
+								                <option value = "4" >Rechazada Funcional</option>
+								              </select>
+						            </div>
+						          </div>  
+            						<div class="form-group row">
+							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Desde:</label>
+							            <div class="col-sm-3">
+							              <input type="date" class="form-control" th:field="*{fechas.fechaDesde}" name="fechas.fechaDesde" id="fechas.fechaDesde" placeholder="Fecha desde">
+							            </div>
+							          </div>
+							          
+							          <div class="form-group row">
+							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Hasta:</label>
+							            <div class="col-sm-3">
+							              <input type="date" class="form-control" th:field="*{fechas.fechaHasta}" name="fechas.fechaHasta" id="fechas.fechaHasta" placeholder="Fecha hasta">
+							            </div>
+							          </div>
+            					
+            					
+            					<div>
+		        					<button type="submit" class="btn btn-primary">Consultar</button>
+		      	 				 </div>
+            					         
+          					</form>
+        			</div>
+		            <div class="my-2 text-right">
+		              	<a class="btn btn-primary" th:href="@{/solicitudes/formSolicitudGenerarReporte}" title="Generar Reporte" role="button">Generar Reporte</a>
+		            </div>
+		            
+		          </div><!--/.card-header-->
+		          <div class="card-body">
+		          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+		            <table class="table">
+		              <thead>
+		                <tr>
+		                  <th>Cod. Operacion</th>
+		                  <th>Nombre/Razon social</th>
+		                  <th>Fecha Operacion</th>
+		                  <th>Cuenta en divisas</th>
+		                  <th>Cuenta en Bolivares</th>
+		                  <th>Monto Divisa</th>
+		                  <th>Monto Bs</th>
+		                  <th>Estatus</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                <tr th:each = "movimiento: ${listaMovimientosVenta}">
+		                  <td th:text="${movimiento.codOperacion}"></td>
+		                  <td th:text="${movimiento.nombreCliente}"></td>
+		                  <td th:text="${movimiento.fechaOperacion}"></td>
+		                  <td th:text="${movimiento.cuentaDivisa}"></td>
+		                  <td th:text="${movimiento.cuentaNacional}"></td>
+		                  <td th:text="${movimiento.montoDivisa}"></td>
+		                  <td th:text="${movimiento.montoBsCliente}"></td>
+		                  <td>
+		                  	<span th:if="${movimiento.estatus == 0}">Por Aprobar</span>
+		                  	<span th:if="${movimiento.estatus == 1}">Aprobada Automática</span>
+		                  	<span th:if="${movimiento.estatus == 2}">Aprobada Funcional</span>
+		                  	<span th:if="${movimiento.estatus == 3}">Rechazada Automática</span>
+		                  	<span th:if="${movimiento.estatus == 4}">Rechazada Funcional</span>
+		                  </td>		             
+		                </tr>
+		              </tbody>
+		            </table>
+		           
+		           <nav th:if="${datosPaginacionVenta.totalPaginas > 0}" aria-label="Page navigation example" > 
+		            	<ul class="pagination justify-content-center">         
+		            		<li class="page-item" th:classappend="${datosPaginacionVenta.paginaActual == 1 ? 'disabled' : ''}">
+		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosVentas/{page}/{estatus}/{fechaDesde}/{fechaHasta}  (page=${datosPaginacionVenta.paginaActual - 1}, estatus=${estatus}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Anterior</a>
+		            		</li> 
+		            		<li class="page-item">
+								<a class="page-link"  th:text="${'Pagina '+ datosPaginacionVenta.paginaActual + ' - '+ datosPaginacionVenta.totalPaginas}" th:title="${'Page '+ datosPaginacionVenta.paginaActual}" data-toggle="tooltip"></a>
+							</li>
+		            		<li class="page-item" th:classappend="${datosPaginacionVenta.paginaActual == (datosPaginacionVenta.totalPaginas) ? 'disabled' : ''}">
+		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosVentas/{page}/{estatus}/{fechaDesde}/{fechaHasta}  (page=${datosPaginacionVenta.paginaActual + 1}, estatus=${estatus}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Siguiente</a>
+		            		</li>  
+		            	</ul> 
+		            </nav> 
+		            
+		         
+		            
+		            
+		             
+		          </div><!--/.card-body-->
+		        </div><!--/.card-->
+		      </div><!--/.col-lg-1-12-->
+		    </div><!--/.row-->    
+		  </div><!--/.animated fadeIn-->
+		  </div>
+		  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+		  	<h4>Compra</h4>
+		  	<div class="animated fadeIn">
+		    <div class="row">
+		      <div class="col-lg-1-12">
+		        <div class="card">
+		          <div class="card-header">
+		            <i class="fa fa-align-justify"></i> Listado Movimientos Compra
+		            <div class="my-2">
+         					<form th:action="@{/solicitudes/searchEstatusCompra}"  th:object="${movimientoSearch}"  method="get" class="form-horizontal">
+        						<div class="form-group row">
+						            <label class="col-sm-2 col-form-label" for="estatus">Estatus:</label>
+						            <div class="col-sm-3">
+						              <select  class="form-control" th:field="*{estatus}"  name="estatus" required="required">
+								                <option value = "">----Selecionar Estatus----</option>
+								                <option value = "0" >Por Aprobar</option>
+								                <option value = "1" >Aprobada Automática</option>
+								                <option value = "2" >Aprobada Funcional</option>
+								                <option value = "3" >Rechazada Automática</option>
+								                <option value = "4" >Rechazada Funcional</option>
+								              </select>
+						            </div>
+						          </div>  
+            						<div class="form-group row">
+							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Desde:</label>
+							            <div class="col-sm-3">
+							              <input type="date" class="form-control" th:field="*{fechas.fechaDesde}" name="fechas.fechaDesde" id="fechas.fechaDesde" placeholder="Fecha desde" required="required">
+							            </div>
+							          </div>
+							          
+							          <div class="form-group row">
+							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Hasta:</label>
+							            <div class="col-sm-3">
+							              <input type="date" class="form-control" th:field="*{fechas.fechaHasta}" name="fechas.fechaHasta" id="fechas.fechaHasta" placeholder="Fecha hasta" required="required">
+							            </div>
+							          </div>
+            					
+            					 
+            					<div>
+		        					<button type="submit" class="btn btn-primary">Consultar</button>
+		      	 				 </div>
+            					         
+          					</form>
+        			</div>
+        			<div class="my-2 text-right">
+		              	<a class="btn btn-primary" th:href="@{/solicitudes/formSolicitudGenerarReporte}" title="Generar Reporte" role="button">Generar Reporte</a>
+		            </div>
+		          </div><!--/.card-header-->
+		          <div class="card-body">
+		          	<div th:if="${mensajeErrorCompra != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeErrorCompra}"></li>
+		            		</ul>
+		            	</div>
+		            <table class="table">
+		              <thead>
+		                <tr>
+		                  <th>Cod. Operacion</th>
+		                  <th>Nombre/Razon social</th>
+		                  <th>Fecha Operacion</th>
+		                  <th>Cuenta en divisas</th>
+		                  <th>Cuenta en Bolivares</th>
+		                  <th>Monto Divisa</th>
+		                  <th>Monto Bs</th>
+		                  <th>Estatus</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                <tr th:each = "movimientoCompra: ${listaMovimientosCompra}">
+		                  <td th:text="${movimientoCompra.codOperacion}"></td>
+		                  <td th:text="${movimientoCompra.nombreCliente}"></td>
+		                  <td th:text="${movimientoCompra.fechaOperacion}"></td>
+		                  <td th:text="${movimientoCompra.cuentaDivisa}"></td>
+		                  <td th:text="${movimientoCompra.cuentaNacional}"></td>
+		                  <td th:text="${movimientoCompra.montoDivisa}"></td>
+		                  <td th:text="${movimientoCompra.montoBsCliente}"></td>
+		                  <td>
+		                  	<span th:if="${movimientoCompra.estatus == 0}">Por Aprobar</span>
+		                  	<span th:if="${movimientoCompra.estatus == 1}">Aprobada Automática</span>
+		                  	<span th:if="${movimientoCompra.estatus == 2}">Aprobada Funcional</span>
+		                  	<span th:if="${movimientoCompra.estatus == 3}">Rechazada Automática</span>
+		                  	<span th:if="${movimientoCompra.estatus == 4}">Rechazada Funcional</span>
+		                  </td>		             
+		                </tr>
+		              </tbody>
+		            </table>
+		            
+		            
+		            
+		            <nav th:if="${datosPaginacionCompra.totalPaginas > 0}" aria-label="Page navigation example" > 
+		            	<ul class="pagination justify-content-center">         
+		            		<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == 1 ? 'disabled' : ''}">
+		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{page}  (page=${datosPaginacionCompra.paginaActual - 1})}" class="page-link">Anterior</a>
+		            		</li> 
+		            		<li class="page-item">
+								<a class="page-link"  th:text="${'Pagina '+ datosPaginacionCompra.paginaActual + ' - '+ datosPaginacionCompra.totalPaginas}" th:title="${'Page '+ datosPaginacionCompra.paginaActual}" data-toggle="tooltip"></a>
+							</li>
+		            		<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == (datosPaginacionCompra.totalPaginas) ? 'disabled' : ''}">
+		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{page}  (page=${datosPaginacionCompra.paginaActual + 1})}" class="page-link">Siguiente</a>
+		            		</li>  
+		            	</ul> 
+		            </nav>
+		            
+		            <!-- vacantes.totalPages = datosPaginacion.totalPaginas -->
+		            <!-- vacantes.number = datosPaginacion.paginaActual -->
+		            <!-- th:href="@{/vacantes/indexPaginate(page=${datosPaginacion.paginaActual - 1})}" -->
+		            <!-- th:href="@{/vacantes/indexPaginate?page={tmpPag} (tmpPag=${i}) }" -->
+		            <!-- th:href="@{/vacantes/indexPaginate(page=${datosPaginacion.paginaActual + 1})}" -->
+		            
+		            <!--
+		            <nav th:if="${datosPaginacionCompra.totalPaginas > 0}" aria-label="Page navigation example" >
+						<ul class="pagination justify-content-center">
+							<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == 1 ? 'disabled' : ''}">
+								<a th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{page}  (page=${datosPaginacionCompra.paginaActual - 1})}" class="page-link">Anterior</a>
+							</li>
+							
+							<li class="page-item" th:classappend="${i eq datosPaginacionCompra.paginaActual} ? 'active'" th:each="i : ${#numbers.sequence( 1, datosPaginacionCompra.totalPaginas, 1)}">
+								<a class="page-link" th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{tmpPag} (tmpPag=${i}) }" th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
+							</li>
+							<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == (datosPaginacionCompra.totalPaginas) ? 'disabled' : ''}">
+								<a  th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{page}  (page=${datosPaginacionCompra.paginaActual + 1})}"  class="page-link">Siguiente</a>
+							</li>
+						</ul>
+					</nav>-->
+		            
+		            
+		             
+		          </div><!--/.card-body-->
+		        </div><!--/.card-->
+		      </div><!--/.col-lg-1-12-->
+		    </div><!--/.row-->    
+		  </div><!--/.animated fadeIn-->
+		  </div>
+		</div>
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

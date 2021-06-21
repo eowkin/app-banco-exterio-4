@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="row">
+		      <div class="col-lg-1-12">
+		        <div class="card">
+		          <div class="card-header">
+		            <i class="fa fa-align-justify"></i> Listado de Limites Personalizados
+		            <p align="right"></p>
+		            
+		            <div class="my-2 text-right">
+		              <a class="btn btn-primary" th:href="@{/clientesPersonalizados/formLimiteClientePersonalizado/{codigoIbs}  (codigoIbs=${codigoIbs})}" title="Crear Limite Personalizado" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Limites Personalizados</a>
+		            </div>
+		          </div><!--/.card-header-->
+		          <div class="card-body">
+		          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+		          	<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
+		            <table class="table">
+		              <thead>
+		                <tr>
+		                	<th>Codigo Ibs</th>
+		                  	<th>Codigo Moneda</th>
+		                    <th>Tipo Trans.</th>
+		                    <th>Monto Min</th>
+		                    <th>Monto Max</th>
+		                    <th>Monto Tope</th>
+		                    <th>Monto Men</th>
+		                    <th>Monto Diario</th>
+		                    <th>Cod. Usuario</th>
+		                    <!--  
+		                    <th>Flag Activo</th>-->
+		                    <th>Fecha Modificacion</th>
+		                    <th>Editar</th>
+		                    <th>Activar/Inactivar</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                <tr th:each = "limitesPersonalizados: ${listaLimitesPersonalizados}">
+		                  <td th:text="${limitesPersonalizados.codigoIbs}"></td>
+		                  <td th:text="${limitesPersonalizados.codMoneda}"></td>
+		                  <td>
+		                  	<span th:if="${limitesPersonalizados.tipoTransaccion == 'V'}">Venta</span>
+		                  	<span th:if="${limitesPersonalizados.tipoTransaccion == 'C'}">Compra</span>
+		                  </td>
+		                  <td th:text="${limitesPersonalizados.montoMin}"></td>
+		                  <td th:text="${limitesPersonalizados.montoMax}"></td>
+		                  <td th:text="${limitesPersonalizados.montoTope}"></td>
+		                  <td th:text="${limitesPersonalizados.montoMensual}"></td>
+		                  <td th:text="${limitesPersonalizados.montoDiario}"></td>
+		                  <td th:text="${limitesPersonalizados.codUsuario}"></td>
+		                  <!-- 
+		                  <td>
+	                		<span class="badge badge-primary" th:if="${limitesPersonalizados.flagActivo}">Activo</span>
+	                		<span class="badge badge-danger" th:unless="${limitesPersonalizados.flagActivo }">Desactivo</span>
+	                	  </td> -->
+		               	  <td th:text="${limitesPersonalizados.fechaModificacion}"></td>
+		                  
+		                  <td th:if="${limitesPersonalizados.flagActivo}">
+                      		<a  class="btn btn-primary" th:href="@{/clientesPersonalizados/editLimiteCliente/{id}/{id2}/{id3} (id=${limitesPersonalizados.codigoIbs}, id2=${limitesPersonalizados.codMoneda}, id3=${limitesPersonalizados.tipoTransaccion}) }" role="button" title="Editar el registro."><i class="fas fa-edit" aria-hidden="true"></i></a>
+                    	  </td>
+                    	  <td th:unless="${limitesPersonalizados.flagActivo }">
+		           			<button type="submit" class="btn btn-primary" disabled="disabled"><i class="fas fa-edit" aria-hidden="true"></i></button>
+		                  </td>
+                          <td th:if="${limitesPersonalizados.flagActivo}">
+                          	<label class="switch switch-pill switch-primary">
+								  <input th:onclick="|window.location.href='@{/clientesPersonalizados/desactivarLimiteCliente/{id}/{id2}/{id3} (id=${limitesPersonalizados.codigoIbs}, id2=${limitesPersonalizados.codMoneda}, id3=${limitesPersonalizados.tipoTransaccion}) }'|" type="checkbox" class="switch-input" checked>
+								  <span class="switch-slider"></span>
+								</label>
+							<!-- 	
+                   		    <a  onclick="return confirm('¿Estas seguro de desactivar?')" th:href="@{/limitesPersonalizados/desactivar/{id}/{id2}/{id3} (id=${limitesPersonalizados.codigoIbs}, id2=${limitesPersonalizados.codMoneda}, id3=${limitesPersonalizados.tipoTransaccion}) }" class="btn btn-danger" role="button" title="Desactivar el registro.">Desactivar</a>
+                   		     -->
+	                      </td>
+                          <td th:unless="${limitesPersonalizados.flagActivo }"> 
+                          	<label class="switch switch-pill switch-secondary">
+								  <input th:onclick="|window.location.href='@{/clientesPersonalizados/activarLimiteCliente/{id}/{id2}/{id3} (id=${limitesPersonalizados.codigoIbs}, id2=${limitesPersonalizados.codMoneda}, id3=${limitesPersonalizados.tipoTransaccion}) }'|" type="checkbox" class="switch-input" checked>
+								   <span class="switch-slider"></span>
+							</label>
+							<!--	
+                    	    <a onclick="return confirm('¿Estas seguro de desactivar?')" th:href="@{/limitesPersonalizados/activar/{id}/{id2}/{id3} (id=${limitesPersonalizados.codigoIbs}, id2=${limitesPersonalizados.codMoneda}, id3=${limitesPersonalizados.tipoTransaccion}) }"  class="btn btn-primary"  role="button" title="Activar el registro.">Activar</a>
+                    	    -->
+                  	      </td>
+		                </tr>
+		              </tbody>
+		            </table> 
+		          </div><!--/.card-body-->
+		        </div><!--/.card-->
+		      </div><!--/.col-lg-1-12-->
+		    </div><!--/.row-->    
+		  </div><!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="row">
+		      <div class="col-lg-1-12">
+		        <div class="card">
+		          <div class="card-header">
+		            <i class="fa fa-align-justify"></i> Listado de Tasas
+		            <p align="right"></p>
+		            <div class="my-2 text-right">
+		              <a class="btn btn-primary" th:href="@{/tasas/formTasa}" title="Crear nueva Tasa" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Tasa</a>
+		            </div>
+		          </div><!--/.card-header-->
+		          <div class="card-body">
+		          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+		          	<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
+		            <table class="table">
+		              <thead>
+		                <tr>
+		                  <th>Cod. Moneda Origen</th>
+		                  <th>Cod. Moneda Destino</th>
+		                  <th>Tipo Operacion</th>
+		                  <th>Tasa Compra</th>
+		                  <th>Tasa Venta</th>
+		                  <th>Cod. Usuario</th>
+		                  <th>Fecha Modificacion</th>
+		                  <th>Editar</th>
+		                </tr>
+		              </thead>
+		              <tbody>
+		                <tr th:each = "tasa: ${listaTasas}">
+		                  <td th:text="${tasa.codMonedaOrigen}"></td>
+		                  <td th:text="${tasa.codMonedaDestino}"></td>
+		                  <td>
+		                  	<span th:if="${tasa.tipoOperacion == 0}">Mercado Internacional</span>
+		                  	<span th:if="${tasa.tipoOperacion == 1}">Mesa de Cambio</span>
+		                  	<span th:if="${tasa.tipoOperacion == 2}">Intervencion</span>
+		                  	<span th:if="${tasa.tipoOperacion == 3}">Menudeo</span>
+		                  </td> 
+		                  <td th:text="${tasa.montoTasaCompra}"></td>
+		                  <td th:text="${tasa.montoTasaVenta}"></td>
+		                  <td th:text="${tasa.codUsuario}"></td>
+		                  <td th:text="${tasa.fechaModificacion}"></td>
+		                  <td>
+		                  	<a  class="btn btn-primary" th:href="@{/tasas/edit/{id}/{id2}/{id3} (id=${tasa.codMonedaOrigen}, id2=${tasa.codMonedaDestino}, id3=${tasa.tipoOperacion}) }" role="button" title="Editar el registro."><i class="fas fa-edit" aria-hidden="true"></i></a>
+		                  </td>
+		                </tr>
+		              </tbody>
+		            </table> 
+		          </div><!--/.card-body-->
+		        </div><!--/.card-->
+		      </div><!--/.col-lg-1-12-->
+		    </div><!--/.row-->    
+		  </div><!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

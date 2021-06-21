@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+			    <div class="card">
+			      <div class="card-header">
+			        <strong>Buscar Agencia</strong>
+			      </div>
+			      <div class="card-body">
+			        <div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+		            
+			        <form  th:action="@{/agencias/searchCrear}"  th:object="${agencia}"  method="get" class="form-horizontal">
+			         	
+			          	<div class="form-group row">
+				            <label class="col-sm-3 col-form-label" for="codAgencia">Codigo Agencia:</label>
+				            <div class="col-sm-3">
+				              <select  class="form-control"  name="codAgencia" th:field="*{codAgencia}"  required="required">
+		                		<option value="">----Selecionar Moneda----</option>
+		                																											
+		                		<option th:each = "agenciaB: ${listaAgencias}" th:value="${agenciaB.codAgencia}" th:text="${agenciaB.codAgencia} + ' - ' + ${agenciaB.nombreAgencia}"></option>
+		              		</select>
+				              
+				            </div>
+			          </div>
+			          <div class="card-footer">
+			          	<button type="submit" class="btn btn-primary mb-3">Buscar</button>
+			          	<a class="btn btn-primary mb-3" th:href="@{/agencias/index}" title="Volver a lista agencias" role="button">Volver a lista agencias</a>
+			      	  </div>
+			        </form>
+			        
+			      </div>
+			      <div class="card-footer">
+			      </div>
+			    </div>
+			  </div><!--/.col-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <script th:src="@{/node_modules/@fortawesome/fontawesome-free/js/all.js}" type="text/javascript"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>
