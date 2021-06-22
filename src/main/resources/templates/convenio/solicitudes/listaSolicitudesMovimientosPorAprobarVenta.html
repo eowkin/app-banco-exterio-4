@@ -35,6 +35,13 @@
 							   Ofertas del Día
 				        </div>
 				       <div class="card-body">
+				       	<div><span style="float:right">[[${ventaAcumuladoUSD.monto}]]</span>Monto en Dólares:</div>
+				       	<div><span style="float:right">[[${ventaAcumuladoEUR.monto}]]</span>Monto en Euros:</div>
+				       	<div><span style="float:right">[[${montoBsTotalVenta}]]</span>Monto en Bs:</div>
+				       	<!--<P ALIGN="LEFT">Monto en Dólares:</P><P ALIGN="RIGHT">[[${ventaAcumuladoUSD.monto}]]</P>
+				       	<P ALIGN="LEFT">Monto en Euros:</P><P ALIGN="RIGHT">[[${ventaAcumuladoEUR.monto}]]</P>
+				       	<P ALIGN="LEFT">Monto en Bs:</P><P ALIGN="RIGHT">[[${montoBsTotalVenta}]]</P> 
+				    	  
 				       	  <table class="table">
 						      <tbody>
 						      	<tr style="border: hidden">	
@@ -50,7 +57,7 @@
 							        <td align="right">[[${montoBsTotalVenta}]]</td>
 							    </tr>  
 							  </tbody>
-						  </table> 
+						  </table>--> 
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -60,6 +67,10 @@
 							   Demanda del Día
 				        </div>
 				       <div class="card-body">
+				       	  <div><span style="float:right">[[${compraAcumuladoUSD.monto}]]</span>Monto en Dólares:</div>
+				       	  <div><span style="float:right">[[${compraAcumuladoEUR.monto}]]</span>Monto en Euros:</div>
+				       	  <div><span style="float:right">[[${montoBsTotalCompra}]]</span>Monto en Bs:</div>
+				       	  <!-- 
 				       	  <table class="table">
 						      <tbody>
 						      	<tr style="border: hidden">	
@@ -75,7 +86,7 @@
 							        <td align="right">[[${montoBsTotalCompra}]]</td>
 							    </tr>  
 							  </tbody>
-						  </table>	
+						  </table> -->	
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -85,6 +96,10 @@
 							   Ofertas por Aprobar
 				        </div>
 				       <div class="card-body">
+				       	  <div><span style="float:right">[[${ventaPorAprobarUSD.monto}]]</span>Monto en Dólares:</div>
+				       	  <div><span style="float:right">[[${ventaPorAprobarEUR.monto}]]</span>Monto en Euros:</div>
+				       	  <div><span style="float:right">[[${montoBsTotalPorAprobarVenta}]]</span>Monto en Bs:</div>		
+				       	  <!-- 
 				       	  <table class="table">
 						      <tbody>
 						      	<tr style="border: hidden">	
@@ -100,7 +115,7 @@
 							        <td align="right">[[${montoBsTotalPorAprobarVenta}]]</td>
 							    </tr>  
 							  </tbody>
-						  </table>		   
+						  </table> -->		   
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -110,6 +125,10 @@
 							   Demandas por Aprobar
 				        </div>
 				       <div class="card-body">
+				       	  <div><span style="float:right">[[${compraPorAprobarUSD.monto}]]</span>Monto en Dólares:</div>
+				       	  <div><span style="float:right">[[${compraPorAprobarEUR.monto}]]</span>Monto en Euros:</div>
+				       	  <div><span style="float:right">[[${montoBsTotalPorAprobarCompra}]]</span>Monto en Bs:</div>	
+				       	  <!-- 
 				       	  <table class="table">
 						      <tbody>
 						      	<tr style="border: hidden">	
@@ -125,7 +144,7 @@
 							        <td align="right">[[${montoBsTotalPorAprobarCompra}]]</td>
 							    </tr>  
 							  </tbody>
-						  </table>	
+						  </table> -->	
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -173,13 +192,13 @@
 							                  <td th:text="${movimiento.montoDivisa}"></td>
 							                  <td th:text="${movimiento.tasaCliente}"></td>
 							                  <td>
-							                  	<a onclick="return confirm('¿Estas seguro de aprobar la solicitud de Venta (Oferta)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarVenta/{codOperacion}/{page} (codOperacion=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fas fa-check" aria-hidden="true"></i></a>
+							                  	<a onclick="return confirm('¿Estas seguro de aprobar la solicitud de Venta (Oferta)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarVenta/{codOperacion}/{page} (codOperacion=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fa fa-check" aria-hidden="true"></i></a>
 							                  </td>
 							                  <td>
-							                  	<a  class="btn btn-primary" th:href="@{/solicitudes/procesarVenta/{id}/{page} (id=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Procesar Solicitud."><i class="fas fa-sync" aria-hidden="true"></i></a>
+							                  	<a  class="btn btn-primary" th:href="@{/solicitudes/procesarVenta/{id}/{page} (id=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Procesar Solicitud."><i class="fa fa-refresh" aria-hidden="true"></i></a>
 							                  </td>
 							                  <td>
-							                  	<a onclick="return confirm('¿Estas seguro de rechazar la solicitud de Venta? (Oferta)')" class="btn btn-danger" th:href="@{/solicitudes/rechazarVenta/{codOperacion}/{page} (codOperacion=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Rechazar Solicitud."><i class="fas fa-times" aria-hidden="true"></i></a>
+							                  	<a onclick="return confirm('¿Estas seguro de rechazar la solicitud de Venta? (Oferta)')" class="btn btn-danger" th:href="@{/solicitudes/rechazarVenta/{codOperacion}/{page} (codOperacion=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Rechazar Solicitud."><i class="fa fa-times" aria-hidden="true"></i></a>
 							                  </td>	
 							                </tr>
 							                
@@ -245,13 +264,13 @@
 							                  <td th:text="${movimientoCompra.montoDivisa}"></td>
 							                  <td th:text="${movimientoCompra.tasaCliente}"></td>
 							                  <td>
-							                  	<a  onclick="return confirm('¿Estas seguro de aprobar la solicitud de Compra (Demanda)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarCompra/{codOperacion}/{page} (codOperacion=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fas fa-check" aria-hidden="true"></i></a>
+							                  	<a  onclick="return confirm('¿Estas seguro de aprobar la solicitud de Compra (Demanda)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarCompra/{codOperacion}/{page} (codOperacion=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fa fa-check" aria-hidden="true"></i></a>
 							                  </td>
 							                  <td>
-							                  	<a  class="btn btn-primary" th:href="@{/solicitudes/procesarCompra/{id}/{page} (id=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }"  role="button" title="Procesar Solicitud."><i class="fas fa-sync" aria-hidden="true"></i></a>
+							                  	<a  class="btn btn-primary" th:href="@{/solicitudes/procesarCompra/{id}/{page} (id=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }"  role="button" title="Procesar Solicitud."><i class="fa fa-refresh" aria-hidden="true"></i></a>
 							                  </td>							
 							                  <td>
-							                  	<a onclick="return confirm('¿Estas seguro de rechazar la solicitud de Compra? (Demanda)')" class="btn btn-danger" th:href="@{/solicitudes/rechazarCompra/{codOperacion}/{page} (codOperacion=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }" role="button" title="Rechazar Solicitud."><i class="fas fa-times" aria-hidden="true"></i></a>
+							                  	<a onclick="return confirm('¿Estas seguro de rechazar la solicitud de Compra? (Demanda)')" class="btn btn-danger" th:href="@{/solicitudes/rechazarCompra/{codOperacion}/{page} (codOperacion=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }" role="button" title="Rechazar Solicitud."><i class="fa fa-times" aria-hidden="true"></i></a>
 							                  </td>		             
 							                </tr>
 							              </tbody>

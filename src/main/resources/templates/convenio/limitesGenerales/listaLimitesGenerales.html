@@ -40,7 +40,7 @@
           					</form>
         			</div>
 		            <div class="my-2 text-right">
-		              <a class="btn btn-primary" th:href="@{/limitesGenerales/formLimitesGenerales}" title="Crear nueva Tasa" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Limites Generales</a>
+		              <a class="btn btn-primary" th:href="@{/limitesGenerales/formLimitesGenerales}" title="Crear nueva Tasa" role="button"><i class="fa fa-file-o" aria-hidden="true"></i> Crear Limites Generales</a>
 		            </div>
 		          </div><!--/.card-header-->
 		          <div class="card-body">
@@ -105,14 +105,14 @@
 				                	  </td> -->
 					               	  <td th:text="${limitesGenerales.fechaModificacion}"></td>
 					                  <td>
-			                      		<a  class="btn btn-info" th:href="@{/limitesGenerales/detalle/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Detalle el registro."><i class="fas fa-search" aria-hidden="true"></i></a>
+			                      		<a  class="btn btn-info" th:href="@{/limitesGenerales/detalle/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Detalle el registro."><i class="fa fa-search" aria-hidden="true"></i></a>
 			                    	  </td>
 			                    	  
 					                  <td th:if="${limitesGenerales.flagActivo}">
-			                      		<a  class="btn btn-primary" th:href="@{/limitesGenerales/edit/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Editar el registro."><i class="fas fa-edit" aria-hidden="true"></i></a>
+			                      		<a  class="btn btn-primary" th:href="@{/limitesGenerales/edit/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>
 			                    	  </td>
 			                    	  <td th:unless="${limitesGenerales.flagActivo }">
-		                      			<button type="submit" class="btn btn-primary" disabled="disabled"><i class="fas fa-edit" aria-hidden="true"></i></button>
+		                      			<button type="submit" class="btn btn-primary" disabled="disabled"><i class="fa fa-pencil" aria-hidden="true"></i></button>
 		                    		  </td>
 			                          <td th:if="${limitesGenerales.flagActivo}">
 			                          	<label class="switch switch-pill switch-primary">

@@ -48,7 +48,7 @@ public class CceTransaccion {
 	private String numeroIdentificacion;
 	
 	@Column(name = "monto", nullable = false)
-	@Digits(integer=20, fraction=2)
+	@Digits(integer=13, fraction=2)
 	private BigDecimal monto;
 	
 	@Column(name = "moneda", nullable = false)

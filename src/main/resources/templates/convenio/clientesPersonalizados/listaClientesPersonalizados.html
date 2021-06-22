@@ -46,7 +46,7 @@
           					</form>
         			</div>
 		            <div class="my-2 text-right">
-		              <a class="btn btn-primary" th:href="@{/clientesPersonalizados/formClientePersonalizadoBuscar}" title="Crear Cliente Personalizado" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Cliente Personalizado</a>
+		              <a class="btn btn-primary" th:href="@{/clientesPersonalizados/formClientePersonalizadoBuscar}" title="Crear Cliente Personalizado" role="button"><i class="fa fa-file-o" aria-hidden="true"></i> Crear Cliente Personalizado</a>
 		            </div>
 		          </div><!--/.card-header-->
 		          <div class="card-body">
@@ -78,7 +78,7 @@
 		                  <td th:text="${cliente.codUsuario}"></td>
 		                  <td th:text="${cliente.fechaModificacion}"></td>
 		                  <td th:if="${cliente.flagActivo}">
-		                      <a  class="btn btn-info" th:href="@{/clientesPersonalizados/verLimites/{codigoIbs} (codigoIbs=${cliente.codigoIbs}) }" role="button" title="Ver limites."><i class="fas fa-search" aria-hidden="true"></i></a>
+		                      <a  class="btn btn-info" th:href="@{/clientesPersonalizados/verLimites/{codigoIbs} (codigoIbs=${cliente.codigoIbs}) }" role="button" title="Ver limites."><i class="fa fa-search" aria-hidden="true"></i></a>
 		                  </td>
 		                  <td th:unless="${cliente.flagActivo}">
 		                      <button type="submit" class="btn btn-info" disabled="disabled"><i class="fas fa-search" aria-hidden="true"></i></button>

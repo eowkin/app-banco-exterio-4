@@ -34,7 +34,7 @@
 		            <i class="fa fa-align-justify"></i> Listado de Tasas
 		            <p align="right"></p>
 		            <div class="my-2 text-right">
-		              <a class="btn btn-primary" th:href="@{/tasas/formTasa}" title="Crear nueva Tasa" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Tasa</a>
+		              <a class="btn btn-primary" th:href="@{/tasas/formTasa}" title="Crear nueva Tasa" role="button"><i class="fa fa-file-o" aria-hidden="true"></i> Crear Tasa</a>
 		            </div>
 		          </div><!--/.card-header-->
 		          <div class="card-body">
@@ -73,7 +73,7 @@
 		                  <td th:text="${tasa.codUsuario}"></td>
 		                  <td th:text="${tasa.fechaModificacion}"></td>
 		                  <td>
-		                  	<a  class="btn btn-primary" th:href="@{/tasas/edit/{id}/{id2}/{id3} (id=${tasa.codMonedaOrigen}, id2=${tasa.codMonedaDestino}, id3=${tasa.tipoOperacion}) }" role="button" title="Editar el registro."><i class="fas fa-edit" aria-hidden="true"></i></a>
+		                  	<a  class="btn btn-primary" th:href="@{/tasas/edit/{id}/{id2}/{id3} (id=${tasa.codMonedaOrigen}, id2=${tasa.codMonedaDestino}, id3=${tasa.tipoOperacion}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>
 		                  </td>
 		                </tr>
 		              </tbody>

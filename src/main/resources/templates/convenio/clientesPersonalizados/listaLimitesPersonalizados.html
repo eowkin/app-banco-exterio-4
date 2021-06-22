@@ -35,7 +35,7 @@
 		            <p align="right"></p>
 		            
 		            <div class="my-2 text-right">
-		              <a class="btn btn-primary" th:href="@{/clientesPersonalizados/formLimiteClientePersonalizado/{codigoIbs}  (codigoIbs=${codigoIbs})}" title="Crear Limite Personalizado" role="button"><i class="fas fa-file" aria-hidden="true"></i> Crear Limites Personalizados</a>
+		              <a class="btn btn-primary" th:href="@{/clientesPersonalizados/formLimiteClientePersonalizado/{codigoIbs}  (codigoIbs=${codigoIbs})}" title="Crear Limite Personalizado" role="button"><i class="fa fa-file-o" aria-hidden="true"></i> Crear Limites Personalizados</a>
 		            </div>
 		          </div><!--/.card-header-->
 		          <div class="card-body">
@@ -87,10 +87,10 @@
 		               	  <td th:text="${limitesPersonalizados.fechaModificacion}"></td>
 		                  
 		                  <td th:if="${limitesPersonalizados.flagActivo}">
-                      		<a  class="btn btn-primary" th:href="@{/clientesPersonalizados/editLimiteCliente/{id}/{id2}/{id3} (id=${limitesPersonalizados.codigoIbs}, id2=${limitesPersonalizados.codMoneda}, id3=${limitesPersonalizados.tipoTransaccion}) }" role="button" title="Editar el registro."><i class="fas fa-edit" aria-hidden="true"></i></a>
+                      		<a  class="btn btn-primary" th:href="@{/clientesPersonalizados/editLimiteCliente/{id}/{id2}/{id3} (id=${limitesPersonalizados.codigoIbs}, id2=${limitesPersonalizados.codMoneda}, id3=${limitesPersonalizados.tipoTransaccion}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>
                     	  </td>
                     	  <td th:unless="${limitesPersonalizados.flagActivo }">
-		           			<button type="submit" class="btn btn-primary" disabled="disabled"><i class="fas fa-edit" aria-hidden="true"></i></button>
+		           			<button type="submit" class="btn btn-primary" disabled="disabled"><i class="fa fa-pencil" aria-hidden="true"></i></button>
 		                  </td>
                           <td th:if="${limitesPersonalizados.flagActivo}">
                           	<label class="switch switch-pill switch-primary">
