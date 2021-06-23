@@ -37,7 +37,11 @@
 		          <div class="card-header">
 		            <i class="fa fa-align-justify"></i> Listado de Movimientos Consulta
 		            <p align="right"></p>
+		            <div class="my-2 text-right">
+		              <a class="btn btn-primary" th:href="@{/ccetransacciones/formConsultaMovimientosConsultaAltoBajoValor}" title="Consulta de Movimientos" role="button">Consulta de Movimientos</a>
+		            </div>
 		          </div><!--/.card-header-->
+		          
 		          <div class="card-body">
 		          	<div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
 		            		Ocurrio los siguientes errores:
@@ -50,12 +54,13 @@
 		            <table class="table">
 		              <thead>
 		                <tr>
-		                  <th>Referencia SGLBTR</th>
+		                  <th>Referencia BCV</th>
 		                  <th>Referencia IBS</th>
 		                  <th>Cta. Ordenante</th>
 		                  <th>Cta. Beneficiario</th>
 		                  <th>Monto</th>
-		                  <th>Fecha Modificacion</th>
+		                  <th>Fecha Liquidacion</th>
+		                  <th>Ver</th>
 		                </tr>
 		              </thead>
 		              <tbody>
@@ -66,7 +71,9 @@
 		                  <td th:text="${transaccion.cuentaDestino}"></td>
 		                  <td th:text="${transaccion.monto}"></td>
 		                  <td th:text="${transaccion.fechaModificacion}"></td>
-		                  
+		                  <td>
+		                  	<a  class="btn btn-info" th:href="@{/ccetransacciones/detalleMovimiento (endtoendId=${transaccion.endtoendId}, page=${listaTransacciones.number}, codTransaccion=${codTransaccion}, bancoDestino=${bancoDestino}, numeroIdentificacion=${numeroIdentificacion}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}) }" role="button" title="Ver limites."><i class="fa fa-search" aria-hidden="true"></i></a>
+		                  </td>
 		                </tr>
 		              </tbody>
 		            </table>

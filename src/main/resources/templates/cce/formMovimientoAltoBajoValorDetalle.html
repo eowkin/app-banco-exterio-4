@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">Home</li>
+          <li class="breadcrumb-item">
+            <a href="#">Admin</a>
+          </li>
+          <li class="breadcrumb-item active">Dashboard</li>
+          <!-- Breadcrumb Menu-->
+   
+        </ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+		    <div class="card">
+		      <div class="card-header">
+		        <strong>Detalle del Movimientos</strong>
+		      </div>
+		      <div class="card-body">
+		        <form  th:action = "@{/ccetransacciones/procesarConsultaMovimientosAltoBajoValorPageable}"   method="get" th:object="${cceTransaccionDto}"   class="form-horizontal">
+		          <div th:if="${listaError != null}" class="alert alert-danger" role="alert">
+		            		Por favor corrija los siguientes errores:
+		            		<!-- 
+		            		<ul>
+		            			<li th:each="err : ${#fields.errors('*')}"  th:text="${err}"></li>
+		            		</ul> -->
+		            		<ul>
+		            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
+		            		</ul>
+		            	</div>
+		            <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="fechaModificacion">Fecha de Liquidación:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{fechaModificacion}" id="fechaModificacion" name="fechaModificacion" disabled="disabled">
+			              
+			            </div>
+			          </div>
+				  <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="endtoendId">Referencia BCV:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{endtoendId}" id="endtoendId" name="endtoendId" disabled="disabled">
+			              
+			            </div>
+			          </div>
+			       <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="referencia">Referencia IBS:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{referencia}" id="referencia" name="referencia" disabled="disabled">
+			              
+			            </div>
+			          </div>   
+			        <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="numeroIdentificacion">CI del Ordenante:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{numeroIdentificacion}" id="numeroIdentificacion" name="numeroIdentificacion" disabled="disabled">
+			              
+			            </div>
+			          </div>  
+			         <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="aliasOrigen">Nombre del Ordenante:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{aliasOrigen}" id="aliasOrigen" name="numeroIdentificacion" disabled="disabled">
+			              
+			            </div>
+			          </div>   
+			          
+		         
+			      <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="cuentaOrigen">Cuenta del Ordenante:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{cuentaOrigen}" id="cuentaOrigen" name="numeroIdentificacion" disabled="disabled">
+			              
+			            </div>
+			          </div>  
+			       <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="numeroIdentificacionDestino">CI del Beneficiario:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{numeroIdentificacionDestino}" id="numeroIdentificacionDestino" name="numeroIdentificacion" disabled="disabled">
+			              
+			            </div>
+			          </div>         
+		          <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="aliasDestino">Nombre del Beneficiario:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{aliasDestino}" id="aliasDestino" name="aliasDestino" disabled="disabled">
+			              
+			            </div>
+			          </div>
+			        <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="cuentaDestino">Cuenta del Beneficiario:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{cuentaDestino}" id="cuentaDestino" name="cuentaDestino" disabled="disabled">
+			              
+			            </div>
+			          </div>    
+			        <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="monto">Monto:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{monto}" id="monto" name="monto" disabled="disabled">
+			              
+			            </div>
+			          </div>   
+		          	<div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="concepto">Motivo:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{concepto}" id="concepto" name="concepto" disabled="disabled">
+			              
+			            </div>
+			          </div>
+		          
+		          
+		          <div class="card-footer">
+		        	<div class="card-footer">
+			      	 
+			         <a class="btn btn-primary" th:href="@{/ccetransacciones/consultaMovimientosAltoSinFechaBajoValorPageable(page=${page}, codTransaccion=${codTransaccion}, bancoDestino=${bancoDestino}, numeroIdentificacion=${numeroIdentificacion})}" title="Volver a lista limites" role="button">Volver a lista Movimientos</a>
+			         
+			      </div>
+		      	  </div>
+		        </form>
+		      </div>
+		      
+		    </div>
+		  </div><!--/.col--> <!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

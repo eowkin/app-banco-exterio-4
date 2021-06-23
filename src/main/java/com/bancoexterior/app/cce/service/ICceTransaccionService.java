@@ -31,4 +31,8 @@ public interface ICceTransaccionService {
     public List<CceTransaccionDto> consultaMovimientosConFechasPrueba(String fechaDesde, String fechaHasta);
     
     public List<CceTransaccionDto> findByCodTransaccion(String codTransaccion);
+    
+    public CceTransaccionDto findByEndtoendId(String endtoendId);
+    
+    
 }

@@ -137,4 +137,13 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 		return repo.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
 	}
 
+	@Override
+	public CceTransaccionDto findByEndtoendId(String endtoendId) {
+		CceTransaccion cceTransaccion = repo.findById(endtoendId).orElse(null);
+		if(cceTransaccion != null) {
+			return mapper.map(cceTransaccion, CceTransaccionDto.class);
+		}
+		return null;
+	}
+
 }

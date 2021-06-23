@@ -27,7 +27,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/scss/**",
 				"/node_modules/**").permitAll() 
 		.antMatchers("/monedas/**").hasAnyAuthority("ROLE_USER") 
+		.antMatchers("/limitesGenerales/**").hasAnyAuthority("ROLE_USER")
+		.antMatchers("/clientesPersonalizados/**").hasAnyAuthority("ROLE_USER")
 		.antMatchers("/tasas/**").hasAnyAuthority("ROLE_USER")
+		.antMatchers("/agencias/**").hasAnyAuthority("ROLE_USER")
+		.antMatchers("/solicitudes/**").hasAnyAuthority("ROLE_USER")
 		.anyRequest().authenticated()
 		.and().formLogin().loginPage("/login").failureUrl("/login-error").defaultSuccessUrl("/").permitAll()
 		.and().logout().permitAll();
@@ -42,6 +46,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		auth
         .inMemoryAuthentication()
         .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
+        .and()
+        .withUser("user-cce").password(passwordEncoder().encode("123456")).roles("ADMIN")
         .and()
         .withUser("admin").password(passwordEncoder().encode("admin")).roles("ADMIN");
 		

@@ -11,6 +11,7 @@ import javax.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,9 +22,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.bancoexterior.app.cce.dto.BancoRequest;
 import com.bancoexterior.app.cce.dto.CceTransaccionDto;
+import com.bancoexterior.app.cce.model.Banco;
 import com.bancoexterior.app.cce.model.CceTransaccion;
+import com.bancoexterior.app.cce.service.IBancoService;
 import com.bancoexterior.app.cce.service.ICceTransaccionService;
+import com.bancoexterior.app.convenio.exception.CustomException;
+import com.bancoexterior.app.util.LibreriaUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +40,12 @@ public class CceTransaccionController {
 
 	@Autowired
 	private ICceTransaccionService service;
+	
+	@Autowired
+	private IBancoService bancoService;
+	
+	@Autowired
+	private LibreriaUtil libreriaUtil; 
 	
 	private static final String STRDATEFORMET = "yyyy-MM-dd";
 	
@@ -64,9 +76,19 @@ public class CceTransaccionController {
 	@GetMapping("/formConsultaMovimientosConsultaAltoBajoValor")
 	public String formConsultaMovimientosAltoBajoValor(CceTransaccionDto cceTransaccionDto, Model model) {
 		log.info("formConsultaMovimientosAltoBajoValor");
-		model.addAttribute("cceTransaccionDto", cceTransaccionDto);
+		List<Banco> listaBancos = new ArrayList<>();
+		BancoRequest bancoRequest = getBancoRequest();
+		
+		try {
+			listaBancos = bancoService.listaBancos(bancoRequest);
+			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
+		} catch (CustomException e) {
+			e.printStackTrace();
+			model.addAttribute(LISTAERROR, e.getMessage());
+		}
 		
 		return "cce/formConsultarMovimientosAltoBajoValor";
+		
 	}
 	
 	@GetMapping("/procesarConsultaMovimientosAltoBajoValor")
@@ -253,6 +275,68 @@ public class CceTransaccionController {
 		
 	}
 	
+	@GetMapping("/detalle")
+	public String verMovimineto(@RequestParam("endtoendId") String endtoendId, @RequestParam("codTransaccion") String codTransaccion, 
+			@RequestParam("bancoDestino") String bancoDestino, @RequestParam("numeroIdentificacion") String numeroIdentificacion, 
+			Model model, Pageable page) {
+		log.info(endtoendId);
+		
+		CceTransaccionDto cceTransaccionDto = service.findByEndtoendId(endtoendId);
+		if(cceTransaccionDto != null) {
+			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
+			model.addAttribute("codTransaccion", codTransaccion);
+			model.addAttribute("bancoDestino", bancoDestino);
+			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
+			model.addAttribute("page", page.getPageNumber());
+			return "cce/formMovimientoAltoBajoValorDetalle";
+		}else {
+			Page<CceTransaccion> listaTransacciones;
+			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+			model.addAttribute("listaTransacciones", listaTransacciones);
+			model.addAttribute("codTransaccion", codTransaccion);
+			model.addAttribute("bancoDestino", bancoDestino);
+			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
+			return "cce/listaMovimientosConsultaAltoBajoValorSinFechaPaginate";
+		}
+		
+		
+		
+	}
+	
+	@GetMapping("/detalleMovimiento")
+	public String verMovimineto(@RequestParam("endtoendId") String endtoendId,@RequestParam("codTransaccion") String codTransaccion, 
+			@RequestParam("bancoDestino") String bancoDestino, @RequestParam("numeroIdentificacion") String numeroIdentificacion,
+			@RequestParam("fechaDesde") String fechaDesde, @RequestParam("fechaHasta") String fechaHasta, 
+			Model model, Pageable page) {
+		log.info(endtoendId);
+		
+		CceTransaccionDto cceTransaccionDto = service.findByEndtoendId(endtoendId);
+		if(cceTransaccionDto != null) {
+			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
+			model.addAttribute("codTransaccion", codTransaccion);
+			model.addAttribute("bancoDestino", bancoDestino);
+			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
+			model.addAttribute("fechaDesde", fechaDesde);
+			model.addAttribute("fechaHasta", fechaHasta);
+			model.addAttribute("page", page.getPageNumber());
+			return "cce/formMovimientoAltoBajoValorDetalleFechas";
+		}else {
+			Page<CceTransaccion> listaTransacciones;
+			listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
+					fechaDesde, fechaHasta, page);
+			model.addAttribute("listaTransacciones", listaTransacciones);
+			model.addAttribute("codTransaccion", codTransaccion);
+			model.addAttribute("bancoDestino", bancoDestino);
+			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
+			model.addAttribute("fechaDesde", fechaDesde);
+			model.addAttribute("fechaHasta", fechaHasta);
+			return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+		}
+		
+		
+		
+	}
+	
 	
 	public boolean isFechaValidaDesdeHasta(String fechaDesde, String fechaHasta) {
 		
@@ -284,6 +368,16 @@ public class CceTransaccionController {
         
         return false;
 	}
+	
+	
+	public BancoRequest getBancoRequest() {
+		BancoRequest bancoRequest = new BancoRequest();
+		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+		bancoRequest.setIdUsuario(userName);
+		bancoRequest.setIdSesion(libreriaUtil.obtenerIdSesion());
+		return bancoRequest;
+	}
+	
 	
 	@ModelAttribute
 	public void setGenericos(Model model) {
