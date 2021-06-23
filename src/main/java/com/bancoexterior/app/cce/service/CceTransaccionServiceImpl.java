@@ -1,6 +1,8 @@
 package com.bancoexterior.app.cce.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,6 +146,47 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 			return mapper.map(cceTransaccion, CceTransaccionDto.class);
 		}
 		return null;
+	}
+
+	@Override
+	public List<CceTransaccionDto> consultaMovimientosPorAprobarAltoValor() {
+		List<CceTransaccionDto> listaMovimientosPorAprobarAltoValor = new ArrayList<>();
+		CceTransaccionDto cceTransaccion1 = new CceTransaccionDto();
+		cceTransaccion1.setEndtoendId("00012021061704035900172704");
+		cceTransaccion1.setReferencia("00477749");
+		cceTransaccion1.setCuentaOrigen("01150081131002918355");
+		cceTransaccion1.setCuentaDestino("01740111431114240037");
+		cceTransaccion1.setMonto(new BigDecimal(1500000000));
+		cceTransaccion1.setFechaModificacion(new Date());
+		listaMovimientosPorAprobarAltoValor.add(cceTransaccion1);
+		
+		
+		return listaMovimientosPorAprobarAltoValor;
+	}
+
+	@Override
+	public Page<CceTransaccion> consultaMovimientosSinFechasRecibidas(String codTransaccion, String bancoDestino,
+			String numeroIdentificacion, Pageable page) {
+		log.info("codTransaccion: "+codTransaccion);
+		log.info("bancoDestino: "+bancoDestino);
+		log.info("numeroIdentificacion: "+numeroIdentificacion);
+		
+		
+		return repo.consultaMovimientosSinFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+	}
+
+	@Override
+	public Page<CceTransaccion> consultaMovimientosConFechasRecibidas(String codTransaccion, String bancoDestino,
+			String numeroIdentificacion, String fechaDesde, String fechaHasta, Pageable page) {
+		fechaDesde = fechaDesde +" 00:00:00";
+		fechaHasta = fechaHasta +" 23:59:00";
+		log.info("codTransaccion: "+codTransaccion);
+		log.info("bancoDestino: "+bancoDestino);
+		log.info("numeroIdentificacion: "+numeroIdentificacion);
+		log.info("fechaDesde: "+fechaDesde);
+		log.info("fechaHasta: "+fechaHasta);
+		
+		return repo.consultaMovimientosConFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, fechaDesde, fechaHasta, page);  
 	}
 
 }

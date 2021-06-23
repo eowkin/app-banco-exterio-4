@@ -79,13 +79,14 @@ public class CceTransaccionController {
 		List<Banco> listaBancos = new ArrayList<>();
 		BancoRequest bancoRequest = getBancoRequest();
 		
+		/*
 		try {
 			listaBancos = bancoService.listaBancos(bancoRequest);
 			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
 		} catch (CustomException e) {
 			e.printStackTrace();
 			model.addAttribute(LISTAERROR, e.getMessage());
-		}
+		}*/
 		
 		return "cce/formConsultarMovimientosAltoBajoValor";
 		
@@ -149,10 +150,16 @@ public class CceTransaccionController {
 		if(!cceTransaccionDto.getFechaDesde().equals("")&&!cceTransaccionDto.getFechaHasta().equals("")) {
 			if(isFechaValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())){
 				
-				  //listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
-						  													//cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta());
-				listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
+				if(cceTransaccionDto.getCodTransaccion().equals("5723")||cceTransaccionDto.getCodTransaccion().equals("5727")) {
+					log.info("enviadas");
+					listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
 							cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
+				}else {
+					log.info("recibidas");
+					listaTransacciones = service.consultaMovimientosConFechasRecibidas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
+							cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
+				}
+				
 				
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
@@ -174,8 +181,17 @@ public class CceTransaccionController {
 		}else {
 			//listaTransaccionesDto = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
 																			//cceTransaccionDto.getNumeroIdentificacion());
-			listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
-																			cceTransaccionDto.getNumeroIdentificacion(), page);
+			
+			if(cceTransaccionDto.getCodTransaccion().equals("5723")||cceTransaccionDto.getCodTransaccion().equals("5727")) {
+				log.info("enviadas");
+				listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
+						cceTransaccionDto.getNumeroIdentificacion(), page);
+			}else {
+				log.info("recibidas");
+				listaTransacciones = service.consultaMovimientosSinFechasRecibidas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
+						cceTransaccionDto.getNumeroIdentificacion(), page);
+			}
+			
 			
 			if(listaTransacciones.isEmpty()) {
 				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
@@ -212,6 +228,15 @@ public class CceTransaccionController {
 				listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
 							fechaDesde, fechaHasta, page);
 				
+				if(codTransaccion.equals("5723")||codTransaccion.equals("5727")) {
+					listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
+							fechaDesde, fechaHasta, page);
+				}else {
+					listaTransacciones = service.consultaMovimientosConFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion,
+							fechaDesde, fechaHasta, page);
+				}
+				
+				
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				}
@@ -233,8 +258,15 @@ public class CceTransaccionController {
 			//listaTransaccionesDto = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion);
 			
 			
-			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-
+			//listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+			if(codTransaccion.equals("5723")||codTransaccion.equals("5727")) {
+				log.info("enviadas");
+				listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+			}else {
+				log.info("recibidas");
+				listaTransacciones = service.consultaMovimientosSinFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+			}
+			
 			if(listaTransacciones.isEmpty()) {
 				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 			}
@@ -262,6 +294,16 @@ public class CceTransaccionController {
 		//listaTransaccionesDto = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion);
 		listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
 
+		if(codTransaccion.equals("5723")||codTransaccion.equals("5727")) {
+			log.info("enviadas");
+			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+		}else {
+			log.info("recibidas");
+			listaTransacciones = service.consultaMovimientosSinFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+		}
+		
+		
+		
 		if(listaTransacciones.isEmpty()) {
 			model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 		}
@@ -335,6 +377,22 @@ public class CceTransaccionController {
 		
 		
 		
+	}
+	
+	
+	@GetMapping("/procesarMovimientosPorAprobarAltoValor")
+	public String consultaMovimientosPorAprobarAltovalor(Model model, Pageable page) {
+		Page<CceTransaccion> listaTransacciones;
+		listaTransacciones = service.consultaMovimientosSinFechas("", "", "", page);
+
+		if(listaTransacciones.isEmpty()) {
+			model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+		}
+		model.addAttribute("listaTransacciones", listaTransacciones);
+		model.addAttribute("codTransaccion", "");
+		model.addAttribute("bancoDestino", "");
+		model.addAttribute("numeroIdentificacion", "");
+		return "cce/listaMovimientosPorAporbarAltoValorPaginate";
 	}
 	
 	
