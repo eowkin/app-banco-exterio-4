@@ -67,8 +67,14 @@
 		                <tr th:each = "transaccion: ${listaTransacciones}">
 		                  <td th:text="${transaccion.endtoendId}"></td>
 		                  <td th:text="${transaccion.referencia}"></td>
-		                  <td th:text="${transaccion.cuentaOrigen}"></td>
-		                  <td th:text="${transaccion.cuentaDestino}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5727'}"  th:text="${transaccion.cuentaOrigen}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5723'}"  th:text="${transaccion.cuentaOrigen}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5724'}"  th:text="${transaccion.cuentaDestino}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5728'}"  th:text="${transaccion.cuentaDestino}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5727'}"  th:text="${transaccion.cuentaDestino}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5723'}"  th:text="${transaccion.cuentaDestino}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5724'}"  th:text="${transaccion.cuentaOrigen}"></td>
+		                  <td th:if="${transaccion.codTransaccion == '5728'}"  th:text="${transaccion.cuentaOrigen}"></td>
 		                  <td th:text="${transaccion.monto}"></td>
 		                  <td th:text="${transaccion.fechaModificacion}"></td>
 		                  <td>

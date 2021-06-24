@@ -57,5 +57,30 @@ public class LibreriaUtil {
 	
 		return valorAno+valorMes+valorDia+valorHora+valorMin+valorSeg;
 	}
+	
+	public String obtenerFechaHoy() {
+		LocalDateTime ahora = LocalDateTime.now();
+		String valorAno = "";
+		valorAno = ahora.getYear()+"";
+		
+		
+		String valorMes = "";
+		if(ahora.getMonthValue() < 10) {
+			valorMes = "0"+ahora.getMonthValue();
+		}else {
+			valorMes = ""+ahora.getMonthValue();
+		}
+		
+		
+		String valorDia = "";
+		if(ahora.getDayOfMonth() < 10) {
+			valorDia = "0"+ahora.getDayOfMonth();
+		}else {
+			valorDia = ""+ahora.getDayOfMonth();
+		}
+		
+		
+		return valorDia+"/"+valorMes+"/"+valorAno;
+	}
 
 }

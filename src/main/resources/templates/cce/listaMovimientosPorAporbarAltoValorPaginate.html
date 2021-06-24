@@ -38,7 +38,7 @@
 		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar
 		            <p align="right"></p>
 		            <div class="my-2 text-right">
-		              <a class="btn btn-primary" th:href="@{/ccetransacciones/formConsultaMovimientosConsultaAltoBajoValor}" title="Consulta de Movimientos" role="button">Consulta de Movimientos</a>
+		            	<input type="checkbox" /> Seleccionar todos
 		            </div>
 		          </div><!--/.card-header-->
 		          
@@ -60,7 +60,7 @@
 		                  <th>Cta. Beneficiario</th>
 		                  <th>Monto</th>
 		                  <th>Fecha Liquidacion</th>
-		                  <th>Ver</th>
+		                  
 		                </tr>
 		              </thead>
 		              <tbody>
@@ -72,11 +72,23 @@
 		                  <td th:text="${transaccion.monto}"></td>
 		                  <td th:text="${transaccion.fechaModificacion}"></td>
 		                  <td>
-		                  	<a  class="btn btn-info" th:href="@{/ccetransacciones/detalleMovimiento (endtoendId=${transaccion.endtoendId}, page=${listaTransacciones.number}, codTransaccion=${codTransaccion}, bancoDestino=${bancoDestino}, numeroIdentificacion=${numeroIdentificacion}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}) }" role="button" title="Ver limites."><i class="fa fa-search" aria-hidden="true"></i></a>
+		                  	<input type="checkbox" />
 		                  </td>
 		                </tr>
 		              </tbody>
+		              
 		            </table>
+		            <div class="form-group row text-right">
+		            <label class="col-sm-9 col-form-label" for="input-large">Monto Total Seleccionado:</label>
+		            <div class="col-sm-3">
+		              <input type="text" class="form-control"  id="monto" name="monto" value="0" disabled="disabled">
+		            </div>
+		          </div>
+		            
+		            <div>
+		        		<button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-circle-o"></i> Aprobar</button>
+			        	<a   class="btn btn-sm btn-danger" role="button" th:href="@{/}"><i class="fa fa-ban"></i>Cancelar</a>
+		      	  	</div>
 		            <nav th:if="${listaTransacciones.totalPages > 0}" aria-label="Page navigation example" > 
 		            	<ul class="pagination justify-content-center">         
 		            		<li class="page-item" th:classappend="${listaTransacciones.number == 0 ? 'disabled' : ''}">
@@ -85,7 +97,7 @@
 		            		<li class="page-item">
 								<a class="page-link"  th:text="${'Pagina '+ (listaTransacciones.number + 1) + ' - '+ (listaTransacciones.totalPages)}" th:title="${'Page '+ listaTransacciones.number}" data-toggle="tooltip"></a>
 							</li>
-		            		<li class="page-item" th:classappend="${listaTransacciones.number == (listaTransacciones.totalPages - 1) ? 'disabled' : ''}">
+		            		<li class="page-item" th:classappend="${listaTransacciones.number == 0 ? 'disabled' : ''}">
 		            			<a th:href="@{/ccetransacciones/consultaMovimientosAltoBajoValorPageable(page=${listaTransacciones.number + 1}, codTransaccion=${codTransaccion}, bancoDestino=${bancoDestino}, numeroIdentificacion=${numeroIdentificacion}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Siguiente</a>
 		            		</li>  
 		            	</ul> 

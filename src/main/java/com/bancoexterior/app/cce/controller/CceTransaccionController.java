@@ -78,7 +78,8 @@ public class CceTransaccionController {
 		log.info("formConsultaMovimientosAltoBajoValor");
 		List<Banco> listaBancos = new ArrayList<>();
 		BancoRequest bancoRequest = getBancoRequest();
-		
+		cceTransaccionDto.setFechaDesde(libreriaUtil.obtenerFechaHoy());
+		//cceTransaccionDto.setNumeroIdentificacion("hola");
 		/*
 		try {
 			listaBancos = bancoService.listaBancos(bancoRequest);
@@ -150,16 +151,8 @@ public class CceTransaccionController {
 		if(!cceTransaccionDto.getFechaDesde().equals("")&&!cceTransaccionDto.getFechaHasta().equals("")) {
 			if(isFechaValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())){
 				
-				if(cceTransaccionDto.getCodTransaccion().equals("5723")||cceTransaccionDto.getCodTransaccion().equals("5727")) {
-					log.info("enviadas");
-					listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
-							cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
-				}else {
-					log.info("recibidas");
-					listaTransacciones = service.consultaMovimientosConFechasRecibidas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
-							cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
-				}
-				
+				listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
+					cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
 				
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
@@ -179,20 +172,8 @@ public class CceTransaccionController {
 				return "cce/formConsultarMovimientosAltoBajoValor";
 			}
 		}else {
-			//listaTransaccionesDto = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
-																			//cceTransaccionDto.getNumeroIdentificacion());
-			
-			if(cceTransaccionDto.getCodTransaccion().equals("5723")||cceTransaccionDto.getCodTransaccion().equals("5727")) {
-				log.info("enviadas");
-				listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
-						cceTransaccionDto.getNumeroIdentificacion(), page);
-			}else {
-				log.info("recibidas");
-				listaTransacciones = service.consultaMovimientosSinFechasRecibidas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
-						cceTransaccionDto.getNumeroIdentificacion(), page);
-			}
-			
-			
+			listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
+																		cceTransaccionDto.getNumeroIdentificacion(), page);
 			if(listaTransacciones.isEmpty()) {
 				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 			}
@@ -222,21 +203,8 @@ public class CceTransaccionController {
 		Page<CceTransaccion> listaTransacciones;
 		if(!fechaDesde.equals("")&&!fechaHasta.equals("")) {
 			if(isFechaValidaDesdeHasta(fechaDesde, fechaHasta)){
-				
-				  //listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
-						  													//cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta());
 				listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
 							fechaDesde, fechaHasta, page);
-				
-				if(codTransaccion.equals("5723")||codTransaccion.equals("5727")) {
-					listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
-							fechaDesde, fechaHasta, page);
-				}else {
-					listaTransacciones = service.consultaMovimientosConFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion,
-							fechaDesde, fechaHasta, page);
-				}
-				
-				
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				}
@@ -255,18 +223,7 @@ public class CceTransaccionController {
 				return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
 			}
 		}else {
-			//listaTransaccionesDto = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion);
-			
-			
-			//listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-			if(codTransaccion.equals("5723")||codTransaccion.equals("5727")) {
-				log.info("enviadas");
-				listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-			}else {
-				log.info("recibidas");
-				listaTransacciones = service.consultaMovimientosSinFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-			}
-			
+			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
 			if(listaTransacciones.isEmpty()) {
 				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 			}
@@ -289,21 +246,8 @@ public class CceTransaccionController {
 		log.info("bancoDestino: "+bancoDestino);
 		log.info("numeroIdentificacion: "+numeroIdentificacion);
 		
-		List<String> listaError = new ArrayList<>();
 		Page<CceTransaccion> listaTransacciones;
-		//listaTransaccionesDto = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion);
 		listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-
-		if(codTransaccion.equals("5723")||codTransaccion.equals("5727")) {
-			log.info("enviadas");
-			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-		}else {
-			log.info("recibidas");
-			listaTransacciones = service.consultaMovimientosSinFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-		}
-		
-		
-		
 		if(listaTransacciones.isEmpty()) {
 			model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 		}
@@ -395,6 +339,25 @@ public class CceTransaccionController {
 		return "cce/listaMovimientosPorAporbarAltoValorPaginate";
 	}
 	
+	@GetMapping("/formAprobarMovimientosBajoValor")
+	public String formAprobarMovimientosBajoValor(CceTransaccionDto cceTransaccionDto, Model model) {
+		log.info("formConsultaMovimientosAltoBajoValor");
+		List<Banco> listaBancos = new ArrayList<>();
+		BancoRequest bancoRequest = getBancoRequest();
+		cceTransaccionDto.setFechaDesde(libreriaUtil.obtenerFechaHoy());
+		//cceTransaccionDto.setNumeroIdentificacion("hola");
+		/*
+		try {
+			listaBancos = bancoService.listaBancos(bancoRequest);
+			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
+		} catch (CustomException e) {
+			e.printStackTrace();
+			model.addAttribute(LISTAERROR, e.getMessage());
+		}*/
+		
+		return "cce/formAprobarMovimientosBajoValor";
+		
+	}
 	
 	public boolean isFechaValidaDesdeHasta(String fechaDesde, String fechaHasta) {
 		
