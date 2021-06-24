@@ -53,10 +53,11 @@ public class BancoServiceImpl implements IBancoService{
 		WSResponse retorno;
 		String bancoRequestJSON;
 		bancoRequestJSON = new Gson().toJson(bancoRequest);
+		
 		wsrequest.setBody(bancoRequestJSON);
 		log.info("bancoRequestJSON: "+bancoRequestJSON);
-		log.info("urlConsulta: "+"http://172.19.148.8:8000/api/v1/bancos/cdinme/listadosbancos");
-		wsrequest.setUrl("http://172.19.148.8:8000/api/v1/bancos/cdinme/listadosbancos");
+		log.info("urlConsulta: "+"https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos");
+		wsrequest.setUrl("https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos");
 		log.info("antes de llamarte WS en consultar listaBancos");
 		retorno = wsService.post(wsrequest);
 		log.info("retorno: "+retorno);

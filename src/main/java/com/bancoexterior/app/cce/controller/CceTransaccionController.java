@@ -76,18 +76,18 @@ public class CceTransaccionController {
 	@GetMapping("/formConsultaMovimientosConsultaAltoBajoValor")
 	public String formConsultaMovimientosAltoBajoValor(CceTransaccionDto cceTransaccionDto, Model model) {
 		log.info("formConsultaMovimientosAltoBajoValor");
-		List<Banco> listaBancos = new ArrayList<>();
+		
 		BancoRequest bancoRequest = getBancoRequest();
-		cceTransaccionDto.setFechaDesde(libreriaUtil.obtenerFechaHoy());
+		//cceTransaccionDto.setFechaDesde(libreriaUtil.obtenerFechaHoy());
 		//cceTransaccionDto.setNumeroIdentificacion("hola");
-		/*
+		
 		try {
-			listaBancos = bancoService.listaBancos(bancoRequest);
-			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
+			List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
+			model.addAttribute("listaBancos", listaBancos);
 		} catch (CustomException e) {
 			e.printStackTrace();
 			model.addAttribute(LISTAERROR, e.getMessage());
-		}*/
+		}
 		
 		return "cce/formConsultarMovimientosAltoBajoValor";
 		
@@ -146,45 +146,66 @@ public class CceTransaccionController {
 		log.info("bancoDestino: "+cceTransaccionDto.getBancoDestino());
 		log.info("numeroIdentificacion: "+cceTransaccionDto.getNumeroIdentificacion());
 		
-		List<String> listaError = new ArrayList<>();
-		Page<CceTransaccion> listaTransacciones;
-		if(!cceTransaccionDto.getFechaDesde().equals("")&&!cceTransaccionDto.getFechaHasta().equals("")) {
-			if(isFechaValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())){
-				
-				listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
-					cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
-				
+		
+		BancoRequest bancoRequest = getBancoRequest();
+		//cceTransaccionDto.setFechaDesde(libreriaUtil.obtenerFechaHoy());
+		//cceTransaccionDto.setNumeroIdentificacion("hola");
+		
+		try {
+			
+			List<String> listaError = new ArrayList<>();
+			Page<CceTransaccion> listaTransacciones;
+			if(!cceTransaccionDto.getFechaDesde().equals("")&&!cceTransaccionDto.getFechaHasta().equals("")) {
+				if(isFechaValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())){
+					
+					listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
+						cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
+					
+					if(listaTransacciones.isEmpty()) {
+						model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
+						List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
+						model.addAttribute("listaBancos", listaBancos);
+						return "cce/formConsultarMovimientosAltoBajoValor";
+					}
+					model.addAttribute("listaTransacciones", listaTransacciones);
+					model.addAttribute("codTransaccion", cceTransaccionDto.getCodTransaccion());
+					model.addAttribute("bancoDestino", cceTransaccionDto.getBancoDestino());
+					model.addAttribute("numeroIdentificacion", cceTransaccionDto.getNumeroIdentificacion());
+					model.addAttribute("fechaDesde", cceTransaccionDto.getFechaDesde());
+					model.addAttribute("fechaHasta", cceTransaccionDto.getFechaHasta());
+					return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+					
+				}else {
+					log.info("fechas invalidas");
+					listaError.add(MENSAJEFECHASINVALIDAS);
+					model.addAttribute(LISTAERROR, listaError);
+					return "cce/formConsultarMovimientosAltoBajoValor";
+				}
+			}else {
+				listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
+																			cceTransaccionDto.getNumeroIdentificacion(), page);
 				if(listaTransacciones.isEmpty()) {
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
+					List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
+					model.addAttribute("listaBancos", listaBancos);
+					return "cce/formConsultarMovimientosAltoBajoValor";
 				}
 				model.addAttribute("listaTransacciones", listaTransacciones);
 				model.addAttribute("codTransaccion", cceTransaccionDto.getCodTransaccion());
 				model.addAttribute("bancoDestino", cceTransaccionDto.getBancoDestino());
 				model.addAttribute("numeroIdentificacion", cceTransaccionDto.getNumeroIdentificacion());
-				model.addAttribute("fechaDesde", cceTransaccionDto.getFechaDesde());
-				model.addAttribute("fechaHasta", cceTransaccionDto.getFechaHasta());
-				return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+				return "cce/listaMovimientosConsultaAltoBajoValorSinFechaPaginate";
 				
-			}else {
-				log.info("fechas invalidas");
-				listaError.add(MENSAJEFECHASINVALIDAS);
-				model.addAttribute(LISTAERROR, listaError);
-				return "cce/formConsultarMovimientosAltoBajoValor";
+				
 			}
-		}else {
-			listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
-																		cceTransaccionDto.getNumeroIdentificacion(), page);
-			if(listaTransacciones.isEmpty()) {
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-			}
-			model.addAttribute("listaTransacciones", listaTransacciones);
-			model.addAttribute("codTransaccion", cceTransaccionDto.getCodTransaccion());
-			model.addAttribute("bancoDestino", cceTransaccionDto.getBancoDestino());
-			model.addAttribute("numeroIdentificacion", cceTransaccionDto.getNumeroIdentificacion());
-			return "cce/listaMovimientosConsultaAltoBajoValorSinFechaPaginate";
-			
-			
+		} catch (CustomException e) {
+			e.printStackTrace();
+			model.addAttribute(LISTAERROR, e.getMessage());
+			return "cce/formConsultarMovimientosAltoBajoValor";
 		}
+		
+		
+		
 	}
 	
 	@GetMapping("/consultaMovimientosAltoBajoValorPageable")

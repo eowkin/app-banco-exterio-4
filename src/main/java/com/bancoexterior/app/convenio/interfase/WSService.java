@@ -39,8 +39,13 @@ public class WSService implements IWSService{
 		 WSResponse response;
 		 
 		 
-		 String secret = "VuL4HVoKOVvhNZhzHUkaOTZKbLB9Kwh7";
-		 String iss  =  "GBpXZjE9BCjQlh9S0umaYgFfz0TW98nI";
+		 //String secret = "VuL4HVoKOVvhNZhzHUkaOTZKbLB9Kwh7";
+		 //String iss  =  "GBpXZjE9BCjQlh9S0umaYgFfz0TW98nI";
+		 String secret = "PQQcM04yIebcgt4Cl53aHTzsk1BOltu1";
+		 String iss  =  "GPP4w3Qb7h62LJnrNj2XOAVS9uX2VS93";
+		 
+
+		 
 			
 		 //Utils.createJWT(null, env.getProperty("microservicio.jwt.key"), null, new Date(System.currentTimeMillis()+Long.parseLong(env.getProperty("microservicio.jwt.time"))),env.getProperty("microservicio.jwt.secret"),new Date(System.currentTimeMillis())))
 		 String bearer2 = this.createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
@@ -50,7 +55,8 @@ public class WSService implements IWSService{
 			  .header("Content-Type", request.getContenType())
 			  .header("Accept-Charset", "UTF-8")
 			  .header("Authorization","Bearer "+ bearer2)
-			  .header("x-api-key","Fr6feu2Pjfzyg6QZKscxzpADxAl2w3k0")
+			  //.header("x-api-key","Fr6feu2Pjfzyg6QZKscxzpADxAl2w3k0")
+			  .header("x-api-key","tGRl9gKRk1qwwdGx2rK8XzOY2NcG11r5")
 			  .body(request.getBody()).asString();
 			  response = new WSResponse(retorno);
 			 
@@ -120,8 +126,10 @@ public class WSService implements IWSService{
 			 WSResponse response;
 			 
 			 
-			 String secret = "VuL4HVoKOVvhNZhzHUkaOTZKbLB9Kwh7";
-			 String iss  =  "GBpXZjE9BCjQlh9S0umaYgFfz0TW98nI";
+			 //String secret = "VuL4HVoKOVvhNZhzHUkaOTZKbLB9Kwh7";
+			 //String iss  =  "GBpXZjE9BCjQlh9S0umaYgFfz0TW98nI";
+			 String secret = "PQQcM04yIebcgt4Cl53aHTzsk1BOltu1";
+			 String iss  =  "GPP4w3Qb7h62LJnrNj2XOAVS9uX2VS93";
 				
 			 //Utils.createJWT(null, env.getProperty("microservicio.jwt.key"), null, new Date(System.currentTimeMillis()+Long.parseLong(env.getProperty("microservicio.jwt.time"))),env.getProperty("microservicio.jwt.secret"),new Date(System.currentTimeMillis())))
 			 String bearer2 = this.createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
@@ -139,7 +147,8 @@ public class WSService implements IWSService{
 				  .header("Content-Type", request.getContenType())
 				  .header("Accept-Charset", "UTF-8")
 				  .header("Authorization","Bearer "+ bearer2)
-				  .header("x-api-key","Fr6feu2Pjfzyg6QZKscxzpADxAl2w3k0")
+				  //.header("x-api-key","Fr6feu2Pjfzyg6QZKscxzpADxAl2w3k0")
+				  .header("x-api-key","tGRl9gKRk1qwwdGx2rK8XzOY2NcG11r5")
 				  .body(request.getBody()).asString();
 				  response = new WSResponse(retorno);
 				 
