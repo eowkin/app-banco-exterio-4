@@ -2,6 +2,7 @@ package com.bancoexterior.app.util;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 
@@ -10,6 +11,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LibreriaUtil {
+	
+	
+    public static final String NUMEROFORMAT                       = "#,##0.00";
+    public static final char COMA                                 = ',';
+    public static final char PUNTO                                = '.';
+
 	
 	public String obtenerIdSesion() {
 		LocalDateTime ahora = LocalDateTime.now();
@@ -94,7 +101,7 @@ public class LibreriaUtil {
 	* @param num
 	* @return BigDecimal
 	*/
-	public static BigDecimal stringToBigDecimal(String num)
+	public  BigDecimal stringToBigDecimal(String num)
 	{
 	//se inicializa en 0
 	BigDecimal money = BigDecimal.ZERO;
@@ -104,7 +111,8 @@ public class LibreriaUtil {
 	/**
 	* primero elimina los puntos y luego remplaza las comas en puntos.
 	*/
-	String formatoValido = num.replace(".", "").replace(",", ".");
+	//String formatoValido = num.replace(".", "").replace(",", ".");
+	String formatoValido = num.replace(",", "");	
 	//System.out.println(formatoValido);
 	money = new BigDecimal(formatoValido);
 	}//if
@@ -116,7 +124,7 @@ public class LibreriaUtil {
 	* @param big
 	* @return String
 	*/
-	public static String bigDecimalToString(BigDecimal big)
+	public String bigDecimalToString(BigDecimal big)
 	{
 	double datoDoubleD = 0;
 	//se verifica que sean correctos los argumentos recibidos
@@ -130,6 +138,15 @@ public class LibreriaUtil {
 	return formatter.format(datoDoubleD);
 	}//metodo
 	
-	
+	public  String formatNumber(BigDecimal numero) {
+        
+        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
+        decimalFormatSymbols.setDecimalSeparator(COMA);
+        decimalFormatSymbols.setGroupingSeparator(PUNTO);
+        DecimalFormat df = new DecimalFormat(NUMEROFORMAT);
+        
+         return df.format(numero);
+        
+    }
 	
 }

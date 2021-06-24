@@ -1,5 +1,7 @@
 package com.bancoexterior.app.cce.controller;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -161,6 +163,10 @@ public class CceTransaccionController {
 					listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
 						cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
 					
+					listaTransacciones = convertirLista(listaTransacciones);
+					
+					
+					
 					if(listaTransacciones.isEmpty()) {
 						model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
 						List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
@@ -184,6 +190,13 @@ public class CceTransaccionController {
 			}else {
 				listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
 																			cceTransaccionDto.getNumeroIdentificacion(), page);
+				
+				listaTransacciones = convertirLista(listaTransacciones);
+				
+				for (CceTransaccion cceTransaccion : listaTransacciones) {
+					log.info("montoString: "+cceTransaccion.getMontoString());			 
+				}
+				
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
 					List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
@@ -226,6 +239,7 @@ public class CceTransaccionController {
 			if(isFechaValidaDesdeHasta(fechaDesde, fechaHasta)){
 				listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
 							fechaDesde, fechaHasta, page);
+				listaTransacciones = convertirLista(listaTransacciones);
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				}
@@ -245,6 +259,7 @@ public class CceTransaccionController {
 			}
 		}else {
 			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+			listaTransacciones = convertirLista(listaTransacciones);
 			if(listaTransacciones.isEmpty()) {
 				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 			}
@@ -269,6 +284,7 @@ public class CceTransaccionController {
 		
 		Page<CceTransaccion> listaTransacciones;
 		listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+		listaTransacciones = convertirLista(listaTransacciones);
 		if(listaTransacciones.isEmpty()) {
 			model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 		}
@@ -290,6 +306,13 @@ public class CceTransaccionController {
 		
 		CceTransaccionDto cceTransaccionDto = service.findByEndtoendId(endtoendId);
 		if(cceTransaccionDto != null) {
+			if(cceTransaccionDto.getCodTransaccion().equals("5724") || cceTransaccionDto.getCodTransaccion().equals("5728")) {
+				String cuentaOrigen = cceTransaccionDto.getCuentaOrigen();
+				String cuentaDestino = cceTransaccionDto.getCuentaDestino();
+				cceTransaccionDto.setCuentaOrigen(cuentaDestino);
+				cceTransaccionDto.setCuentaDestino(cuentaOrigen);
+			}
+			cceTransaccionDto.setMonto(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto())));   
 			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
 			model.addAttribute("codTransaccion", codTransaccion);
 			model.addAttribute("bancoDestino", bancoDestino);
@@ -319,6 +342,13 @@ public class CceTransaccionController {
 		
 		CceTransaccionDto cceTransaccionDto = service.findByEndtoendId(endtoendId);
 		if(cceTransaccionDto != null) {
+			if(cceTransaccionDto.getCodTransaccion().equals("5724") || cceTransaccionDto.getCodTransaccion().equals("5728")) {
+				String cuentaOrigen = cceTransaccionDto.getCuentaOrigen();
+				String cuentaDestino = cceTransaccionDto.getCuentaDestino();
+				cceTransaccionDto.setCuentaOrigen(cuentaDestino);
+				cceTransaccionDto.setCuentaDestino(cuentaOrigen);
+			}
+			cceTransaccionDto.setMonto(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto())));
 			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
 			model.addAttribute("codTransaccion", codTransaccion);
 			model.addAttribute("bancoDestino", bancoDestino);
@@ -348,8 +378,15 @@ public class CceTransaccionController {
 	@GetMapping("/procesarMovimientosPorAprobarAltoValor")
 	public String consultaMovimientosPorAprobarAltovalor(Model model, Pageable page) {
 		Page<CceTransaccion> listaTransacciones;
+		
+		//Page<CceTransaccion> listaTransaccionesDto = new 
 		listaTransacciones = service.consultaMovimientosSinFechas("", "", "", page);
 
+		
+		listaTransacciones = convertirLista(listaTransacciones);
+		
+		
+		
 		if(listaTransacciones.isEmpty()) {
 			model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 		}
@@ -360,7 +397,7 @@ public class CceTransaccionController {
 		return "cce/listaMovimientosPorAporbarAltoValorPaginate";
 	}
 	
-	@GetMapping("/formAprobarMovimientosBajoValor")
+	@GetMapping("/formAprobarMovimientosAltoValorLoteAutomatico")
 	public String formAprobarMovimientosBajoValor(CceTransaccionDto cceTransaccionDto, Model model) {
 		log.info("formConsultaMovimientosAltoBajoValor");
 		List<Banco> listaBancos = new ArrayList<>();
@@ -411,6 +448,17 @@ public class CceTransaccionController {
         return false;
 	}
 	
+	public Page<CceTransaccion> convertirLista(Page<CceTransaccion> listaTransacciones){
+		for (CceTransaccion cceTransaccion : listaTransacciones) {
+			//log.info("monto: "+cceTransaccion.getMonto().toString());
+			//log.info("monto: "+ libreriaUtil.formatNumber(cceTransaccion.getMonto()));
+			//cceTransaccion.setMontoString(libreriaUtil.formatNumber(cceTransaccion.getMonto()));
+			//log.info("monto: "+ libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccion.getMonto())));
+			cceTransaccion.setMonto(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccion.getMonto())));
+		}
+	
+		return listaTransacciones;
+	}
 	
 	public BancoRequest getBancoRequest() {
 		BancoRequest bancoRequest = new BancoRequest();
@@ -424,6 +472,9 @@ public class CceTransaccionController {
 	@ModelAttribute
 	public void setGenericos(Model model) {
 		CceTransaccionDto cceTransaccionDto = new CceTransaccionDto();
+		CceTransaccionDto cceTransaccionDtoSearch = new CceTransaccionDto();
 		model.addAttribute("cceTransaccionDto", cceTransaccionDto);
+		model.addAttribute("cceTransaccionDtoSearch", cceTransaccionDtoSearch);
+		
 	}
 }

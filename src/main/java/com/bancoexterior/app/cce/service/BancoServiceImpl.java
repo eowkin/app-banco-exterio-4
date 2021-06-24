@@ -47,6 +47,11 @@ public class BancoServiceImpl implements IBancoService{
     	return wsrequest;
     }
     
+    
+    
+    
+
+    
 	@Override
 	public List<Banco> listaBancos(BancoRequest bancoRequest) throws CustomException {
 		WSRequest wsrequest = getWSRequest();
@@ -56,8 +61,10 @@ public class BancoServiceImpl implements IBancoService{
 		
 		wsrequest.setBody(bancoRequestJSON);
 		log.info("bancoRequestJSON: "+bancoRequestJSON);
-		log.info("urlConsulta: "+"https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos");
-		wsrequest.setUrl("https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos");
+		//
+		//https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos
+		log.info("urlConsulta: "+"https://172.19.148.51:8443/api/v1/bancos/cdinme/listadosbancos");
+		wsrequest.setUrl("https://172.19.148.51:8443/api/v1/bancos/cdinme/listadosbancos");
 		log.info("antes de llamarte WS en consultar listaBancos");
 		retorno = wsService.post(wsrequest);
 		log.info("retorno: "+retorno);

@@ -63,7 +63,7 @@
 			          </div>
 			          
 			      <div class="form-group row">
-		            <label class="col-sm-5 col-form-label" for="bancoDestino">Banco Beneficiario/Banco Beneficiario:</label>
+		            <label class="col-sm-5 col-form-label" for="bancoDestino">Banco Ordenante/Banco Beneficiario:</label>
 		            <div class="col-sm-4">
 		              <select  class="form-control"  name="bancoDestino" th:field="*{bancoDestino}">
 		                <option value="">----Selecionar Banco----</option>
@@ -81,14 +81,14 @@
 		          <div class="form-group row">
 		            <label class="col-sm-5 col-form-label" for="input-large">Fecha Desde:</label>
 		            <div class="col-sm-3">
-		              <input type="date" class="form-control" th:field="*{fechaDesde}" name="fechaDesde" id="fechaDesde" placeholder="Fecha desde">
+		              <input type="date" class="form-control" th:field="*{fechaDesde}" name="fechaDesde" id="fechaDesde" placeholder="Fecha desde" required="required">
 		            </div>
 		          </div>
 		          
 		          <div class="form-group row">
 		            <label class="col-sm-5 col-form-label" for="input-large">Fecha Hasta:</label>
 		            <div class="col-sm-3">
-		              <input type="date" class="form-control" th:field="*{fechaHasta}" name="fechaHasta" id="fechaHasta" placeholder="Fecha hasta">
+		              <input type="date" class="form-control" th:field="*{fechaHasta}" name="fechaHasta" id="fechaHasta" placeholder="Fecha hasta" required="required">
 		            </div>
 		          </div>
 		          

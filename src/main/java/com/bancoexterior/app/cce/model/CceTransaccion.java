@@ -9,10 +9,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,7 +53,10 @@ public class CceTransaccion {
 	private String numeroIdentificacion;
 	
 	@Column(name = "monto", nullable = false)
+	//@Column(nullable = false, precision = 19, scale = 6)
 	@Digits(integer=13, fraction=2)
+	//@NumberFormat(pattern = "##,###.##")
+	//@NumberFormat(style = NumberFormat.Style.CURRENCY)
 	private BigDecimal monto;
 	
 	@Column(name = "moneda", nullable = false)
@@ -135,5 +140,7 @@ public class CceTransaccion {
 	private Date fechaModificacion;
 	
 	
+	@Transient
+	private String montoString;
 
 }

@@ -37,6 +37,27 @@
 		          <div class="card-header">
 		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar
 		            <p align="right"></p>
+		            <form th:action="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValor}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-horizontal">
+        						  	<div class="form-group row">
+							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Desde:</label>
+							            <div class="col-sm-3">
+							              <input type="date" class="form-control" th:field="*{fechaDesde}" name="fechaDesde" id="fechaDesde" placeholder="Fecha desde" required="required">
+							            </div>
+							          </div>
+							          
+							          <div class="form-group row">
+							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Hasta:</label>
+							            <div class="col-sm-3">
+							              <input type="date" class="form-control" th:field="*{fechaHasta}" name="fechaHasta" id="fechaHasta" placeholder="Fecha hasta" required="required">
+							            </div>
+							          </div>
+            					
+            					
+            					<div>
+		        					<button type="submit" class="btn btn-primary">Consultar</button>
+		      	 				 </div>
+            					         
+          					</form>
 		            <div class="my-2 text-right">
 		            	<input type="checkbox" /> Seleccionar todos
 		            </div>
