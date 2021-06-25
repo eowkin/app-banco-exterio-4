@@ -49,22 +49,7 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 		return listaCceTransaccionesDto;
 	}
 
-	@Override
-	public List<CceTransaccionDto> consultaMovimientosSinFechas(String codTransaccion, String bancoDestino,
-			String numeroIdentificacion) {
-		log.info("consultaMovimientosSinFechas");
-		log.info("codTransaccion: "+codTransaccion);
-		log.info("bancoDestino: "+bancoDestino);
-		log.info("numeroIdentificacion: "+numeroIdentificacion);
-		
-		List<CceTransaccion> listaCceTransacciones = repo.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion);
-		List<CceTransaccionDto> listaCceTransaccionesDto = new ArrayList<>();
-		for (CceTransaccion cceTransaccion : listaCceTransacciones) {
-			CceTransaccionDto cceTransaccionDto = mapper.map(cceTransaccion, CceTransaccionDto.class);
-			listaCceTransaccionesDto.add(cceTransaccionDto);
-		}
-		return listaCceTransaccionesDto;
-	}
+	
 
 	@Override
 	public List<CceTransaccionDto> consultaMovimientosConFechas(String codTransaccion, String bancoDestino,
@@ -128,16 +113,7 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 		return repo.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion, fechaDesde, fechaHasta, page); 
 	}
 
-	@Override
-	public Page<CceTransaccion> consultaMovimientosSinFechas(String codTransaccion, String bancoDestino,
-			String numeroIdentificacion, Pageable page) {
-		log.info("codTransaccion: "+codTransaccion);
-		log.info("bancoDestino: "+bancoDestino);
-		log.info("numeroIdentificacion: "+numeroIdentificacion);
-		
-		
-		return repo.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-	}
+	
 
 	@Override
 	public CceTransaccionDto findByEndtoendId(String endtoendId) {
@@ -164,29 +140,6 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 		return listaMovimientosPorAprobarAltoValor;
 	}
 
-	@Override
-	public Page<CceTransaccion> consultaMovimientosSinFechasRecibidas(String codTransaccion, String bancoDestino,
-			String numeroIdentificacion, Pageable page) {
-		log.info("codTransaccion: "+codTransaccion);
-		log.info("bancoDestino: "+bancoDestino);
-		log.info("numeroIdentificacion: "+numeroIdentificacion);
-		
-		
-		return repo.consultaMovimientosSinFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-	}
-
-	@Override
-	public Page<CceTransaccion> consultaMovimientosConFechasRecibidas(String codTransaccion, String bancoDestino,
-			String numeroIdentificacion, String fechaDesde, String fechaHasta, Pageable page) {
-		fechaDesde = fechaDesde +" 00:00:00";
-		fechaHasta = fechaHasta +" 23:59:00";
-		log.info("codTransaccion: "+codTransaccion);
-		log.info("bancoDestino: "+bancoDestino);
-		log.info("numeroIdentificacion: "+numeroIdentificacion);
-		log.info("fechaDesde: "+fechaDesde);
-		log.info("fechaHasta: "+fechaHasta);
-		
-		return repo.consultaMovimientosConFechasRecibidas(codTransaccion, bancoDestino, numeroIdentificacion, fechaDesde, fechaHasta, page);  
-	}
+	
 
 }

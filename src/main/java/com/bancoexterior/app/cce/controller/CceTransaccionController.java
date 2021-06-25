@@ -94,50 +94,10 @@ public class CceTransaccionController {
 		return "cce/formConsultarMovimientosAltoBajoValor";
 		
 	}
-	
-	@GetMapping("/procesarConsultaMovimientosAltoBajoValor")
-	public String procesarConsultaMovimientosAltoBajoValor(CceTransaccionDto cceTransaccionDto, 
-			Model model) {
-		log.info("procesarConsultaMovimientosAltoBajoValor");
-		log.info("fechaDesde: "+cceTransaccionDto.getFechaDesde());
-		log.info("fechaHasta: "+cceTransaccionDto.getFechaHasta());
-		log.info("codTransaccion: "+cceTransaccionDto.getCodTransaccion());
-		log.info("bancoDestino: "+cceTransaccionDto.getBancoDestino());
-		log.info("numeroIdentificacion: "+cceTransaccionDto.getNumeroIdentificacion());
-		
-		List<String> listaError = new ArrayList<>();
-		List<CceTransaccionDto> listaTransacciones;
-		if(!cceTransaccionDto.getFechaDesde().equals("")&&!cceTransaccionDto.getFechaHasta().equals("")) {
-			if(isFechaValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())){
-				
-				  listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
-						  													cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta());
-				 
-				
-				if(listaTransacciones.isEmpty()) {
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-				}
-				model.addAttribute("listaTransacciones", listaTransacciones);
-				return "cce/listaMovimientosConsultaAltoBajoValor";
-				
-			}else {
-				listaError.add(MENSAJEFECHASINVALIDAS);
-				model.addAttribute(LISTAERROR, listaError);
-				return "cce/formConsultarMovimientosAltoBajoValor";
-			}
-		}else {
-			listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), cceTransaccionDto.getNumeroIdentificacion());
-			if(listaTransacciones.isEmpty()) {
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-			}
-			model.addAttribute("listaTransacciones", listaTransacciones);
-			return "cce/listaMovimientosConsultaAltoBajoValor";
-			
-			
-		}
-	}
+					
 	
 	
+				 //procesarConsultaMovimientosAltoBajoValorPageable	
 	@GetMapping("/procesarConsultaMovimientosAltoBajoValorPageable")
 	public String procesarConsultaMovimientosAltoBajoValorPageable(CceTransaccionDto cceTransaccionDto, 
 			Model model, Pageable page) {
@@ -157,46 +117,16 @@ public class CceTransaccionController {
 			
 			List<String> listaError = new ArrayList<>();
 			Page<CceTransaccion> listaTransacciones;
-			if(!cceTransaccionDto.getFechaDesde().equals("")&&!cceTransaccionDto.getFechaHasta().equals("")) {
-				if(isFechaValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())){
+			
+			if(isFechaValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())){
 					
-					listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
-						cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
+				listaTransacciones = service.consultaMovimientosConFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(),
+					cceTransaccionDto.getNumeroIdentificacion(),cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta(), page);
 					
-					listaTransacciones = convertirLista(listaTransacciones);
-					
-					
-					
-					if(listaTransacciones.isEmpty()) {
-						model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
-						List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
-						model.addAttribute("listaBancos", listaBancos);
-						return "cce/formConsultarMovimientosAltoBajoValor";
-					}
-					model.addAttribute("listaTransacciones", listaTransacciones);
-					model.addAttribute("codTransaccion", cceTransaccionDto.getCodTransaccion());
-					model.addAttribute("bancoDestino", cceTransaccionDto.getBancoDestino());
-					model.addAttribute("numeroIdentificacion", cceTransaccionDto.getNumeroIdentificacion());
-					model.addAttribute("fechaDesde", cceTransaccionDto.getFechaDesde());
-					model.addAttribute("fechaHasta", cceTransaccionDto.getFechaHasta());
-					return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
-					
-				}else {
-					log.info("fechas invalidas");
-					listaError.add(MENSAJEFECHASINVALIDAS);
-					model.addAttribute(LISTAERROR, listaError);
-					return "cce/formConsultarMovimientosAltoBajoValor";
-				}
-			}else {
-				listaTransacciones = service.consultaMovimientosSinFechas(cceTransaccionDto.getCodTransaccion(), cceTransaccionDto.getBancoDestino(), 
-																			cceTransaccionDto.getNumeroIdentificacion(), page);
-				
 				listaTransacciones = convertirLista(listaTransacciones);
-				
-				for (CceTransaccion cceTransaccion : listaTransacciones) {
-					log.info("montoString: "+cceTransaccion.getMontoString());			 
-				}
-				
+					
+					
+					
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
 					List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
@@ -207,9 +137,15 @@ public class CceTransaccionController {
 				model.addAttribute("codTransaccion", cceTransaccionDto.getCodTransaccion());
 				model.addAttribute("bancoDestino", cceTransaccionDto.getBancoDestino());
 				model.addAttribute("numeroIdentificacion", cceTransaccionDto.getNumeroIdentificacion());
-				return "cce/listaMovimientosConsultaAltoBajoValorSinFechaPaginate";
-				
-				
+				model.addAttribute("fechaDesde", cceTransaccionDto.getFechaDesde());
+				model.addAttribute("fechaHasta", cceTransaccionDto.getFechaHasta());
+				return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+					
+			}else {
+				log.info("fechas invalidas");
+				listaError.add(MENSAJEFECHASINVALIDAS);
+				model.addAttribute(LISTAERROR, listaError);
+				return "cce/formConsultarMovimientosAltoBajoValor";
 			}
 		} catch (CustomException e) {
 			e.printStackTrace();
@@ -220,7 +156,7 @@ public class CceTransaccionController {
 		
 		
 	}
-	
+	            //consultaMovimientosAltoBajoValorPageable
 	@GetMapping("/consultaMovimientosAltoBajoValorPageable")
 	public String consultaMovimientosAltoBajoValorPageable(@RequestParam("codTransaccion") String codTransaccion, 
 			@RequestParam("bancoDestino") String bancoDestino, @RequestParam("numeroIdentificacion") String numeroIdentificacion,
@@ -235,103 +171,33 @@ public class CceTransaccionController {
 		
 		List<String> listaError = new ArrayList<>();
 		Page<CceTransaccion> listaTransacciones;
-		if(!fechaDesde.equals("")&&!fechaHasta.equals("")) {
-			if(isFechaValidaDesdeHasta(fechaDesde, fechaHasta)){
-				listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
-							fechaDesde, fechaHasta, page);
-				listaTransacciones = convertirLista(listaTransacciones);
-				if(listaTransacciones.isEmpty()) {
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-				}
-				model.addAttribute("listaTransacciones", listaTransacciones);
-				model.addAttribute("codTransaccion", codTransaccion);
-				model.addAttribute("bancoDestino", bancoDestino);
-				model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-				model.addAttribute("fechaDesde", fechaDesde);
-				model.addAttribute("fechaHasta", fechaHasta);
-				return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
-				
-			}else {
-				log.info("fechas invalidas");
-				listaError.add(MENSAJEFECHASINVALIDAS);
-				model.addAttribute(LISTAERROR, listaError);
-				return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
-			}
-		}else {
-			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
+		
+		if(isFechaValidaDesdeHasta(fechaDesde, fechaHasta)){
+			listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
+							                                          fechaDesde, fechaHasta, page);
 			listaTransacciones = convertirLista(listaTransacciones);
 			if(listaTransacciones.isEmpty()) {
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 			}
 			model.addAttribute("listaTransacciones", listaTransacciones);
 			model.addAttribute("codTransaccion", codTransaccion);
 			model.addAttribute("bancoDestino", bancoDestino);
 			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-			return "cce/listaMovimientosConsultaAltoBajoValorSinFechaPaginate";
-			
-			
-		}
-	}
-	
-	@GetMapping("/consultaMovimientosAltoSinFechaBajoValorPageable")
-	public String consultaMovimientosAltoBajoValorSinFechaPageable(@RequestParam("codTransaccion") String codTransaccion, 
-			@RequestParam("bancoDestino") String bancoDestino, @RequestParam("numeroIdentificacion") String numeroIdentificacion, 
-			Model model, Pageable page) {
-		log.info("procesarConsultaMovimientosAltoBajoValor");
-		log.info("codTransaccion: "+codTransaccion);
-		log.info("bancoDestino: "+bancoDestino);
-		log.info("numeroIdentificacion: "+numeroIdentificacion);
-		
-		Page<CceTransaccion> listaTransacciones;
-		listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-		listaTransacciones = convertirLista(listaTransacciones);
-		if(listaTransacciones.isEmpty()) {
-			model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-		}
-		model.addAttribute("listaTransacciones", listaTransacciones);
-		model.addAttribute("codTransaccion", codTransaccion);
-		model.addAttribute("bancoDestino", bancoDestino);
-		model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-		return "cce/listaMovimientosConsultaAltoBajoValorSinFechaPaginate";
-			
-			
-		
-	}
-	
-	@GetMapping("/detalle")
-	public String verMovimineto(@RequestParam("endtoendId") String endtoendId, @RequestParam("codTransaccion") String codTransaccion, 
-			@RequestParam("bancoDestino") String bancoDestino, @RequestParam("numeroIdentificacion") String numeroIdentificacion, 
-			Model model, Pageable page) {
-		log.info(endtoendId);
-		
-		CceTransaccionDto cceTransaccionDto = service.findByEndtoendId(endtoendId);
-		if(cceTransaccionDto != null) {
-			if(cceTransaccionDto.getCodTransaccion().equals("5724") || cceTransaccionDto.getCodTransaccion().equals("5728")) {
-				String cuentaOrigen = cceTransaccionDto.getCuentaOrigen();
-				String cuentaDestino = cceTransaccionDto.getCuentaDestino();
-				cceTransaccionDto.setCuentaOrigen(cuentaDestino);
-				cceTransaccionDto.setCuentaDestino(cuentaOrigen);
-			}
-			cceTransaccionDto.setMonto(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto())));   
-			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
-			model.addAttribute("codTransaccion", codTransaccion);
-			model.addAttribute("bancoDestino", bancoDestino);
-			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-			model.addAttribute("page", page.getPageNumber());
-			return "cce/formMovimientoAltoBajoValorDetalle";
+			model.addAttribute("fechaDesde", fechaDesde);
+			model.addAttribute("fechaHasta", fechaHasta);
+			return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+				
 		}else {
-			Page<CceTransaccion> listaTransacciones;
-			listaTransacciones = service.consultaMovimientosSinFechas(codTransaccion, bancoDestino, numeroIdentificacion, page);
-			model.addAttribute("listaTransacciones", listaTransacciones);
-			model.addAttribute("codTransaccion", codTransaccion);
-			model.addAttribute("bancoDestino", bancoDestino);
-			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-			return "cce/listaMovimientosConsultaAltoBajoValorSinFechaPaginate";
+			log.info("fechas invalidas");
+			listaError.add(MENSAJEFECHASINVALIDAS);
+			model.addAttribute(LISTAERROR, listaError);
+			return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
 		}
-		
-		
-		
 	}
+	
+	
+	
+	
 	
 	@GetMapping("/detalleMovimiento")
 	public String verMovimineto(@RequestParam("endtoendId") String endtoendId,@RequestParam("codTransaccion") String codTransaccion, 
@@ -379,9 +245,8 @@ public class CceTransaccionController {
 	public String consultaMovimientosPorAprobarAltovalor(Model model, Pageable page) {
 		Page<CceTransaccion> listaTransacciones;
 		
-		//Page<CceTransaccion> listaTransaccionesDto = new 
-		listaTransacciones = service.consultaMovimientosSinFechas("", "", "", page);
 
+		listaTransacciones = service.consultaMovimientosConFechas("", "", "", "2021-06-15", "2021-06-18", page);
 		
 		listaTransacciones = convertirLista(listaTransacciones);
 		

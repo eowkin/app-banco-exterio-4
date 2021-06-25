@@ -14,13 +14,9 @@ public interface ICceTransaccionService {
     
     public Page<CceTransaccion> consultar(Pageable page);
     
-    public List<CceTransaccionDto> consultaMovimientosSinFechas(String codTransaccion, String bancoDestino, String numeroIdentificacion);
     
-    public Page<CceTransaccion> consultaMovimientosSinFechas(String codTransaccion, String bancoDestino, String numeroIdentificacion, 
-    														 Pageable page);
     
-    public Page<CceTransaccion> consultaMovimientosSinFechasRecibidas(String codTransaccion, String bancoDestino, String numeroIdentificacion, 
-			 Pageable page);
+   
     
     public List<CceTransaccionDto> consultaMovimientosConFechas(String codTransaccion, String bancoDestino, String numeroIdentificacion, 
     															String fechaDesde, String fechaHasta);
@@ -29,8 +25,7 @@ public interface ICceTransaccionService {
     public Page<CceTransaccion> consultaMovimientosConFechas(String codTransaccion, String bancoDestino, String numeroIdentificacion, 
 			String fechaDesde, String fechaHasta, Pageable page);
     
-    public Page<CceTransaccion> consultaMovimientosConFechasRecibidas(String codTransaccion, String bancoDestino, String numeroIdentificacion, 
-			String fechaDesde, String fechaHasta, Pageable page);
+   
     
     
     
