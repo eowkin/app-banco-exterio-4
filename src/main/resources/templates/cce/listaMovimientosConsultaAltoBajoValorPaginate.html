@@ -59,6 +59,7 @@
 		                  <th>Cta. Ordenante</th>
 		                  <th>Cta. Beneficiario</th>
 		                  <th>Monto</th>
+		                  <th>Estado</th>
 		                  <th>Fecha Liquidacion</th>
 		                  <th>Ver</th>
 		                </tr>
@@ -76,6 +77,11 @@
 		                  <td th:if="${transaccion.codTransaccion == '5724'}"  th:text="${transaccion.cuentaOrigen}"></td>
 		                  <td th:if="${transaccion.codTransaccion == '5728'}"  th:text="${transaccion.cuentaOrigen}"></td>
 		                  <td th:text="${transaccion.monto}"></td>
+		                  <td>
+			                	<span class="badge badge-success" th:if="${transaccion.estadobcv == 'ACCP'}">Aprobada</span>
+			                	<span class="badge badge-danger" th:if="${transaccion.estadobcv == 'RJCT' }">Rechazada</span>
+			                	<span class="badge badge-secondary" th:if="${transaccion.estadobcv == Null }">Incompleta</span>
+			              </td>
 		                  <td th:text="${transaccion.fechaModificacion}"></td>
 		                  <td>
 		                  	<a  class="btn btn-info" th:href="@{/ccetransacciones/detalleMovimiento (endtoendId=${transaccion.endtoendId}, page=${listaTransacciones.number}, codTransaccion=${codTransaccion}, bancoDestino=${bancoDestino}, numeroIdentificacion=${numeroIdentificacion}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}) }" role="button" title="Ver limites."><i class="fa fa-search" aria-hidden="true"></i></a>

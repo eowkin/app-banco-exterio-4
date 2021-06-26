@@ -33,8 +33,7 @@ public interface ICceTransaccionRepository extends JpaRepository<CceTransaccion,
 			+ "where cod_transaccion = (case when ?1 = '' then cod_transaccion else ?1 end) \r\n"
 			+ "and banco_destino = (case when ?2 = '' then banco_destino else ?2 end)\r\n"
 			+ "and numero_identificacion = (case when ?3 = '' then numero_identificacion else ?3 end)\r\n"
-			+ "and fecha_modificacion between to_timestamp(?4, 'YYYY-MM-DD HH24:MI:SS') AND to_timestamp(?5, 'YYYY-MM-DD HH24:MI:SS')\r\n"
-			+ "";
+			+ "and fecha_modificacion between to_timestamp(?4, 'YYYY-MM-DD HH24:MI:SS') AND to_timestamp(?5, 'YYYY-MM-DD HH24:MI:SS')";
 	
 	
 	

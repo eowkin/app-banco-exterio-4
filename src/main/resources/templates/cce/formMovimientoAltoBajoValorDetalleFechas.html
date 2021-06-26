@@ -47,6 +47,14 @@
 		            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
 		            		</ul>
 		            	</div>
+		             <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="nombreTransaccion">Tipo Transaccion:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{nombreTransaccion}" id="nombreTransaccion" name="nombreTransaccion" disabled="disabled">
+			              
+			            </div>
+			          </div>	
+		            	
 		            <div class="form-group row">
 			          	<label class="col-sm-5 col-form-label" for="fechaModificacion">Fecha de Liquidación:</label>
 			            <div class="col-sm-3">
@@ -76,9 +84,9 @@
 			            </div>
 			          </div>  
 			         <div class="form-group row">
-			          	<label class="col-sm-5 col-form-label" for="aliasOrigen">Nombre del Ordenante:</label>
+			          	<label class="col-sm-5 col-form-label" for="beneficiarioOrigen">Nombre del Ordenante:</label>
 			            <div class="col-sm-3">
-			              <input type="text" class="form-control" th:field="*{aliasOrigen}" id="aliasOrigen" name="numeroIdentificacion" disabled="disabled">
+			              <input type="text" class="form-control" th:field="*{beneficiarioOrigen}" id="beneficiarioOrigen" name="beneficiarioOrigen" disabled="disabled">
 			              
 			            </div>
 			          </div>   
@@ -99,9 +107,9 @@
 			            </div>
 			          </div>         
 		          <div class="form-group row">
-			          	<label class="col-sm-5 col-form-label" for="aliasDestino">Nombre del Beneficiario:</label>
+			          	<label class="col-sm-5 col-form-label" for="beneficiarioDestino">Nombre del Beneficiario:</label>
 			            <div class="col-sm-3">
-			              <input type="text" class="form-control" th:field="*{aliasDestino}" id="aliasDestino" name="aliasDestino" disabled="disabled">
+			              <input type="text" class="form-control" th:field="*{beneficiarioDestino}" id="beneficiarioDestino" name="beneficiarioDestino" disabled="disabled">
 			              
 			            </div>
 			          </div>
@@ -126,7 +134,13 @@
 			              
 			            </div>
 			          </div>
-		          
+		          	<div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="nombreEstadoBcv">Estado:</label>
+			            <div class="col-sm-3">
+			              <input type="text" class="form-control" th:field="*{nombreEstadoBcv}" id="nombreEstadoBcv" name="nombreEstadoBcv" disabled="disabled">
+			              
+			            </div>
+			          </div>
 		          
 		          <div class="card-footer">
 		        	<div class="card-footer">

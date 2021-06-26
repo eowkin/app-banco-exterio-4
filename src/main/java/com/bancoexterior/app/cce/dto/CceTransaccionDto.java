@@ -20,6 +20,8 @@ public class CceTransaccionDto implements Serializable{
 	
 	private String codTransaccion;
 	
+	private String nombreTransaccion;
+	
 	private String cuentaOrigen;
 	
 	private String tipoIdentificacion;
@@ -55,6 +57,8 @@ public class CceTransaccionDto implements Serializable{
 	private String nombreBancoDestino;
 	
 	private String estadobcv;
+	
+	private String nombreEstadoBcv;
 	
 	private String rsnbcv;
 	

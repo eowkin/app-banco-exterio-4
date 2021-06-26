@@ -213,7 +213,18 @@ public class CceTransaccionController {
 				String cuentaDestino = cceTransaccionDto.getCuentaDestino();
 				cceTransaccionDto.setCuentaOrigen(cuentaDestino);
 				cceTransaccionDto.setCuentaDestino(cuentaOrigen);
+				String numeroIdentificacionCce = cceTransaccionDto.getNumeroIdentificacion();
+				String numeroIdentificacionDestinoCce = cceTransaccionDto.getNumeroIdentificacionDestino();
+				cceTransaccionDto.setNumeroIdentificacion(numeroIdentificacionDestinoCce);
+				cceTransaccionDto.setNumeroIdentificacionDestino(numeroIdentificacionCce);
+				String beneficiarioOrigen = cceTransaccionDto.getBeneficiarioOrigen();
+				String beneficiarioDestino = cceTransaccionDto.getBeneficiarioDestino();
+				cceTransaccionDto.setBeneficiarioOrigen(beneficiarioDestino);
+				cceTransaccionDto.setBeneficiarioDestino(beneficiarioOrigen);
 			}
+			
+			cceTransaccionDto.setNombreTransaccion(nombreTransaccion(cceTransaccionDto.getCodTransaccion())+"-"+cceTransaccionDto.getCodTransaccion());
+			cceTransaccionDto.setNombreEstadoBcv(nombreEstadoBcv(cceTransaccionDto.getEstadobcv()));
 			cceTransaccionDto.setMonto(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto())));
 			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
 			model.addAttribute("codTransaccion", codTransaccion);
@@ -227,6 +238,7 @@ public class CceTransaccionController {
 			Page<CceTransaccion> listaTransacciones;
 			listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
 					fechaDesde, fechaHasta, page);
+			listaTransacciones = convertirLista(listaTransacciones);
 			model.addAttribute("listaTransacciones", listaTransacciones);
 			model.addAttribute("codTransaccion", codTransaccion);
 			model.addAttribute("bancoDestino", bancoDestino);
@@ -315,7 +327,7 @@ public class CceTransaccionController {
 	
 	public Page<CceTransaccion> convertirLista(Page<CceTransaccion> listaTransacciones){
 		for (CceTransaccion cceTransaccion : listaTransacciones) {
-			//log.info("monto: "+cceTransaccion.getMonto().toString());
+			log.info("estadoBcv: "+cceTransaccion.getEstadobcv());
 			//log.info("monto: "+ libreriaUtil.formatNumber(cceTransaccion.getMonto()));
 			//cceTransaccion.setMontoString(libreriaUtil.formatNumber(cceTransaccion.getMonto()));
 			//log.info("monto: "+ libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccion.getMonto())));
@@ -324,6 +336,43 @@ public class CceTransaccionController {
 	
 		return listaTransacciones;
 	}
+	
+	public String nombreTransaccion(String codTransaccion) {
+		String nombreTransaccion="";
+		if(codTransaccion.equals("5724")) {
+			nombreTransaccion = "Credito Inmediato Recibido";
+		}else {
+			if(codTransaccion.equals("5723")) {
+				nombreTransaccion = "Credito Inmediato Enviado";
+			}else {
+				if(codTransaccion.equals("5728")) {
+					nombreTransaccion = "Alto valor Recibido";
+				}else {
+					nombreTransaccion = "Alto Valor Enviado";
+				}
+			}
+		}
+		
+		return nombreTransaccion;
+	}
+	
+	public String nombreEstadoBcv(String estadobcv) {
+		String nombreEstadoBcv="";
+		
+		if(estadobcv == null) {
+			nombreEstadoBcv = "Incompleta";
+		}else {
+			if(estadobcv.equals("ACCP")) {
+				nombreEstadoBcv = "Aprobada";
+			}else {
+				nombreEstadoBcv = "Rechazada";
+			}
+		}
+		
+	
+		return nombreEstadoBcv;
+	}
+	
 	
 	public BancoRequest getBancoRequest() {
 		BancoRequest bancoRequest = new BancoRequest();
