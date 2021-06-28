@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 public class LibreriaUtil {
 	
 	
-    public static final String NUMEROFORMAT                       = "#,##0.00";
+    //public static final String NUMEROFORMAT                       = "#,##0.00";
+	public static final String NUMEROFORMAT                       = "###0.00";
     public static final char COMA                                 = ',';
     public static final char PUNTO                                = '.';
 
@@ -111,8 +112,8 @@ public class LibreriaUtil {
 	/**
 	* primero elimina los puntos y luego remplaza las comas en puntos.
 	*/
-	String formatoValido = num.replace(".", "").replace(",", ".");
-	//String formatoValido = num.replace(",", "");	
+	//String formatoValido = num.replace(".", "").replace(",", ".");
+	String formatoValido = num.replace(",", "");	
 	//System.out.println(formatoValido);
 	money = new BigDecimal(formatoValido);
 	}//if

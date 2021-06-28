@@ -35,8 +35,26 @@
 		      <div class="col-lg-1-12">
 		        <div class="card">
 		          <div class="card-header">
-		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar
+		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar Searh Monto
 		            <p align="right"></p>
+		             <div class="my-2">
+		            		<div th:if="${listaError}" class="alert alert-danger" role="alert">
+				            		Por favor corrija los siguientes errores:
+				            		<!-- 
+				            		<ul>
+				            			<li th:each="err : ${#fields.errors('*')}"  th:text="${err}"></li>
+				            		</ul> -->
+				            		<ul>
+				            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
+				            		</ul>
+				            	</div>
+         					<form th:action="@{/ccetransacciones/searchMonto}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-inline">
+        						
+        						<input type="text"  class="form-control mb-3"  th:field="*{monto}" maxlength="16" placeholder="Escriba una búsqueda" >&nbsp;
+            					<button type="submit" class="btn btn-primary mb-3">Buscar por Monto</button>            
+          					</form>
+        			</div>
+		            
 		            <form th:action="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValor}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-horizontal">
         						  	<div class="form-group row">
 							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Desde:</label>
@@ -59,7 +77,7 @@
             					         
           					</form>
 		            <div class="my-2 text-right">
-		            	<input type="checkbox" /> Seleccionar todos
+		            	<input type="checkbox"  /> Seleccionar todos
 		            </div>
 		          </div><!--/.card-header-->
 		          
@@ -80,18 +98,22 @@
 		                  <th>Cta. Ordenante</th>
 		                  <th>Cta. Beneficiario</th>
 		                  <th>Monto</th>
-		                  <th>Fecha Liquidacion</th>
+		                  <th>Fecha y Hora</th>
+		                  <th>Status</th>
 		                  
 		                </tr>
 		              </thead>
 		              <tbody>
-		                <tr th:each = "transaccion: ${listaTransacciones}">
-		                  <td th:text="${transaccion.endtoendId}"></td>
-		                  <td th:text="${transaccion.referencia}"></td>
-		                  <td th:text="${transaccion.cuentaOrigen}"></td>
-		                  <td th:text="${transaccion.cuentaDestino}"></td>
-		                  <td th:text="${transaccion.monto}"></td>
-		                  <td th:text="${transaccion.fechaModificacion}"></td>
+		                <tr th:each = "BCVLBT: ${listaBCVLBTPorAprobar}">
+		                  <td th:text="${BCVLBT.referencia}"></td>
+		                  <td th:text="${BCVLBT.referencia}"></td>
+		                  <td th:text="${BCVLBT.nroCuentaOrigen}"></td>
+		                  <td th:text="${BCVLBT.nroCuentaDestino}"></td>
+		                  <td th:text="${BCVLBT.monto}"></td>
+		                  <td th:text="${BCVLBT.fechaTransaccion}"></td>
+		                  <td>
+		                  	<span class="badge badge-danger" th:if="${BCVLBT.status == 'I' }">Por aprobar</span>
+		                  </td>
 		                  <td>
 		                  	<input type="checkbox" />
 		                  </td>
@@ -110,38 +132,19 @@
 		        		<button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-circle-o"></i> Aprobar</button>
 			        	<a   class="btn btn-sm btn-danger" role="button" th:href="@{/}"><i class="fa fa-ban"></i>Cancelar</a>
 		      	  	</div>
-		            <nav th:if="${listaTransacciones.totalPages > 0}" aria-label="Page navigation example" > 
+		            <nav th:if="${datosPaginacion.totalPaginas > 0}" aria-label="Page navigation example" > 
 		            	<ul class="pagination justify-content-center">         
-		            		<li class="page-item" th:classappend="${listaTransacciones.number == 0 ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/consultaMovimientosAltoBajoValorPageable(page=${listaTransacciones.number - 1}, codTransaccion=${codTransaccion}, bancoDestino=${bancoDestino}, numeroIdentificacion=${numeroIdentificacion}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Anterior</a>
+		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == 1 ? 'disabled' : ''}">
+		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhMonto(page=${datosPaginacion.paginaActual - 1}, monto=${monto})}" class="page-link">Anterior</a>
 		            		</li> 
 		            		<li class="page-item">
-								<a class="page-link"  th:text="${'Pagina '+ (listaTransacciones.number + 1) + ' - '+ (listaTransacciones.totalPages)}" th:title="${'Page '+ listaTransacciones.number}" data-toggle="tooltip"></a>
+								<a class="page-link"  th:text="${'Pagina '+ datosPaginacion.paginaActual + ' -  '+ datosPaginacion.totalPaginas}" th:title="${'Page '+ datosPaginacion.paginaActual}" data-toggle="tooltip"></a>
 							</li>
-		            		<li class="page-item" th:classappend="${listaTransacciones.number == 0 ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/consultaMovimientosAltoBajoValorPageable(page=${listaTransacciones.number + 1}, codTransaccion=${codTransaccion}, bancoDestino=${bancoDestino}, numeroIdentificacion=${numeroIdentificacion}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Siguiente</a>
+		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == (datosPaginacion.totalPaginas) ? 'disabled' : ''}">
+		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhMonto(page=${datosPaginacion.paginaActual + 1}, monto=${monto})}" class="page-link">Siguiente</a>
 		            		</li>  
 		            	</ul> 
-		            </nav> 
-		         <!--  
-		            <nav th:if="${listaTransacciones.totalPages > 0}" aria-label="Page navigation example" >
-						<ul class="pagination justify-content-center">
-							<li class="page-item" th:classappend="${listaTransacciones.number == 0 ? 'disabled' : ''}">
-								<a th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate(page=${listaTransacciones.number - 1})}" class="page-link">Anterior</a>
-							</li>
-							
-							<li class="page-item" th:classappend="${i eq listaTransacciones.number + 1} ? 'active'" th:each="i : ${#numbers.sequence( 1, listaTransacciones.totalPages, 1)}">
-								<a class="page-link" th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate?page={tmpPag} (tmpPag=${i-1}) }" th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
-							</li>
-							<li class="page-item" th:classappend="${listaTransacciones.number == (listaTransacciones.totalPages - 1) ? 'disabled' : ''}">
-								<a th:href="@{/ccetransacciones/listaMovimientosConsultaAltoBajoValorPaginate(page=${listaTransacciones.number + 1})}" class="page-link">Siguiente</a>
-							</li>
-						</ul>
-					</nav> 
-				-->	
-				
-					
-					
+		            </nav>	
 		          </div><!--/.card-body-->
 		        </div><!--/.card-->
 		      </div><!--/.col-lg-1-12-->

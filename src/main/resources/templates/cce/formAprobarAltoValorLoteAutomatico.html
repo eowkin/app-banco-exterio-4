@@ -36,7 +36,7 @@
 		        <strong>Aprobacion Alto Valor Lote Automatico</strong>
 		      </div>
 		      <div class="card-body">
-		        <form  th:action = "@{/}"   method="get" th:object="${cceTransaccionDto}"   class="form-horizontal">
+		        <form  th:action = "@{/ccetransacciones/procesarAprobarAltoValorLoteAutomatico}"   method="get" th:object="${cceTransaccionDto}"   class="form-horizontal">
 		          <div th:if="${listaError != null}" class="alert alert-danger" role="alert">
 		            		Por favor corrija los siguientes errores:
 		            		<!-- 
@@ -51,16 +51,16 @@
 		         
 		            
 			      <div class="form-group row">
-			          	<label class="col-sm-5 col-form-label" for="numeroAprobaciones">Nro. Operaciones Aporbar:</label>
+			          	<label class="col-sm-5 col-form-label" for="numeroAprobacionesLotes">Nro. Operaciones Aporbar:</label>
 			            <div class="col-sm-3">
-			              <input type="text" class="form-control"  id="numeroAprobaciones" name="numeroAprobaciones" value="10" disabled="disabled">
+			              <input type="text" class="form-control"  th:field="*{numeroAprobacionesLotes}" id="numeroAprobacionesLotes" name="numeroAprobacionesLotes"  disabled="disabled">
 			              
 			            </div>
 			          </div>      
 		          <div class="form-group row">
 			          	<label class="col-sm-5 col-form-label" for="numeroAprobaciones">Monto Total:</label>
 			            <div class="col-sm-3">
-			              <input type="text" class="form-control"  id="numeroAprobaciones" name="numeroAprobaciones" value="10000000.00" disabled="disabled">
+			              <input type="text" class="form-control" th:field="*{montoAprobacionesLotes}"  id="montoAprobacionesLotes" name="montoAprobacionesLotes"  disabled="disabled">
 			              
 			            </div>
 			          </div>     
