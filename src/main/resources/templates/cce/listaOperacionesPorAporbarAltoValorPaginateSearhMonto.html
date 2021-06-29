@@ -32,6 +32,18 @@
         <div class="container-fluid">
           <div class="animated fadeIn">
 		    <div class="row">
+		    	<div class="col-sm-4 col-md-4">
+				      <div class="card text-white bg-danger">
+				        <div class="card-header">
+							   Transacciones Pendientes-Aprobar
+				        </div>
+				       <div class="card-body">
+				       	<div><span style="float:right">[[${numeroAprobacionesLotes}]]</span>Nro. Transacciones:</div>
+				       	<div><span style="float:right">[[${montoAprobacionesLotes}]]</span>Monto Total:</div>
+				 	   </div>
+				      </div>
+				    </div><!--/.col-->
+		    
 		      <div class="col-lg-1-12">
 		        <div class="card">
 		          <div class="card-header">
@@ -52,6 +64,14 @@
         						
         						<input type="text"  class="form-control mb-3"  th:field="*{monto}" maxlength="16" placeholder="Escriba una búsqueda" >&nbsp;
             					<button type="submit" class="btn btn-primary mb-3">Buscar por Monto</button>            
+          					</form>
+        			</div>
+        			<div class="my-2">
+		            		
+         					<form th:action="@{/ccetransacciones/searchOredenante}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-inline">
+        						
+        						<input type="text"  class="form-control mb-3"  th:field="*{numeroIdentificacion}" maxlength="16" placeholder="Escriba una búsqueda" >&nbsp;
+            					<button type="submit" class="btn btn-primary mb-3">Buscar por Rif-CI Ordenante</button>            
           					</form>
         			</div>
 		            

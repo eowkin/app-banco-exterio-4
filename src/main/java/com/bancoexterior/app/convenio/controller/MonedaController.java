@@ -280,15 +280,12 @@ public class MonedaController {
 	public void setGenericos(Model model, HttpServletRequest request) {
 		Moneda monedaSearch = new Moneda();
 		model.addAttribute("monedaSearch", monedaSearch);
-		String uri = request.getRequestURI();
-		log.info("uri: "+uri);
-		String[] arrUri = uri.split("/");
-
-		arrUri[0] = "Home";
-		model.addAttribute("arrUri", arrUri);
 		
 		
-		
+		String[] arrUriP = new String[2]; 
+		arrUriP[0] = "Home";
+		arrUriP[1] = "moneda";
+		model.addAttribute("arrUri", arrUriP);
 	}
 	
 	

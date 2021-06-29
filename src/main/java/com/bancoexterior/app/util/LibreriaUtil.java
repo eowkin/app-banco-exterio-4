@@ -142,8 +142,8 @@ public class LibreriaUtil {
 	public  String formatNumber(BigDecimal numero) {
         
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-        decimalFormatSymbols.setDecimalSeparator(COMA);
-        decimalFormatSymbols.setGroupingSeparator(PUNTO);
+        //decimalFormatSymbols.setDecimalSeparator(COMA);
+        //decimalFormatSymbols.setGroupingSeparator(PUNTO);
         DecimalFormat df = new DecimalFormat(NUMEROFORMAT);
         
          return df.format(numero);

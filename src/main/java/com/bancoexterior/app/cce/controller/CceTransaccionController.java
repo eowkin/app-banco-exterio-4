@@ -76,9 +76,39 @@ public class CceTransaccionController {
 	@Value("${des.trasacciones.montoTopeMaximoAproAuto}")
     private BigDecimal montoTopeMaximoAproAuto;
 	
+	private static final String URLFORMCONSULTARMOVIMIENTOSALTOBAJOVALOR = "cce/formConsultarMovimientosAltoBajoValor";
 	
+	private static final String URLFORMMOVIMIENTOSALTOBAJOVALORDETALLEFECHAS = "cce/formMovimientoAltoBajoValorDetalleFechas";
+	
+	private static final String URLFORMAPROBARALTOVALORLOTEAUTOMATICO = "cce/formAprobarAltoValorLoteAutomatico";
+																				   
+	private static final String URLLISTAMOVIMIENTOSCONSULTAALTOBAJOVALORPAGINATE = "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+	
+	private static final String URLLISTAOPERACIONESPORAPROBARAALTOVALORPAGINATE = "cce/listaOperacionesPorAporbarAltoValorPaginate";
 	
 	private static final String STRDATEFORMET = "yyyy-MM-dd";
+	
+	private static final String LISTATRANSACCIONES = "listaTransacciones";
+	
+	private static final String LISTABCVLBTPORAPROBAR = "listaBCVLBTPorAprobar";
+	
+	private static final String DATOSPAGINACION = "datosPaginacion";
+	
+	private static final String CODTRANSACCION = "codTransaccion";
+	
+	private static final String BANCODESTINO = "bancoDestino";
+	
+	private static final String NUMEROIDENTIFICACION = "numeroIdentificacion";
+	
+	private static final String FECHADESDE = "fechaDesde";
+	
+	private static final String FECHAHASTA = "fechaHasta";
+	
+	private static final String NUMEROAPROBACIONESLOTES = "numeroAprobacionesLotes";
+	
+	private static final String MONTOAPROBACIONESLOTES = "montoAprobacionesLotes";
+	
+	private static final String LISTABANCOS = "listaBancos";
 	
 	private static final String LISTAERROR = "listaError";
 	
@@ -96,7 +126,7 @@ public class CceTransaccionController {
 	public String index(Model model) {
 		
 		List<CceTransaccionDto> listaTransacciones = service.consultar();
-		model.addAttribute("listaTransacciones", listaTransacciones);   
+		model.addAttribute(LISTATRANSACCIONES, listaTransacciones);   
 		return "cce/listaMovimientosConsultaAltoBajoValor";
 	}
 	
@@ -104,7 +134,7 @@ public class CceTransaccionController {
 	public String indexPaginado(Model model, Pageable page) {
 		
 		Page<CceTransaccion> listaTransacciones = service.consultar(page);
-		model.addAttribute("listaTransacciones", listaTransacciones);   
+		model.addAttribute(LISTATRANSACCIONES, listaTransacciones);   
 		return "cce/listaMovimientosConsultaAltoBajoValorPaginateTodas";
 	}
 	
@@ -113,24 +143,20 @@ public class CceTransaccionController {
 		log.info("formConsultaMovimientosAltoBajoValor");
 		
 		BancoRequest bancoRequest = getBancoRequest();
-		//cceTransaccionDto.setFechaDesde(libreriaUtil.obtenerFechaHoy());
-		//cceTransaccionDto.setNumeroIdentificacion("hola");
 		
 		try {
 			List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
-			model.addAttribute("listaBancos", listaBancos);
+			model.addAttribute(LISTABANCOS, listaBancos);
 		} catch (CustomException e) {
 			e.printStackTrace();
 			model.addAttribute(LISTAERROR, e.getMessage());
 		}
 		
-		return "cce/formConsultarMovimientosAltoBajoValor";
+		return URLFORMCONSULTARMOVIMIENTOSALTOBAJOVALOR;
 		
 	}
 					
 	
-	
-				 //procesarConsultaMovimientosAltoBajoValorPageable	
 	@GetMapping("/procesarConsultaMovimientosAltoBajoValorPageable")
 	public String procesarConsultaMovimientosAltoBajoValorPageable(CceTransaccionDto cceTransaccionDto, 
 			Model model, Pageable page) {
@@ -143,8 +169,6 @@ public class CceTransaccionController {
 		
 		
 		BancoRequest bancoRequest = getBancoRequest();
-		//cceTransaccionDto.setFechaDesde(libreriaUtil.obtenerFechaHoy());
-		//cceTransaccionDto.setNumeroIdentificacion("hola");
 		
 		try {
 			
@@ -163,27 +187,27 @@ public class CceTransaccionController {
 				if(listaTransacciones.isEmpty()) {
 					model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
 					List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
-					model.addAttribute("listaBancos", listaBancos);
-					return "cce/formConsultarMovimientosAltoBajoValor";
+					model.addAttribute(LISTABANCOS, listaBancos);
+					return URLFORMCONSULTARMOVIMIENTOSALTOBAJOVALOR;
 				}
-				model.addAttribute("listaTransacciones", listaTransacciones);
-				model.addAttribute("codTransaccion", cceTransaccionDto.getCodTransaccion());
-				model.addAttribute("bancoDestino", cceTransaccionDto.getBancoDestino());
-				model.addAttribute("numeroIdentificacion", cceTransaccionDto.getNumeroIdentificacion());
-				model.addAttribute("fechaDesde", cceTransaccionDto.getFechaDesde());
-				model.addAttribute("fechaHasta", cceTransaccionDto.getFechaHasta());
-				return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+				model.addAttribute(LISTATRANSACCIONES, listaTransacciones);
+				model.addAttribute(CODTRANSACCION, cceTransaccionDto.getCodTransaccion());
+				model.addAttribute(BANCODESTINO, cceTransaccionDto.getBancoDestino());
+				model.addAttribute(NUMEROIDENTIFICACION, cceTransaccionDto.getNumeroIdentificacion());
+				model.addAttribute(FECHADESDE, cceTransaccionDto.getFechaDesde());
+				model.addAttribute(FECHAHASTA, cceTransaccionDto.getFechaHasta());
+				return URLLISTAMOVIMIENTOSCONSULTAALTOBAJOVALORPAGINATE;
 					
 			}else {
 				log.info("fechas invalidas");
 				listaError.add(MENSAJEFECHASINVALIDAS);
 				model.addAttribute(LISTAERROR, listaError);
-				return "cce/formConsultarMovimientosAltoBajoValor";
+				return URLFORMCONSULTARMOVIMIENTOSALTOBAJOVALOR;
 			}
 		} catch (CustomException e) {
 			e.printStackTrace();
 			model.addAttribute(LISTAERROR, e.getMessage());
-			return "cce/formConsultarMovimientosAltoBajoValor";
+			return URLFORMCONSULTARMOVIMIENTOSALTOBAJOVALOR;
 		}
 		
 		
@@ -212,20 +236,21 @@ public class CceTransaccionController {
 			if(listaTransacciones.isEmpty()) {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 			}
-			model.addAttribute("listaTransacciones", listaTransacciones);
-			model.addAttribute("codTransaccion", codTransaccion);
-			model.addAttribute("bancoDestino", bancoDestino);
-			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-			model.addAttribute("fechaDesde", fechaDesde);
-			model.addAttribute("fechaHasta", fechaHasta);
-			return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+			model.addAttribute(LISTATRANSACCIONES, listaTransacciones);
+			model.addAttribute(CODTRANSACCION, codTransaccion);
+			model.addAttribute(BANCODESTINO, bancoDestino);
+			model.addAttribute(NUMEROIDENTIFICACION, numeroIdentificacion);
+			model.addAttribute(FECHADESDE, fechaDesde);
+			model.addAttribute(FECHAHASTA, fechaHasta);
+			
 				
 		}else {
 			log.info("fechas invalidas");
 			listaError.add(MENSAJEFECHASINVALIDAS);
 			model.addAttribute(LISTAERROR, listaError);
-			return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+			
 		}
+		return URLLISTAMOVIMIENTOSCONSULTAALTOBAJOVALORPAGINATE;
 	}
 	
 	
@@ -238,8 +263,6 @@ public class CceTransaccionController {
 			@RequestParam("fechaDesde") String fechaDesde, @RequestParam("fechaHasta") String fechaHasta, 
 			Model model, Pageable page) {
 		log.info(endtoendId);
-		log.info("model: "+model);
-		log.info("listaTransacciones: "+model.getAttribute("listaTransacciones"));
 		
 		CceTransaccionDto cceTransaccionDto = service.findByEndtoendId(endtoendId);
 		if(cceTransaccionDto != null) {
@@ -262,25 +285,26 @@ public class CceTransaccionController {
 			cceTransaccionDto.setNombreEstadoBcv(nombreEstadoBcv(cceTransaccionDto.getEstadobcv()));
 			cceTransaccionDto.setMonto(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto())));
 			model.addAttribute("cceTransaccionDto", cceTransaccionDto);
-			model.addAttribute("codTransaccion", codTransaccion);
-			model.addAttribute("bancoDestino", bancoDestino);
-			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-			model.addAttribute("fechaDesde", fechaDesde);
-			model.addAttribute("fechaHasta", fechaHasta);
+			model.addAttribute(CODTRANSACCION, codTransaccion);
+			model.addAttribute(BANCODESTINO, bancoDestino);
+			model.addAttribute(NUMEROIDENTIFICACION, numeroIdentificacion);
+			model.addAttribute(FECHADESDE, fechaDesde);
+			model.addAttribute(FECHAHASTA, fechaHasta);
 			model.addAttribute("page", page.getPageNumber());
-			return "cce/formMovimientoAltoBajoValorDetalleFechas";
+			return URLFORMMOVIMIENTOSALTOBAJOVALORDETALLEFECHAS;
 		}else {
 			Page<CceTransaccion> listaTransacciones;
 			listaTransacciones = service.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion,
 					fechaDesde, fechaHasta, page);
 			listaTransacciones = convertirLista(listaTransacciones);
-			model.addAttribute("listaTransacciones", listaTransacciones);
-			model.addAttribute("codTransaccion", codTransaccion);
-			model.addAttribute("bancoDestino", bancoDestino);
-			model.addAttribute("numeroIdentificacion", numeroIdentificacion);
-			model.addAttribute("fechaDesde", fechaDesde);
-			model.addAttribute("fechaHasta", fechaHasta);
-			return "cce/listaMovimientosConsultaAltoBajoValorPaginate";
+			model.addAttribute(LISTATRANSACCIONES, listaTransacciones);
+			model.addAttribute(CODTRANSACCION, codTransaccion);
+			model.addAttribute(BANCODESTINO, bancoDestino);
+			model.addAttribute(NUMEROIDENTIFICACION, numeroIdentificacion);
+			model.addAttribute(FECHADESDE, fechaDesde);
+			model.addAttribute(FECHAHASTA, fechaHasta);
+			return URLLISTAMOVIMIENTOSCONSULTAALTOBAJOVALORPAGINATE;
+			 
 		}
 		
 		
@@ -294,10 +318,6 @@ public class CceTransaccionController {
 		AprobacionesConsultasRequest aprobacionesConsultasRequest = getAprobacionesConsultasRequest(); 
 		
 		CceMontoMaximoAproAuto cceMontoMaximoAproAuto = montoMaximoAproAutoService.buscarMontoMaximoAproAutoActual();
-		log.info("cceMontoMaximoAproAuto: "+cceMontoMaximoAproAuto);
-		log.info("montoTopeMaximoAproAuto: "+montoTopeMaximoAproAuto);
-		//libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto()))
-		
 		//request.getRemoteAddr()
 		aprobacionesConsultasRequest.setNumeroPagina(page);   
 		//aprobacionesConsultasRequest.setTamanoPagina(numeroRegistroPage);
@@ -315,26 +335,28 @@ public class CceTransaccionController {
 		DatosPaginacion datosPaginacion = new DatosPaginacion(0,0,0,0);
 		try {
 			AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
-			
+			CceTransaccionDto cceTransaccionDto = getTransaccionesMostrar();
+			model.addAttribute(NUMEROAPROBACIONESLOTES,cceTransaccionDto.getNumeroAprobacionesLotes());
+			model.addAttribute(MONTOAPROBACIONESLOTES,cceTransaccionDto.getMontoAprobacionesLotes());
 			if(aprobacionesConsultasResponse != null) {
 				listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
 				datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
-				model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-				model.addAttribute("datosPaginacion",datosPaginacion);
+				model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+				model.addAttribute(DATOSPAGINACION,datosPaginacion);
 			}else {
-				model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-				model.addAttribute("datosPaginacion",datosPaginacion);
+				model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+				model.addAttribute(DATOSPAGINACION,datosPaginacion);
 			}
 			
 		} catch (CustomException e) {
 			e.printStackTrace();
-			model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-			model.addAttribute("datosPaginacion",datosPaginacion);
-			model.addAttribute("mensajeError",e.getMessage());
+			model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+			model.addAttribute(DATOSPAGINACION,datosPaginacion);
+			model.addAttribute(MENSAJEERROR,e.getMessage());
 		}
 		
 		
-		return "cce/listaOperacionesPorAporbarAltoValorPaginate";
+		return URLLISTAOPERACIONESPORAPROBARAALTOVALORPAGINATE;
 	}
 	
 	
@@ -345,13 +367,9 @@ public class CceTransaccionController {
 		AprobacionesConsultasRequest aprobacionesConsultasRequest = getAprobacionesConsultasRequest(); 
 		
 		CceMontoMaximoAproAuto cceMontoMaximoAproAuto = montoMaximoAproAutoService.buscarMontoMaximoAproAutoActual();
-		log.info("cceMontoMaximoAproAuto: "+cceMontoMaximoAproAuto);
-		log.info("montoTopeMaximoAproAuto: "+montoTopeMaximoAproAuto);
-		//libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto()))
-		
+	
 		//request.getRemoteAddr()
 		aprobacionesConsultasRequest.setNumeroPagina(1);   
-		//aprobacionesConsultasRequest.setTamanoPagina(numeroRegistroPage);
 		aprobacionesConsultasRequest.setTamanoPagina(2147483647);
 		Filtros filtros = new Filtros();
 		//filtros.setReferencia(null);
@@ -363,7 +381,6 @@ public class CceTransaccionController {
 		
 		aprobacionesConsultasRequest.setFiltros(filtros);
 		List<BCVLBT> listaBCVLBTPorAprobar = new ArrayList<>();
-		DatosPaginacion datosPaginacion = new DatosPaginacion(0,0,0,0);
 		try {
 			AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
 			
@@ -374,7 +391,7 @@ public class CceTransaccionController {
 					cceTransaccionDto.setMontoAprobacionesLotes(new BigDecimal("0.00"));
 					model.addAttribute(LISTAERROR, MENSAJENORESULTADOLOTE);
 				}else {
-					httpSession.setAttribute("listaBCVLBTPorAprobar", listaBCVLBTPorAprobar);
+					httpSession.setAttribute(LISTABCVLBTPORAPROBAR, listaBCVLBTPorAprobar);
 					cceTransaccionDto.setNumeroAprobacionesLotes(listaBCVLBTPorAprobar.size());
 					cceTransaccionDto.setMontoAprobacionesLotes(montoAprobacionesLotes(listaBCVLBTPorAprobar));
 				}
@@ -391,14 +408,14 @@ public class CceTransaccionController {
 			cceTransaccionDto.setMontoAprobacionesLotes(new BigDecimal("0.00"));
 			model.addAttribute(LISTAERROR, e.getMessage());
 		}
-		return "cce/formAprobarAltoValorLoteAutomatico";
+		return URLFORMAPROBARALTOVALORLOTEAUTOMATICO;
 		
 	}
 	
 	@GetMapping("/procesarAprobarAltoValorLoteAutomatico")
 	public String procesarAprobarAltoValorLoteAutomatico(CceTransaccionDto cceTransaccionDto, Model model, HttpSession httpSession) {
 		log.info("procesarAprobarAltoValorLoteAutomatico");
-		List<BCVLBT> listaBCVLBTPorAprobar =(List<BCVLBT>)httpSession.getAttribute("listaBCVLBTPorAprobar");
+		List<BCVLBT> listaBCVLBTPorAprobar =(List<BCVLBT>)httpSession.getAttribute(LISTABCVLBTPORAPROBAR);
 		for (BCVLBT bcvlbt : listaBCVLBTPorAprobar) {
 			log.info("bcvlbt: "+bcvlbt);
 		}
@@ -416,6 +433,7 @@ public class CceTransaccionController {
 		DatosPaginacion datosPaginacion = new DatosPaginacion(0,0,0,0);
 		AprobacionesConsultasRequest aprobacionesConsultasRequest = getAprobacionesConsultasRequest();
 		CceMontoMaximoAproAuto cceMontoMaximoAproAuto = montoMaximoAproAutoService.buscarMontoMaximoAproAutoActual();
+		
 		try {
 			if (result.hasErrors()) {
 				for (ObjectError error : result.getAllErrors()) {
@@ -437,8 +455,10 @@ public class CceTransaccionController {
 			Filtros filtros = new Filtros();
 			//filtros.setReferencia(null);
 			filtros.setStatus("I");
-			log.info("montoSerch: "+montoSerch(cceTransaccionDtoSearch.getMonto()));
 			BigDecimal montoSerch = montoSerch(cceTransaccionDtoSearch.getMonto());
+			CceTransaccionDto cceTransaccionDto = getTransaccionesMostrar();
+			model.addAttribute(NUMEROAPROBACIONESLOTES,cceTransaccionDto.getNumeroAprobacionesLotes());
+			model.addAttribute(MONTOAPROBACIONESLOTES,cceTransaccionDto.getMontoAprobacionesLotes());
 			if(montoSerch.compareTo(BigDecimal.ZERO) == 0) { 
 				filtros.setMontoDesde(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto())));
 				filtros.setMontoHasta(montoTopeMaximoAproAuto);
@@ -452,23 +472,25 @@ public class CceTransaccionController {
 					if(listaBCVLBTPorAprobar.isEmpty()) {
 						model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 					}
-					model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-					model.addAttribute("datosPaginacion",datosPaginacion);
+					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+					model.addAttribute(DATOSPAGINACION,datosPaginacion);
 					model.addAttribute("monto", montoSerch);
-					return "cce/listaOperacionesPorAporbarAltoValorPaginate";
+					
 				}else {
-					model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-					model.addAttribute("datosPaginacion",datosPaginacion);
+					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+					model.addAttribute(DATOSPAGINACION,datosPaginacion);
+					
 				}
-				
+				return "cce/listaOperacionesPorAporbarAltoValorPaginate";
 			}else {
 				if(montoSerch(cceTransaccionDtoSearch.getMonto()).compareTo(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto()))) < 0) {
 					log.info("entro por fuera rango");
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 					listaError.add(MENSAJEFUERARANGO);
 					model.addAttribute(LISTAERROR, listaError);
-					model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-					model.addAttribute("datosPaginacion",datosPaginacion);
+					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+					model.addAttribute(DATOSPAGINACION,datosPaginacion);
 					return "cce/listaOperacionesPorAporbarAltoValorPaginate";
 				}
 				filtros.setMontoDesde(cceTransaccionDtoSearch.getMonto());
@@ -482,29 +504,92 @@ public class CceTransaccionController {
 					if(listaBCVLBTPorAprobar.isEmpty()) {
 						model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 					}
-					model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-					model.addAttribute("datosPaginacion",datosPaginacion);
+					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+					model.addAttribute(DATOSPAGINACION,datosPaginacion);
 					model.addAttribute("monto", montoSerch);
-					return "cce/listaOperacionesPorAporbarAltoValorPaginateSearhMonto";
+					
 				}else {
-					model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-					model.addAttribute("datosPaginacion",datosPaginacion);
+					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+					model.addAttribute(DATOSPAGINACION,datosPaginacion);
 				}
-				
+				return "cce/listaOperacionesPorAporbarAltoValorPaginateSearhMonto";
 			}
 			
 			
 			
 		} catch (CustomException e) {
 			e.printStackTrace();
-			model.addAttribute("listaBCVLBTPorAprobar",listaBCVLBTPorAprobar);
-			model.addAttribute("datosPaginacion",datosPaginacion);
-			model.addAttribute("mensajeError",e.getMessage());
+			model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+			model.addAttribute(DATOSPAGINACION,datosPaginacion);
+			model.addAttribute(MENSAJEERROR,e.getMessage());
+			return "cce/listaOperacionesPorAporbarAltoValorPaginate";
 		}
 		
-		return "cce/listaOperacionesPorAporbarAltoValorPaginate";
+		
 	}
 	
+	
+	@GetMapping("/searchOredenante")
+	public String searchOredenante(@ModelAttribute("cceTransaccionDtoSearch") CceTransaccionDto cceTransaccionDtoSearch,
+			 Model model) {
+		log.info("ordenante: " + cceTransaccionDtoSearch.getNumeroIdentificacion());
+		List<String> listaError = new ArrayList<>();
+		List<BCVLBT> listaBCVLBTPorAprobar = new ArrayList<>();
+		DatosPaginacion datosPaginacion = new DatosPaginacion(0,0,0,0);
+		AprobacionesConsultasRequest aprobacionesConsultasRequest = getAprobacionesConsultasRequest();
+		CceMontoMaximoAproAuto cceMontoMaximoAproAuto = montoMaximoAproAutoService.buscarMontoMaximoAproAutoActual();
+		
+		try {
+			CceTransaccionDto cceTransaccionDto = getTransaccionesMostrar();
+			log.info("cceTransaccionDtoMostar: "+cceTransaccionDto.getNumeroAprobacionesLotes() +"-"+cceTransaccionDto.getMontoAprobacionesLotes());
+			model.addAttribute(NUMEROAPROBACIONESLOTES,cceTransaccionDto.getNumeroAprobacionesLotes());
+			model.addAttribute(MONTOAPROBACIONESLOTES,cceTransaccionDto.getMontoAprobacionesLotes());
+			//request.getRemoteAddr()
+			aprobacionesConsultasRequest.setNumeroPagina(1);   
+			//aprobacionesConsultasRequest.setTamanoPagina(numeroRegistroPage);
+			aprobacionesConsultasRequest.setTamanoPagina(5);
+			Filtros filtros = new Filtros();
+			//filtros.setReferencia(null);
+			filtros.setStatus("I");
+			filtros.setMontoDesde(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto())));
+			filtros.setMontoHasta(montoTopeMaximoAproAuto);
+			filtros.setNroIdEmisor(cceTransaccionDtoSearch.getNumeroIdentificacion());
+			
+			
+			aprobacionesConsultasRequest.setFiltros(filtros);
+			AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
+			log.info("aprobacionesConsultasResponse "+aprobacionesConsultasResponse);
+			if(aprobacionesConsultasResponse != null) {
+				listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
+				datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
+				if(listaBCVLBTPorAprobar.isEmpty()) {
+					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				}
+				model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+				model.addAttribute(DATOSPAGINACION,datosPaginacion);
+				model.addAttribute("ordenante", cceTransaccionDtoSearch.getNumeroIdentificacion());
+				if(cceTransaccionDtoSearch.getNumeroIdentificacion().equals("")) {
+					log.info("es blanco"+cceTransaccionDtoSearch.getNumeroIdentificacion());
+					return "cce/listaOperacionesPorAporbarAltoValorPaginate";
+				}
+				return "cce/listaOperacionesPorAporbarAltoValorPaginateSearhOrdenante";
+			}else {
+				model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+				model.addAttribute(DATOSPAGINACION,datosPaginacion);
+				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				return "cce/listaOperacionesPorAporbarAltoValorPaginateSearhOrdenante";
+			}
+		} catch (CustomException e) {
+			e.printStackTrace();
+			model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+			model.addAttribute(DATOSPAGINACION,datosPaginacion);
+			model.addAttribute(MENSAJEERROR,e.getMessage());
+			return "cce/listaOperacionesPorAporbarAltoValorPaginate";
+		}
+		
+		
+	}
 	
 	@GetMapping("/procesarMovimientosPorAprobarAltoValorSearhMonto")
 	public String consultaMovimientosPorAprobarAltovalorSearhMonto(@RequestParam("monto") BigDecimal monto, 
@@ -534,7 +619,10 @@ public class CceTransaccionController {
 		DatosPaginacion datosPaginacion = new DatosPaginacion(0,0,0,0);
 		try {
 			AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
-			
+			CceTransaccionDto cceTransaccionDto = getTransaccionesMostrar();
+			log.info("cceTransaccionDtoMostar: "+cceTransaccionDto.getNumeroAprobacionesLotes() +"-"+cceTransaccionDto.getMontoAprobacionesLotes());
+			model.addAttribute(NUMEROAPROBACIONESLOTES,cceTransaccionDto.getNumeroAprobacionesLotes());
+			model.addAttribute(MONTOAPROBACIONESLOTES,cceTransaccionDto.getMontoAprobacionesLotes());
 			if(aprobacionesConsultasResponse != null) {
 				listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
 				datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
@@ -578,6 +666,62 @@ public class CceTransaccionController {
 		
 		return montoAprobacionesLotes;
 	}
+	
+	public CceTransaccionDto getTransaccionesMostrar() throws CustomException{
+		
+		CceTransaccionDto cceTransaccionDto = new CceTransaccionDto();
+		AprobacionesConsultasRequest aprobacionesConsultasRequest = getAprobacionesConsultasRequest();
+		CceMontoMaximoAproAuto cceMontoMaximoAproAuto = montoMaximoAproAutoService.buscarMontoMaximoAproAutoActual();
+		log.info("cceMontoMaximoAproAuto: "+cceMontoMaximoAproAuto);
+		log.info("montoTopeMaximoAproAuto: "+montoTopeMaximoAproAuto);
+		//libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceTransaccionDto.getMonto()))
+		
+		//request.getRemoteAddr()
+		aprobacionesConsultasRequest.setNumeroPagina(1);   
+		//aprobacionesConsultasRequest.setTamanoPagina(numeroRegistroPage);
+		aprobacionesConsultasRequest.setTamanoPagina(2147483647);
+		Filtros filtros = new Filtros();
+		//filtros.setReferencia(null);
+		filtros.setStatus("I");
+		filtros.setMontoDesde(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto())));
+		filtros.setMontoHasta(montoTopeMaximoAproAuto);
+		
+		
+		
+		aprobacionesConsultasRequest.setFiltros(filtros);
+		List<BCVLBT> listaBCVLBTPorAprobar = new ArrayList<>();
+		try {
+			AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
+			
+			if(aprobacionesConsultasResponse != null) {
+				listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
+				if(listaBCVLBTPorAprobar.isEmpty()) {
+					cceTransaccionDto.setNumeroAprobacionesLotes(0);
+					cceTransaccionDto.setMontoAprobacionesLotes(new BigDecimal("0.00"));
+					
+				}else {
+					
+					cceTransaccionDto.setNumeroAprobacionesLotes(listaBCVLBTPorAprobar.size());
+					cceTransaccionDto.setMontoAprobacionesLotes(montoAprobacionesLotes(listaBCVLBTPorAprobar));
+				}
+				
+			}else {
+				cceTransaccionDto.setNumeroAprobacionesLotes(0);
+				cceTransaccionDto.setMontoAprobacionesLotes(new BigDecimal("0.00"));
+				
+			}
+			
+		} catch (CustomException e) {
+			e.printStackTrace();
+			cceTransaccionDto.setNumeroAprobacionesLotes(0);
+			cceTransaccionDto.setMontoAprobacionesLotes(new BigDecimal("0.00"));
+			
+		}
+		return cceTransaccionDto;
+		
+		
+	}
+	
 	
 	
 	public boolean isFechaValidaDesdeHasta(String fechaDesde, String fechaHasta) {

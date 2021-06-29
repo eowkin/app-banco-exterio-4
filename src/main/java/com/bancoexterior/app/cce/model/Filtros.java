@@ -28,6 +28,15 @@ public class Filtros implements Serializable{
 	@JsonProperty("referencia")
 	private Integer referencia;
 	
+	@JsonProperty("nroIdEmisor")
+	private String nroIdEmisor;
+	
+	@JsonProperty("fechaDesde")
+	private String fechaDesde;
+	
+	@JsonProperty("fechaHasta")
+	private String fechaHasta;
+	
 	/**
 	 * 
 	 */

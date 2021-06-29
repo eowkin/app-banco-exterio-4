@@ -393,11 +393,10 @@ public class AgenciaController {
 	public void setGenericos(Model model, HttpServletRequest request) {
 		Agencia agenciaSearch = new Agencia();
 		model.addAttribute("agenciaSearch", agenciaSearch);
-		String uri = request.getRequestURI();
-		log.info("uri: "+uri);
-		String[] arrUri = uri.split("/");
-
-		arrUri[0] = "Home";
-		model.addAttribute("arrUri", arrUri);
+		
+		String[] arrUriP = new String[2]; 
+		arrUriP[0] = "Home";
+		arrUriP[1] = "agencia";
+		model.addAttribute("arrUri", arrUriP);
 	}
 }

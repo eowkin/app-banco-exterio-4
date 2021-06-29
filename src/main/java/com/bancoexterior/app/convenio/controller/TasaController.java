@@ -279,12 +279,11 @@ public class TasaController {
 	
 	@ModelAttribute
 	public void setGenericos(Model model, HttpServletRequest request) {
-		String uri = request.getRequestURI();
-		log.info("uri: "+uri);
-		String[] arrUri = uri.split("/");
-
-		arrUri[0] = "Home";
-		model.addAttribute("arrUri", arrUri);
+		
+		String[] arrUriP = new String[2]; 
+		arrUriP[0] = "Home";
+		arrUriP[1] = "tasa";
+		model.addAttribute("arrUri", arrUriP);
 	}
 	
 	

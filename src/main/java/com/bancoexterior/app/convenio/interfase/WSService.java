@@ -10,6 +10,8 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -26,11 +28,27 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
+@PropertySource( value = "file://"+"${des.seed.ruta}"+"application.properties", ignoreResourceNotFound = false)
 public class WSService implements IWSService{
 	
 	 private static final Logger LOGGER = LogManager.getLogger(WSService.class);
 	 private static final boolean VERIFYSSL = false;
 	 private static final HostnameVerifier VERIFIER = NoopHostnameVerifier.INSTANCE;
+	 
+	 @Value("${des.secret}")
+	 private String secret;
+	 
+	 @Value("${des.iss}")
+	 private String iss;
+	 
+	 @Value("${des.xapikey}")
+	 private String xapikey;
+	 
+	 @Value("${sconfig.deskey}")
+	 private String sconfigDesKey;
+		
+	 @Value("${sconfig.prokey}")
+	 private String sconfigProKey;
 	 
 	 @Override
 	 public WSResponse post(WSRequest request) {
@@ -39,24 +57,17 @@ public class WSService implements IWSService{
 		 WSResponse response;
 		 
 		 
-		 //String secret = "VuL4HVoKOVvhNZhzHUkaOTZKbLB9Kwh7";
-		 //String iss  =  "GBpXZjE9BCjQlh9S0umaYgFfz0TW98nI";
-		 String secret = "PQQcM04yIebcgt4Cl53aHTzsk1BOltu1";
-		 String iss  =  "GPP4w3Qb7h62LJnrNj2XOAVS9uX2VS93";
+		 log.info("sconfigDesKey: "+sconfigDesKey);
+		 log.info("sconfigProKey: "+sconfigProKey);
 		 
-
-		 
-			
-		 //Utils.createJWT(null, env.getProperty("microservicio.jwt.key"), null, new Date(System.currentTimeMillis()+Long.parseLong(env.getProperty("microservicio.jwt.time"))),env.getProperty("microservicio.jwt.secret"),new Date(System.currentTimeMillis())))
-		 String bearer2 = this.createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
+		 String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
 		 try {
 			 initUniRest (request.getSocketTimeout(),request.getConnectTimeout() );
 			 retorno = Unirest.post(request.getUrl()) 
 			  .header("Content-Type", request.getContenType())
 			  .header("Accept-Charset", "UTF-8")
 			  .header("Authorization","Bearer "+ bearer2)
-			  //.header("x-api-key","Fr6feu2Pjfzyg6QZKscxzpADxAl2w3k0")
-			  .header("x-api-key","tGRl9gKRk1qwwdGx2rK8XzOY2NcG11r5")
+			  .header("x-api-key",xapikey)
 			  .body(request.getBody()).asString();
 			  response = new WSResponse(retorno);
 			 
@@ -94,7 +105,7 @@ public class WSService implements IWSService{
 		}
 		
 		
-		public static String createJWT(String id, String issuer, String subject, Date exp ,String secret, Date issuedat) {
+		public  String createJWT(String id, String issuer, String subject, Date exp ,String secret, Date issuedat) {
 			
 			
 	        //The JWT signature algorithm we will be using to sign the token
@@ -125,30 +136,15 @@ public class WSService implements IWSService{
 			HttpResponse<String> retorno = null;
 			 WSResponse response;
 			 
-			 
-			 //String secret = "VuL4HVoKOVvhNZhzHUkaOTZKbLB9Kwh7";
-			 //String iss  =  "GBpXZjE9BCjQlh9S0umaYgFfz0TW98nI";
-			 String secret = "PQQcM04yIebcgt4Cl53aHTzsk1BOltu1";
-			 String iss  =  "GPP4w3Qb7h62LJnrNj2XOAVS9uX2VS93";
+			 String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
 				
-			 //Utils.createJWT(null, env.getProperty("microservicio.jwt.key"), null, new Date(System.currentTimeMillis()+Long.parseLong(env.getProperty("microservicio.jwt.time"))),env.getProperty("microservicio.jwt.secret"),new Date(System.currentTimeMillis())))
-			 String bearer2 = this.createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
-				
-			 
-			 log.info("bearer2: "+bearer2);
-			 
-			 
-			    
-
-			 
 			 try {
 				 initUniRest (request.getSocketTimeout(),request.getConnectTimeout() );
 				 retorno = Unirest.put(request.getUrl()) 
 				  .header("Content-Type", request.getContenType())
 				  .header("Accept-Charset", "UTF-8")
 				  .header("Authorization","Bearer "+ bearer2)
-				  //.header("x-api-key","Fr6feu2Pjfzyg6QZKscxzpADxAl2w3k0")
-				  .header("x-api-key","tGRl9gKRk1qwwdGx2rK8XzOY2NcG11r5")
+				  .header("x-api-key",xapikey)
 				  .body(request.getBody()).asString();
 				  response = new WSResponse(retorno);
 				 
