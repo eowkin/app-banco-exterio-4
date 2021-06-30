@@ -10,4 +10,6 @@ public interface IBancoService {
 
 	public List<Banco> listaBancos (BancoRequest bancoRequest) throws CustomException;
 	
+	public Banco buscarBanco(BancoRequest bancoRequest) throws CustomException;
+	
 }

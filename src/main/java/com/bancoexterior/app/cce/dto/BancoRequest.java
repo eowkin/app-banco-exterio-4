@@ -17,6 +17,9 @@ public class BancoRequest implements Serializable{
 	@JsonProperty("idUsuario")
 	private String idUsuario;
 	
+	@JsonProperty("codBanco")
+	private String codBanco;
+	
 	
 	/**
 	 * 

@@ -44,11 +44,12 @@ public class WSService implements IWSService{
 	 @Value("${des.xapikey}")
 	 private String xapikey;
 	 
+	 /*
 	 @Value("${sconfig.deskey}")
 	 private String sconfigDesKey;
 		
 	 @Value("${sconfig.prokey}")
-	 private String sconfigProKey;
+	 private String sconfigProKey;*/
 	 
 	 @Override
 	 public WSResponse post(WSRequest request) {
@@ -57,8 +58,8 @@ public class WSService implements IWSService{
 		 WSResponse response;
 		 
 		 
-		 log.info("sconfigDesKey: "+sconfigDesKey);
-		 log.info("sconfigProKey: "+sconfigProKey);
+		 //log.info("sconfigDesKey: "+sconfigDesKey);
+		 //log.info("sconfigProKey: "+sconfigProKey);
 		 
 		 String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
 		 try {

@@ -76,6 +76,10 @@ public class CceTransaccionDto implements Serializable{
 	
 	private String fechaHasta;
 	
+	private String horaDesde;
+	
+	private String horaHasta;
+	
 	private int numeroAprobacionesLotes;
 	
 	private BigDecimal montoAprobacionesLotes;

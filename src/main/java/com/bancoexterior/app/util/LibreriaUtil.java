@@ -69,6 +69,30 @@ public class LibreriaUtil {
 		return valorAno+valorMes+valorDia+valorHora+valorMin+valorSeg;
 	}
 	
+	public String obtenerIdSesionCce() {
+		LocalDateTime ahora = LocalDateTime.now();
+		String valorAno = "";
+		valorAno = ahora.getYear()+"";
+		
+		
+		String valorMes = "";
+		if(ahora.getMonthValue() < 10) {
+			valorMes = "0"+ahora.getMonthValue();
+		}else {
+			valorMes = ""+ahora.getMonthValue();
+		}
+		
+		
+		String valorDia = "";
+		if(ahora.getDayOfMonth() < 10) {
+			valorDia = "0"+ahora.getDayOfMonth();
+		}else {
+			valorDia = ""+ahora.getDayOfMonth();
+		}
+		
+		return valorDia+valorMes+valorAno;
+	}
+	
 	public String obtenerFechaHoy() {
 		LocalDateTime ahora = LocalDateTime.now();
 		String valorAno = "";
@@ -113,7 +137,8 @@ public class LibreriaUtil {
 	* primero elimina los puntos y luego remplaza las comas en puntos.
 	*/
 	//String formatoValido = num.replace(".", "").replace(",", ".");
-	String formatoValido = num.replace(",", "");	
+	//String formatoValido = num.replace(",", "");
+		String formatoValido = num.replace(",", ".");	
 	//System.out.println(formatoValido);
 	money = new BigDecimal(formatoValido);
 	}//if

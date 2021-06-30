@@ -16,6 +16,8 @@ public class BancoResponse implements Serializable{
 	
 	private Resultado resultado;
 	
+	private Banco datosBanco;
+	
 	private List<Banco> lisBancos;
 	
 	
@@ -23,6 +25,7 @@ public class BancoResponse implements Serializable{
 	public BancoResponse() {
 		super();
 		this.resultado = new Resultado();
+		this.datosBanco = new Banco();
 		this.lisBancos = new ArrayList<>();
 	}
 

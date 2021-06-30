@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.bancoexterior.app.cce.dto.AprobacionesConsultasRequest;
 import com.bancoexterior.app.cce.dto.AprobacionesConsultasResponse;
+import com.bancoexterior.app.cce.dto.FiToFiCustomerCreditTransferRequest;
+import com.bancoexterior.app.cce.model.BCVLBT;
 import com.bancoexterior.app.convenio.exception.CustomException;
 import com.bancoexterior.app.convenio.interfase.IWSService;
 import com.bancoexterior.app.convenio.interfase.model.WSRequest;
@@ -97,7 +99,58 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 			return null;
 		}
 	}
-	
-	
 
+
+
+	@Override
+	public void prueba(FiToFiCustomerCreditTransferRequest fiToFiCustomerCreditTransferRequest) throws CustomException {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	@Override
+	public BCVLBT buscarBCVLBT(AprobacionesConsultasRequest aprobacionesConsultasRequest) throws CustomException {
+		WSRequest wsrequest = getWSRequest();
+		WSResponse retorno;
+		String aprobacionesConsultasRequestJSON;
+		aprobacionesConsultasRequestJSON = new Gson().toJson(aprobacionesConsultasRequest);
+		log.info("aprobacionesConsultasRequestJSON: "+aprobacionesConsultasRequestJSON);
+		wsrequest.setBody(aprobacionesConsultasRequestJSON);
+		wsrequest.setUrl("http://172.19.50.104:9001/api/des/V1/lbtr/aprobaciones/consultas");
+		log.info("antes de llamarte WS en listaTransaccionesPorAporbarAltoValorPaginacion");
+		retorno = wsService.post(wsrequest);
+		log.info("retorno: "+retorno);
+		if (retorno.isExitoso()) {
+			if (retorno.getStatus() == 200) {
+				return respuesta2xxBCVLBT(retorno);
+			} else {
+				throw new CustomException(respuesta4xxListaTransaccionesPorAporbarAltoValorPaginacion(retorno));
+			}
+		} else {
+			throw new CustomException(ERRORMICROCONEXION);
+			
+		}
+	}
+	
+	
+	public BCVLBT respuesta2xxBCVLBT(WSResponse retorno) {
+		try {
+			AprobacionesConsultasResponse aprobacionesConsultasResponse = mapper.jsonToClass(retorno.getBody(), AprobacionesConsultasResponse.class);	
+			log.info(aprobacionesConsultasResponse.getResultado().getCodigo());
+			if(aprobacionesConsultasResponse.getResultado().getCodigo().equals("0000")){
+	        	log.info("Respusta codigo 0000 si de clienteResponse");
+	        	return aprobacionesConsultasResponse.getOperaciones().get(0);
+	        	
+	        }else {
+	        	return null;
+	        }
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
 }

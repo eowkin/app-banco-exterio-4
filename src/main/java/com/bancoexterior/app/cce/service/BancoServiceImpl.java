@@ -105,4 +105,52 @@ public class BancoServiceImpl implements IBancoService{
 		}
 	}
 
+	public Banco respuest2xxBanco(WSResponse retorno) {
+		try {
+			BancoResponse bancoResponse = mapper.jsonToClass(retorno.getBody(), BancoResponse.class);
+			if(bancoResponse.getResultado().getCodigo().equals("0000")){
+	        	return bancoResponse.getDatosBanco();
+	        }else {
+	        	return null;
+	        }
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+        
+	}
+
+
+
+
+	@Override
+	public Banco buscarBanco(BancoRequest bancoRequest) throws CustomException {
+		WSRequest wsrequest = getWSRequest();
+		WSResponse retorno;
+		String bancoRequestJSON;
+		bancoRequestJSON = new Gson().toJson(bancoRequest);
+		
+		wsrequest.setBody(bancoRequestJSON);
+		log.info("bancoRequestJSON: "+bancoRequestJSON);
+		//
+		//http://172.19.148.7:9047/api/v1/bancos/cdinme/consultasbancos
+		//https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos
+		log.info("urlConsulta: "+"http://172.19.148.7:9047/api/v1/bancos/cdinme/consultasbancos");
+		//log.info("urlConsulta: "+"https://172.19.148.51:8443/api/v1/bancos/cdinme/consultasbancos");
+		//wsrequest.setUrl("https://172.19.148.51:8443/api/v1/bancos/cdinme/consultasbancos");
+		wsrequest.setUrl("http://172.19.148.7:9047/api/v1/bancos/cdinme/consultasbancos");
+		log.info("antes de llamarte WS en buscarBanco");
+		retorno = wsService.post(wsrequest);
+		log.info("retorno: "+retorno);
+		if(retorno.isExitoso()) {
+			if(retorno.getStatus() == 200) {
+	            return respuest2xxBanco(retorno);
+			}else {
+				throw new CustomException(respuesta4xx(retorno));	
+			}
+		}else {
+			throw new CustomException(ERRORMICROCONEXION);
+		}
+	}
+
 }

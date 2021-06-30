@@ -42,19 +42,21 @@
 				 	   </div>
 				      </div>
 				    </div><!--/.col-->
-          	<div class="row">
-          		
-          	
-          	
-          	
+		    <div class="row">
+		    	
+		    
 		      <div class="col-lg-1-12">
 		        <div class="card">
 		          <div class="card-header">
-		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar
+		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar Searh Fechas
 		            <p align="right"></p>
 		             <div class="my-2">
 		            		<div th:if="${listaError}" class="alert alert-danger" role="alert">
 				            		Por favor corrija los siguientes errores:
+				            		<!-- 
+				            		<ul>
+				            			<li th:each="err : ${#fields.errors('*')}"  th:text="${err}"></li>
+				            		</ul> -->
 				            		<ul>
 				            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
 				            		</ul>
@@ -65,7 +67,7 @@
             					<button type="submit" class="btn btn-primary mb-3">Buscar por Monto</button>            
           					</form>
         			</div>
-		            <div class="my-2">
+        			<div class="my-2">
 		            		
          					<form th:action="@{/ccetransacciones/searchOredenante}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-inline">
         						
@@ -73,7 +75,8 @@
             					<button type="submit" class="btn btn-primary mb-3">Buscar por Rif-CI Ordenante</button>            
           					</form>
         			</div>
-        			<div class="my-2">
+		            
+		            <div class="my-2">
         				<div th:if="${listaErrorFecha}" class="alert alert-danger" role="alert">
 				            		Por favor corrija los siguientes errores:
 				            		<ul>
@@ -159,13 +162,13 @@
 		            <nav th:if="${datosPaginacion.totalPaginas > 0}" aria-label="Page navigation example" > 
 		            	<ul class="pagination justify-content-center">         
 		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == 1 ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValor/{page}  (page=${datosPaginacion.paginaActual - 1})}" class="page-link">Anterior</a>
+		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhFechaHora(page=${datosPaginacion.paginaActual - 1}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Anterior</a>
 		            		</li> 
 		            		<li class="page-item">
 								<a class="page-link"  th:text="${'Pagina '+ datosPaginacion.paginaActual + ' -  '+ datosPaginacion.totalPaginas}" th:title="${'Page '+ datosPaginacion.paginaActual}" data-toggle="tooltip"></a>
 							</li>
 		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == (datosPaginacion.totalPaginas) ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValor/{page}  (page=${datosPaginacion.paginaActual + 1})}" class="page-link">Siguiente</a>
+		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhFechaHora(page=${datosPaginacion.paginaActual + 1}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Siguiente</a>
 		            		</li>  
 		            	</ul> 
 		            </nav>	
