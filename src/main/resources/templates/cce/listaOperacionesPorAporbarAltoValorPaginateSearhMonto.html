@@ -32,7 +32,7 @@
         <div class="container-fluid">
           <div class="animated fadeIn">
           <div class="col-sm-4 col-md-4">
-				      <div class="card text-white bg-danger">
+				      <div class="card text-white bg-primary">
 				        <div class="card-header">
 							   Transacciones Pendientes-Aprobar
 				        </div>
@@ -50,20 +50,33 @@
 		          <div class="card-header">
 		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar Searh Monto
 		            <p align="right"></p>
+		            <div class="my-2">
+		            		
+         					<form th:action="@{/ccetransacciones/searchBancoBeneficiario}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-horizontal">
+        						<div class="form-group row">
+						            <div class="col-sm-6">
+						              <select  class="form-control"  name="bancoDestino" th:field="*{bancoDestino}">
+						                <option value="">----Selecionar Banco----</option>
+						                <option th:each = "banco: ${listaBancos}" th:value="${banco.codBanco}" th:text="${banco.nbBanco}"></option>
+						              </select>
+						            </div>
+						          </div>
+					            <div>
+					            	<button type="submit" class="btn btn-primary mb-3">Buscar por Banco</button>
+					            </div>	            
+          					</form>
+        			</div>
 		             <div class="my-2">
 		            		<div th:if="${listaError}" class="alert alert-danger" role="alert">
 				            		Por favor corrija los siguientes errores:
-				            		<!-- 
-				            		<ul>
-				            			<li th:each="err : ${#fields.errors('*')}"  th:text="${err}"></li>
-				            		</ul> -->
 				            		<ul>
 				            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
 				            		</ul>
 				            	</div>
          					<form th:action="@{/ccetransacciones/searchMonto}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-inline">
         						
-        						<input type="text"  class="form-control mb-3"  th:field="*{monto}" maxlength="16" placeholder="Escriba una búsqueda" >&nbsp;
+        						<input type="text"  class="form-control mb-3"  th:field="*{montoDesde}" maxlength="16" placeholder="Monto Desde" required="required">&nbsp;
+        						<input type="text"  class="form-control mb-3"  th:field="*{montoHasta}" maxlength="16" placeholder="Monto Hasta" required="required">&nbsp;
             					<button type="submit" class="btn btn-primary mb-3">Buscar por Monto</button>            
           					</form>
         			</div>
@@ -122,7 +135,7 @@
 		            <table class="table">
 		              <thead>
 		                <tr>
-		                  <th>Referencia BCV</th>
+		                  <th>Referencia IBS</th>
 		                  <th>Cta. Ordenante</th>
 		                  <th>Cta. Beneficiario</th>
 		                  <th>Monto</th>
@@ -136,7 +149,7 @@
 		                  <td th:text="${BCVLBT.referencia}"></td>
 		                  <td th:text="${BCVLBT.nroCuentaOrigen}"></td>
 		                  <td th:text="${BCVLBT.nroCuentaDestino}"></td>
-		                  <td th:text="${BCVLBT.monto}"></td>
+		                  <td th:text="${BCVLBT.montoString}"></td>
 		                  <td th:text="${BCVLBT.fechaTransaccion}"></td>
 		                  <td>
 		                  	<span class="badge badge-danger" th:if="${BCVLBT.status == 'I' }">Por aprobar</span>
@@ -162,13 +175,13 @@
 		            <nav th:if="${datosPaginacion.totalPaginas > 0}" aria-label="Page navigation example" > 
 		            	<ul class="pagination justify-content-center">         
 		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == 1 ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhMonto(page=${datosPaginacion.paginaActual - 1}, monto=${monto})}" class="page-link">Anterior</a>
+		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhMonto(page=${datosPaginacion.paginaActual - 1}, montoDesde=${montoDesde}, montoHasta=${montoHasta})}" class="page-link">Anterior</a>
 		            		</li> 
 		            		<li class="page-item">
 								<a class="page-link"  th:text="${'Pagina '+ datosPaginacion.paginaActual + ' -  '+ datosPaginacion.totalPaginas}" th:title="${'Page '+ datosPaginacion.paginaActual}" data-toggle="tooltip"></a>
 							</li>
 		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == (datosPaginacion.totalPaginas) ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhMonto(page=${datosPaginacion.paginaActual + 1}, monto=${monto})}" class="page-link">Siguiente</a>
+		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValorSearhMonto(page=${datosPaginacion.paginaActual + 1}, montoDesde=${montoDesde}, montoHasta=${montoHasta})}" class="page-link">Siguiente</a>
 		            		</li>  
 		            	</ul> 
 		            </nav>	

@@ -37,6 +37,9 @@ public class Filtros implements Serializable{
 	@JsonProperty("fechaHasta")
 	private String fechaHasta;
 	
+	@JsonProperty("bancoBeneficiario")
+	private String bancoBeneficiario;
+	
 	/**
 	 * 
 	 */

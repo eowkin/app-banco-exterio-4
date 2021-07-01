@@ -72,6 +72,9 @@ public class BCVLBT implements Serializable{
 	@JsonProperty("codUsuario")
 	private String codUsuario;
 	
+	
+	private String montoString;
+	
 	/**
 	 * 
 	 */

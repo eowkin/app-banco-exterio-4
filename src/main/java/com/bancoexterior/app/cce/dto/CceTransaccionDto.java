@@ -80,9 +80,16 @@ public class CceTransaccionDto implements Serializable{
 	
 	private String horaHasta;
 	
+	private String bancoBenefiaciario;
+	
 	private int numeroAprobacionesLotes;
 	
 	private BigDecimal montoAprobacionesLotes;
+	
+	private BigDecimal montoDesde;
+	
+	private BigDecimal montoHasta;
+	
 	/**
 	 * 
 	 */

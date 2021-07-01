@@ -5,16 +5,16 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
-
+import java.util.Locale;
 
 import org.springframework.stereotype.Component;
 
 @Component
 public class LibreriaUtil {
 	
-	
-    //public static final String NUMEROFORMAT                       = "#,##0.00";
-	public static final String NUMEROFORMAT                       = "###0.00";
+	//public static final String NUMEROFORMAT                       = "#.##0,00";
+    public static final String NUMEROFORMAT                       = "#,##0.00";
+	//public static final String NUMEROFORMAT                       = "###0.00";
     public static final char COMA                                 = ',';
     public static final char PUNTO                                = '.';
 
@@ -126,23 +126,21 @@ public class LibreriaUtil {
 	* @param num
 	* @return BigDecimal
 	*/
-	public  BigDecimal stringToBigDecimal(String num)
-	{
-	//se inicializa en 0
-	BigDecimal money = BigDecimal.ZERO;
-	//sino esta vacio entonces
-	if(!num.isEmpty())
-	{
-	/**
-	* primero elimina los puntos y luego remplaza las comas en puntos.
-	*/
-	//String formatoValido = num.replace(".", "").replace(",", ".");
-	//String formatoValido = num.replace(",", "");
-		String formatoValido = num.replace(",", ".");	
-	//System.out.println(formatoValido);
-	money = new BigDecimal(formatoValido);
-	}//if
-	return money;
+	public  BigDecimal stringToBigDecimal(String num){
+		//se inicializa en 0
+		BigDecimal money = BigDecimal.ZERO;
+		//sino esta vacio entonces
+		if(!num.isEmpty()){
+			/**
+			* primero elimina los puntos y luego remplaza las comas en puntos.
+			*/
+			String formatoValido = num.replace(".", "").replace(",", ".");
+			//String formatoValido = num.replace(",", "");
+				//String formatoValido = num.replace(",", ".");	
+			//System.out.println(formatoValido);
+			money = new BigDecimal(formatoValido);
+		}//if
+		return money;
 	}//metodo
 	/**
 	* Convierte un tipo de dato BigDecimal a String.
@@ -150,29 +148,33 @@ public class LibreriaUtil {
 	* @param big
 	* @return String
 	*/
-	public String bigDecimalToString(BigDecimal big)
-	{
-	double datoDoubleD = 0;
-	//se verifica que sean correctos los argumentos recibidos
-	if(big != null)
-	datoDoubleD = big.doubleValue();
-	/**
-	* Los # indican valores no obligatorios
-	* Los 0 indican que si no hay valor se pondrá un cero
-	*/
-	NumberFormat formatter = new DecimalFormat("#,#00.00");
-	return formatter.format(datoDoubleD);
+	public String bigDecimalToString(BigDecimal big){
+		double datoDoubleD = 0;
+		//se verifica que sean correctos los argumentos recibidos
+		if(big != null)
+			datoDoubleD = big.doubleValue();
+		/**
+		* Los # indican valores no obligatorios
+		* Los 0 indican que si no hay valor se pondrá un cero
+		*/
+		NumberFormat formatter = new DecimalFormat("#,##0.00");
+		return formatter.format(datoDoubleD);
 	}//metodo
 	
 	public  String formatNumber(BigDecimal numero) {
-        
+		
         DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
-        //decimalFormatSymbols.setDecimalSeparator(COMA);
-        //decimalFormatSymbols.setGroupingSeparator(PUNTO);
-        DecimalFormat df = new DecimalFormat(NUMEROFORMAT);
+        decimalFormatSymbols.setDecimalSeparator(COMA);
+        decimalFormatSymbols.setGroupingSeparator(PUNTO);
+        DecimalFormat df = new DecimalFormat(NUMEROFORMAT, decimalFormatSymbols);
         
          return df.format(numero);
         
     }
+	
+	//DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.GERMAN); 
+	//otherSymbols.setDecimalSeparator(','); 
+	//otherSymbols.setGroupingSeparator('.'); 
+	//DecimalFormat df = new DecimalFormat(formatString, otherSymbols); 
 	
 }
