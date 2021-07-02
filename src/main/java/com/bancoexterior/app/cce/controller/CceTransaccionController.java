@@ -28,8 +28,10 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bancoexterior.app.cce.dto.AprobacionesConsultasRequest;
 import com.bancoexterior.app.cce.dto.AprobacionesConsultasResponse;
@@ -43,8 +45,12 @@ import com.bancoexterior.app.cce.model.Banco;
 import com.bancoexterior.app.cce.model.CceMontoMaximoAproAuto;
 import com.bancoexterior.app.cce.model.CceTransaccion;
 import com.bancoexterior.app.cce.model.DatosPaginacion;
+import com.bancoexterior.app.cce.model.FIToFICstmrCdtTrfInitnDetalle;
 import com.bancoexterior.app.cce.model.Filtros;
+import com.bancoexterior.app.cce.model.GrpHdrObject;
+import com.bancoexterior.app.cce.model.Moneda;
 import com.bancoexterior.app.cce.model.ParamIdentificacion;
+import com.bancoexterior.app.cce.model.PmtInfObject;
 import com.bancoexterior.app.cce.service.IBancoService;
 import com.bancoexterior.app.cce.service.IBcvlbtService;
 import com.bancoexterior.app.cce.service.ICceMontoMaximoAproAutoService;
@@ -86,6 +92,8 @@ public class CceTransaccionController {
     private BigDecimal montoTopeMaximoAproAuto;
 	
 	private static final String URLFORMCONSULTARMOVIMIENTOSALTOBAJOVALOR = "cce/formConsultarMovimientosAltoBajoValor";
+	
+	private static final String URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR = "cce/formConsultarOperacionesAprobarAltoBajoValor";
 	
 	private static final String URLFORMMOVIMIENTOSALTOBAJOVALORDETALLEFECHAS = "cce/formMovimientoAltoBajoValorDetalleFechas";
 	
@@ -333,6 +341,18 @@ public class CceTransaccionController {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	@GetMapping("/procesarMovimientosPorAprobarAltoValor/{page}")
 	public String consultaMovimientosPorAprobarAltovalor(@PathVariable("page") int page, Model model, HttpServletRequest request) {
 		
@@ -448,17 +468,36 @@ public class CceTransaccionController {
 		List<BCVLBT> listaBCVLBTPorAprobar =(List<BCVLBT>)httpSession.getAttribute(LISTABCVLBTPORAPROBAR);
 		
 		FiToFiCustomerCreditTransferRequest FiToFiCustomerCreditTransferRequest = new FiToFiCustomerCreditTransferRequest(); 
-		ParamIdentificacion paramIdentificacion = getParamIdentificacion();
-		Sglbtr sglbtr = new Sglbtr();
-	
 		
+		Sglbtr sglbtr = new Sglbtr();
+		FIToFICstmrCdtTrfInitnDetalle fIToFICstmrCdtTrfInitnDetalle = new FIToFICstmrCdtTrfInitnDetalle(); 
+		GrpHdrObject grpHdr = new GrpHdrObject();
+		Moneda moneda = new Moneda();
 		for (BCVLBT bcvlbt : listaBCVLBTPorAprobar) {
 			log.info("bcvlbt: "+bcvlbt);
 			
 			
 			try {
+				//creando el ParamIdentificacion de la esctructura
+				ParamIdentificacion paramIdentificacion = getParamIdentificacion();
 				paramIdentificacion.setCodTransaccion(bcvlbt.getCodTransaccion());
 				paramIdentificacion.setBancoReceptor(getBancoReceptor(bcvlbt.getBancoReceptor()).getNbBanco());
+				
+				//creando el grpHdr de la esctructura
+				grpHdr.setMsgId(getMsgId());
+				grpHdr.setCreDtTm(libreriaUtil.fechayhora());
+				grpHdr.setNbOfTxs(1);
+				
+				moneda.setCcy(bcvlbt.getCodMoneda());
+				moneda.setAmt(bcvlbt.getMonto().doubleValue());
+				grpHdr.setCtrlSum(moneda);
+				grpHdr.setLclInstrm(libreriaUtil.getProducto(bcvlbt.getProducto()));
+				grpHdr.setChannel(libreriaUtil.getChannel());
+				
+				PmtInfObject pmtInfObject1 = new PmtInfObject();
+				pmtInfObject1.setRegId(1);
+				pmtInfObject1.setEndToEndId(BANCODESTINO);
+				
 			} catch (CustomException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -472,6 +511,79 @@ public class CceTransaccionController {
 		
 		return "/index";
 	}	
+	
+	
+	
+	@GetMapping("/formConsultaOperacionesAprobarAltoBajoValor")
+	public String formConsultaOperacionesAprobarAltoBajoValor(CceTransaccionDto cceTransaccionDto, Model model) {
+		log.info("formConsultaOperacionesAprobarAltoBajoValor");
+		
+		BancoRequest bancoRequest = getBancoRequest();
+		
+		try {
+			List<Banco> listaBancos  = bancoService.listaBancos(bancoRequest);
+			model.addAttribute(LISTABANCOS, listaBancos);
+		} catch (CustomException e) {
+			e.printStackTrace();
+			model.addAttribute(LISTAERROR, e.getMessage());
+		}
+		
+		return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+		
+	}
+	
+			
+	@PostMapping("/procesarConsultaOperacionesAprobarAltoBajoValorPageable")
+	public String procesarConsultaOperacionesAprobarAltoBajoValorPageable(CceTransaccionDto cceTransaccionDto, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		log.info("procesarConsultaOperacionesAprobarAltoBajoValorPageable");
+		log.info("bcvlbt: "+cceTransaccionDto);
+		log.info("montoDesde: "+cceTransaccionDto.getMontoDesde());
+		log.info("montoHasta: "+cceTransaccionDto.getMontoHasta());
+		log.info("nroIdEmisor: "+cceTransaccionDto.getNumeroIdentificacion());
+		log.info("bancoEmisor: "+cceTransaccionDto.getBancoDestino());
+		log.info("fechaDesde: "+cceTransaccionDto.getFechaDesde());
+		log.info("fechaHasta: "+cceTransaccionDto.getFechaHasta());
+		BancoRequest bancoRequest = getBancoRequest();
+		List<String> listaError = new ArrayList<>();
+		List<Banco> listaBancos = new ArrayList<>();
+		try {
+			listaBancos  = bancoService.listaBancos(bancoRequest);
+			if (cceTransaccionDto.getMontoDesde() != null && cceTransaccionDto.getMontoHasta() != null) {
+				if (result.hasErrors()) {
+					for (ObjectError error : result.getAllErrors()) {
+						log.info("Ocurrio un error: " + error.getDefaultMessage());
+						if(error.getCode().equals("typeMismatch")) {
+							listaError.add("El valor del monto debe ser numerico");
+						}
+					}
+					model.addAttribute(LISTAERROR, listaError);
+					model.addAttribute(LISTABANCOS, listaBancos);
+					return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+				}
+				/*
+				if(montoSerch(cceTransaccionDtoSearch.getMontoDesde()).compareTo(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto()))) < 0) {
+					log.info("entro por fuera rango");
+					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					listaError.add(MENSAJEFUERARANGO);
+					model.addAttribute(LISTAERROR, listaError);
+					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+					model.addAttribute(LISTABANCOS, listaBancos);
+					model.addAttribute(DATOSPAGINACION,datosPaginacion);
+					return "cce/listaOperacionesPorAporbarAltoValorPaginate";
+				}*/
+				
+			}
+			
+			model.addAttribute(LISTABANCOS, listaBancos);
+		} catch (CustomException e) {
+			e.printStackTrace();
+			model.addAttribute(LISTAERROR, e.getMessage());
+		}
+		
+		return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+		
+	}
+	
 	
 	@GetMapping("/exportarExcelMoviminetos")
 	public void exportarExcelMoviminetos(HttpServletResponse response, HttpSession httpSession) {
@@ -1121,9 +1233,8 @@ public class CceTransaccionController {
 		String valor = "";
 		for (int i = 0; i < 28; i++) {
 			valor = valor+"0";
-			
 		}
-		
+		log.info(valor);
 		return valor;
 	}
 	

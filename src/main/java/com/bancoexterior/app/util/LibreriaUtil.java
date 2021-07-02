@@ -1,10 +1,13 @@
 package com.bancoexterior.app.util;
 
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Locale;
 
 import org.springframework.stereotype.Component;
@@ -172,9 +175,27 @@ public class LibreriaUtil {
         
     }
 	
-	//DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.GERMAN); 
-	//otherSymbols.setDecimalSeparator(','); 
-	//otherSymbols.setGroupingSeparator('.'); 
-	//DecimalFormat df = new DecimalFormat(formatString, otherSymbols); 
+	   
+    public String fechayhora() {
+        DateFormat fecha = new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat hora = new SimpleDateFormat("hh:mm:ss");
+        String fechacompleta;   
+        fechacompleta= fecha.format(new Date()) + "T" + hora.format(new Date()) ;
+        return fechacompleta;
+       
+    } 
+    
+    public String getChannel() {
+        return "0005";
+    }
 	
+    public String getProducto(String codProducto) {
+    	return codProducto.substring(1,codProducto.length());
+    }
+    
+    public String getEndToEndId(String bancoEmisor, String referencia) {
+    	
+    	return bancoEmisor+obtenerIdSesion()+referencia;
+    }
+    
 }

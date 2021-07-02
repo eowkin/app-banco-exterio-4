@@ -2,7 +2,6 @@ package com.bancoexterior.app.cce.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
@@ -72,8 +71,19 @@ public class BCVLBT implements Serializable{
 	@JsonProperty("codUsuario")
 	private String codUsuario;
 	
-	
 	private String montoString;
+	
+	private String fechaDesde;
+	
+	private String fechaHasta;
+	
+	private String horaDesde;
+	
+	private String horaHasta;
+	
+	private BigDecimal montoDesde;
+	
+	private BigDecimal montoHasta;
 	
 	/**
 	 * 

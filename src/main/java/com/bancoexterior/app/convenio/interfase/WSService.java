@@ -17,6 +17,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import com.bancoexterior.app.convenio.interfase.model.WSRequest;
 import com.bancoexterior.app.convenio.interfase.model.WSResponse;
+import com.bancoexterior.app.seguridad.MiCipher;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -44,10 +45,11 @@ public class WSService implements IWSService{
 	 @Value("${des.xapikey}")
 	 private String xapikey;
 	 
-	 /*
+	
 	 @Value("${sconfig.deskey}")
 	 private String sconfigDesKey;
-		
+	 
+	 /*	
 	 @Value("${sconfig.prokey}")
 	 private String sconfigProKey;*/
 	 
@@ -57,18 +59,19 @@ public class WSService implements IWSService{
 		 HttpResponse<String> retorno = null;
 		 WSResponse response;
 		 
+		 String secretDecrypt = MiCipher.decrypt(secret, sconfigDesKey);
+		 String issDecrypt = MiCipher.decrypt(iss, sconfigDesKey);
+	     String xapikeyDecrypt = MiCipher.decrypt(xapikey, sconfigDesKey);
 		 
-		 //log.info("sconfigDesKey: "+sconfigDesKey);
-		 //log.info("sconfigProKey: "+sconfigProKey);
-		 
-		 String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
+		 //String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
+	     String bearer2 = createJWT(null, issDecrypt, null, new Date(System.currentTimeMillis()+ 900000), secretDecrypt, new Date(System.currentTimeMillis()));
 		 try {
 			 initUniRest (request.getSocketTimeout(),request.getConnectTimeout() );
 			 retorno = Unirest.post(request.getUrl()) 
 			  .header("Content-Type", request.getContenType())
 			  .header("Accept-Charset", "UTF-8")
 			  .header("Authorization","Bearer "+ bearer2)
-			  .header("x-api-key",xapikey)
+			  .header("x-api-key",xapikeyDecrypt)
 			  .body(request.getBody()).asString();
 			  response = new WSResponse(retorno);
 			 
@@ -137,7 +140,12 @@ public class WSService implements IWSService{
 			HttpResponse<String> retorno = null;
 			 WSResponse response;
 			 
-			 String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
+			 String secretDecrypt = MiCipher.decrypt(secret, sconfigDesKey);
+			 String issDecrypt = MiCipher.decrypt(iss, sconfigDesKey);
+		     String xapikeyDecrypt = MiCipher.decrypt(xapikey, sconfigDesKey);
+			 
+		     String bearer2 = createJWT(null, issDecrypt, null, new Date(System.currentTimeMillis()+ 900000), secretDecrypt, new Date(System.currentTimeMillis()));
+			 //String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
 				
 			 try {
 				 initUniRest (request.getSocketTimeout(),request.getConnectTimeout() );
@@ -145,7 +153,7 @@ public class WSService implements IWSService{
 				  .header("Content-Type", request.getContenType())
 				  .header("Accept-Charset", "UTF-8")
 				  .header("Authorization","Bearer "+ bearer2)
-				  .header("x-api-key",xapikey)
+				  .header("x-api-key",xapikeyDecrypt)
 				  .body(request.getBody()).asString();
 				  response = new WSResponse(retorno);
 				 
