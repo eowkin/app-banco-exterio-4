@@ -11,7 +11,6 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -24,34 +23,28 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
 @Service
-@PropertySource( value = "file://"+"${des.seed.ruta}"+"application.properties", ignoreResourceNotFound = false)
 public class WSService implements IWSService{
 	
 	 private static final Logger LOGGER = LogManager.getLogger(WSService.class);
 	 private static final boolean VERIFYSSL = false;
 	 private static final HostnameVerifier VERIFIER = NoopHostnameVerifier.INSTANCE;
 	 
-	 @Value("${des.secret}")
+	 @Value("${${app.ambiente}"+".secret}")
 	 private String secret;
 	 
-	 @Value("${des.iss}")
+	 @Value("${${app.ambiente}"+".iss}")
 	 private String iss;
 	 
-	 @Value("${des.xapikey}")
+	 @Value("${${app.ambiente}"+".xapikey}")
 	 private String xapikey;
 	 
-	
-	 @Value("${sconfig.deskey}")
+	 @Value("${${app.ambiente}"+".seed.monitorfinanciero}")
 	 private String sconfigDesKey;
 	 
-	 /*	
-	 @Value("${sconfig.prokey}")
-	 private String sconfigProKey;*/
+	
 	 
 	 @Override
 	 public WSResponse post(WSRequest request) {
@@ -63,11 +56,10 @@ public class WSService implements IWSService{
 		 String issDecrypt = MiCipher.decrypt(iss, sconfigDesKey);
 	     String xapikeyDecrypt = MiCipher.decrypt(xapikey, sconfigDesKey);
 		 
-		 //String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
-	     String bearer2 = createJWT(null, issDecrypt, null, new Date(System.currentTimeMillis()+ 900000), secretDecrypt, new Date(System.currentTimeMillis()));
+		 String bearer2 = createJWT(null, issDecrypt, null, new Date(System.currentTimeMillis()+ 900000), secretDecrypt, new Date(System.currentTimeMillis()));
 		 try {
 			 initUniRest (request.getSocketTimeout(),request.getConnectTimeout() );
-			 retorno = Unirest.post(request.getUrl()) 
+			 retorno = Unirest.post(request.getUrl().trim()) 
 			  .header("Content-Type", request.getContenType())
 			  .header("Accept-Charset", "UTF-8")
 			  .header("Authorization","Bearer "+ bearer2)
@@ -145,11 +137,10 @@ public class WSService implements IWSService{
 		     String xapikeyDecrypt = MiCipher.decrypt(xapikey, sconfigDesKey);
 			 
 		     String bearer2 = createJWT(null, issDecrypt, null, new Date(System.currentTimeMillis()+ 900000), secretDecrypt, new Date(System.currentTimeMillis()));
-			 //String bearer2 = createJWT(null, iss, null, new Date(System.currentTimeMillis()+ 900000), secret, new Date(System.currentTimeMillis()));
-				
+			 	
 			 try {
 				 initUniRest (request.getSocketTimeout(),request.getConnectTimeout() );
-				 retorno = Unirest.put(request.getUrl()) 
+				 retorno = Unirest.put(request.getUrl().trim()) 
 				  .header("Content-Type", request.getContenType())
 				  .header("Accept-Charset", "UTF-8")
 				  .header("Authorization","Bearer "+ bearer2)

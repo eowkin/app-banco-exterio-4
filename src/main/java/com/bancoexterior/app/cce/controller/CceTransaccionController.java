@@ -532,24 +532,34 @@ public class CceTransaccionController {
 		
 	}
 	
-			
-	@PostMapping("/procesarConsultaOperacionesAprobarAltoBajoValorPageable")
+			    //procesarConsultaOperacionesAprobarAltoBajoValorPageable
+	@GetMapping("/procesarConsultaOperacionesAprobarAltoBajoValorPageable")
 	public String procesarConsultaOperacionesAprobarAltoBajoValorPageable(CceTransaccionDto cceTransaccionDto, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		log.info("procesarConsultaOperacionesAprobarAltoBajoValorPageable");
-		log.info("bcvlbt: "+cceTransaccionDto);
-		log.info("montoDesde: "+cceTransaccionDto.getMontoDesde());
-		log.info("montoHasta: "+cceTransaccionDto.getMontoHasta());
-		log.info("nroIdEmisor: "+cceTransaccionDto.getNumeroIdentificacion());
-		log.info("bancoEmisor: "+cceTransaccionDto.getBancoDestino());
-		log.info("fechaDesde: "+cceTransaccionDto.getFechaDesde());
-		log.info("fechaHasta: "+cceTransaccionDto.getFechaHasta());
+		log.info("llegue hasta aqui 1");
 		BancoRequest bancoRequest = getBancoRequest();
 		List<String> listaError = new ArrayList<>();
 		List<Banco> listaBancos = new ArrayList<>();
+		List<BCVLBT> listaBCVLBTPorAprobar = new ArrayList<>();
+		DatosPaginacion datosPaginacion = new DatosPaginacion(0,0,0,0);
+		AprobacionesConsultasRequest aprobacionesConsultasRequest = getAprobacionesConsultasRequest();
+		CceMontoMaximoAproAuto cceMontoMaximoAproAuto = montoMaximoAproAutoService.buscarMontoMaximoAproAutoActual();
 		try {
+			log.info("llegue hasta aqui 2");
 			listaBancos  = bancoService.listaBancos(bancoRequest);
-			if (cceTransaccionDto.getMontoDesde() != null && cceTransaccionDto.getMontoHasta() != null) {
+			CceTransaccionDto cceTransaccionDtoMostrar = getTransaccionesMostrar();
+			model.addAttribute(NUMEROAPROBACIONESLOTES,cceTransaccionDtoMostrar.getNumeroAprobacionesLotes());
+			model.addAttribute(MONTOAPROBACIONESLOTES,libreriaUtil.formatNumber(cceTransaccionDtoMostrar.getMontoAprobacionesLotes()));
+			//request.getRemoteAddr()
+			aprobacionesConsultasRequest.setNumeroPagina(1);   
+			//aprobacionesConsultasRequest.setTamanoPagina(numeroRegistroPage);
+			aprobacionesConsultasRequest.setTamanoPagina(5);
+			Filtros filtros = new Filtros();
+			log.info("llegue hasta aqui 3");
+			//filtros.setReferencia(null);
+			filtros.setStatus("I");
 				if (result.hasErrors()) {
+					log.info("llegue hasta aqui result.hasErrors()");
 					for (ObjectError error : result.getAllErrors()) {
 						log.info("Ocurrio un error: " + error.getDefaultMessage());
 						if(error.getCode().equals("typeMismatch")) {
@@ -560,29 +570,376 @@ public class CceTransaccionController {
 					model.addAttribute(LISTABANCOS, listaBancos);
 					return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
 				}
-				/*
-				if(montoSerch(cceTransaccionDtoSearch.getMontoDesde()).compareTo(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto()))) < 0) {
-					log.info("entro por fuera rango");
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-					listaError.add(MENSAJEFUERARANGO);
-					model.addAttribute(LISTAERROR, listaError);
+				
+				
+				if(cceTransaccionDto.getMontoDesde() != null && cceTransaccionDto.getMontoDesde() != null) {
+					
+					log.info("llegue hasta aqui dsitinto de null");
+					log.info("montoDesde: "+cceTransaccionDto.getMontoDesde());
+					log.info("montoHasta: "+cceTransaccionDto.getMontoHasta());
+					if(montoSerch(cceTransaccionDto.getMontoDesde()).compareTo(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto()))) < 0) {
+						log.info("entro por fuera rango");
+						listaError.add(MENSAJEFUERARANGO);
+						model.addAttribute(LISTAERROR, listaError);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+					}
+					
+					if(cceTransaccionDto.getMontoHasta().compareTo(cceTransaccionDto.getMontoDesde()) < 0) { 
+						log.info("entro monto desde menor que monto hasta");
+						listaError.add(MENSAJEMONTOSINVALIDAS);
+						model.addAttribute(LISTAERROR, listaError);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+					}
+					log.info("llegue hasta aqui filtra por montos");
+					
+					
+					filtros.setMontoDesde(cceTransaccionDto.getMontoDesde());
+					filtros.setMontoHasta(cceTransaccionDto.getMontoHasta());
+					
+					if(!cceTransaccionDto.getFechaDesde().equals("") && !cceTransaccionDto.getFechaHasta().equals("")) {
+						if(isFechaHoraValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())) {
+							String[] arrOfFechaD = cceTransaccionDto.getFechaDesde().split("T");
+							String fechaDesde = arrOfFechaD[0];
+							String horaDesde = arrOfFechaD[1];
+							String[] arrOfFechaH = cceTransaccionDto.getFechaHasta().split("T");
+							String fechaHasta = arrOfFechaH[0];
+							String horaHasta = arrOfFechaH[1];
+							fechaDesde = getFechaDiaMesAno(fechaDesde);
+							horaDesde = getHora(horaDesde);
+							fechaDesde = fechaDesde+" "+horaDesde+":00.000000";
+							log.info("fechaDesde: "+fechaDesde);
+						
+							fechaHasta = getFechaDiaMesAno(fechaHasta);
+							horaHasta = getHora(horaHasta);
+							fechaHasta = fechaHasta+" "+horaHasta+":59.000000";
+							log.info("fechaHasta: "+fechaHasta);
+				        
+							filtros.setFechaDesde(fechaDesde);
+							filtros.setFechaHasta(fechaHasta);
+				        
+						}
+					}
+					
+					
+					
+					if(!cceTransaccionDto.getBancoDestino().equals(""))
+						filtros.setBancoBeneficiario(cceTransaccionDto.getBancoDestino());
+					
+					if(!cceTransaccionDto.getNumeroIdentificacion().equals(""))
+						filtros.setNroIdEmisor(cceTransaccionDto.getNumeroIdentificacion());
+					
+					aprobacionesConsultasRequest.setFiltros(filtros);
+					log.info("filtros: "+filtros);
+					AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
+					
+					if(aprobacionesConsultasResponse != null) {
+						listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
+						listaBCVLBTPorAprobar = convertirListaBCVLT(listaBCVLBTPorAprobar);
+						datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
+						if(listaBCVLBTPorAprobar.isEmpty()) {
+							model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+						}
+						model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						model.addAttribute(DATOSPAGINACION,datosPaginacion);
+						model.addAttribute("montoDesde", cceTransaccionDto.getMontoDesde());
+						model.addAttribute("montoHasta", cceTransaccionDto.getMontoHasta());
+						model.addAttribute("bancoEmisor", cceTransaccionDto.getBancoDestino());
+						model.addAttribute("nroIdEmisor", cceTransaccionDto.getNumeroIdentificacion());
+						model.addAttribute("fechaDesde", cceTransaccionDto.getFechaDesde());
+						model.addAttribute("fechaHasta", cceTransaccionDto.getFechaHasta());
+						return URLLISTAOPERACIONESPORAPROBARAALTOVALORPAGINATE;
+					}else {
+						listaError.add(MENSAJENORESULTADO);
+						model.addAttribute(LISTAERROR, listaError);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+					}
+					
+				}
+				log.info("llegue hasta aqui no hay montos");
+				filtros.setMontoDesde(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto())));
+				filtros.setMontoHasta(montoTopeMaximoAproAuto);
+				
+				
+				if(!cceTransaccionDto.getFechaDesde().equals("") && !cceTransaccionDto.getFechaHasta().equals("")) {
+					if(isFechaHoraValidaDesdeHasta(cceTransaccionDto.getFechaDesde(), cceTransaccionDto.getFechaHasta())) {
+						String[] arrOfFechaD = cceTransaccionDto.getFechaDesde().split("T");
+						String fechaDesde = arrOfFechaD[0];
+						String horaDesde = arrOfFechaD[1];
+						String[] arrOfFechaH = cceTransaccionDto.getFechaHasta().split("T");
+						String fechaHasta = arrOfFechaH[0];
+						String horaHasta = arrOfFechaH[1];
+						fechaDesde = getFechaDiaMesAno(fechaDesde);
+						horaDesde = getHora(horaDesde);
+						fechaDesde = fechaDesde+" "+horaDesde+":00.000000";
+						log.info("fechaDesde: "+fechaDesde);
+					
+						fechaHasta = getFechaDiaMesAno(fechaHasta);
+						horaHasta = getHora(horaHasta);
+						fechaHasta = fechaHasta+" "+horaHasta+":59.000000";
+						log.info("fechaHasta: "+fechaHasta);
+			        
+						filtros.setFechaDesde(fechaDesde);
+						filtros.setFechaHasta(fechaHasta);
+			        
+					}
+				}
+				
+				
+				
+				
+				
+				if(!cceTransaccionDto.getBancoDestino().equals(""))
+					filtros.setBancoBeneficiario(cceTransaccionDto.getBancoDestino());
+				
+				if(!cceTransaccionDto.getNumeroIdentificacion().equals(""))
+					filtros.setNroIdEmisor(cceTransaccionDto.getNumeroIdentificacion());
+				
+				aprobacionesConsultasRequest.setFiltros(filtros);
+				log.info("filtros: "+filtros);
+				AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
+				
+				if(aprobacionesConsultasResponse != null) {
+					listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
+					listaBCVLBTPorAprobar = convertirListaBCVLT(listaBCVLBTPorAprobar);
+					datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
+					if(listaBCVLBTPorAprobar.isEmpty()) {
+						model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					}
 					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
 					model.addAttribute(LISTABANCOS, listaBancos);
 					model.addAttribute(DATOSPAGINACION,datosPaginacion);
-					return "cce/listaOperacionesPorAporbarAltoValorPaginate";
-				}*/
+					model.addAttribute("montoDesde", cceTransaccionDto.getMontoDesde());
+					model.addAttribute("montoHasta", cceTransaccionDto.getMontoHasta());
+					model.addAttribute("bancoEmisor", cceTransaccionDto.getBancoDestino());
+					model.addAttribute("nroIdEmisor", cceTransaccionDto.getNumeroIdentificacion());
+					model.addAttribute("fechaDesde", cceTransaccionDto.getFechaDesde());
+					model.addAttribute("fechaHasta", cceTransaccionDto.getFechaHasta());
+					return URLLISTAOPERACIONESPORAPROBARAALTOVALORPAGINATE;
+				}else {
+					
+					listaError.add(MENSAJENORESULTADO);
+					model.addAttribute(LISTAERROR, listaError);
+					model.addAttribute(LISTABANCOS, listaBancos);
+					return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+				}
 				
-			}
 			
-			model.addAttribute(LISTABANCOS, listaBancos);
+			
+			
 		} catch (CustomException e) {
 			e.printStackTrace();
 			model.addAttribute(LISTAERROR, e.getMessage());
+			model.addAttribute(LISTABANCOS, listaBancos);
+			return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
 		}
-		
-		return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+				
 		
 	}
+	
+	@GetMapping("/consultaOperacionesAprobarAltoBajoValorPageable")
+	public String consultaOperacionesAprobarAltoBajoValorPageable(@RequestParam("montoDesde") BigDecimal montoDesde, @RequestParam("montoHasta") BigDecimal montoHasta, 
+			@RequestParam("bancoEmisor") String bancoEmisor, @RequestParam("nroIdEmisor") String nroIdEmisor, @RequestParam("fechaDesde") String fechaDesde,
+			@RequestParam("fechaHasta") String fechaHasta, @RequestParam("page") int page, Model model, HttpServletRequest request) {
+		
+		log.info("montoDesde: "+montoDesde);
+		log.info("montoHasta: "+montoHasta);
+		log.info("bancoEmisor: "+bancoEmisor);
+		log.info("nroIdEmisor: "+nroIdEmisor);
+		log.info("fechaDesde: "+fechaDesde);
+		log.info("fechaHasta: "+fechaHasta);
+		log.info("page: "+page);
+		BancoRequest bancoRequest = getBancoRequest();
+		List<String> listaError = new ArrayList<>();
+		List<Banco> listaBancos = new ArrayList<>();
+		List<BCVLBT> listaBCVLBTPorAprobar = new ArrayList<>();
+		DatosPaginacion datosPaginacion = new DatosPaginacion(0,0,0,0);
+		AprobacionesConsultasRequest aprobacionesConsultasRequest = getAprobacionesConsultasRequest();
+		CceMontoMaximoAproAuto cceMontoMaximoAproAuto = montoMaximoAproAutoService.buscarMontoMaximoAproAutoActual();
+		try {
+			log.info("llegue hasta aqui 2");
+			listaBancos  = bancoService.listaBancos(bancoRequest);
+			CceTransaccionDto cceTransaccionDtoMostrar = getTransaccionesMostrar();
+			model.addAttribute(NUMEROAPROBACIONESLOTES,cceTransaccionDtoMostrar.getNumeroAprobacionesLotes());
+			model.addAttribute(MONTOAPROBACIONESLOTES,libreriaUtil.formatNumber(cceTransaccionDtoMostrar.getMontoAprobacionesLotes()));
+			//request.getRemoteAddr()
+			aprobacionesConsultasRequest.setNumeroPagina(1);   
+			//aprobacionesConsultasRequest.setTamanoPagina(numeroRegistroPage);
+			aprobacionesConsultasRequest.setTamanoPagina(5);
+			Filtros filtros = new Filtros();
+			log.info("llegue hasta aqui 3");
+			//filtros.setReferencia(null);
+			filtros.setStatus("I");
+								
+				if(montoDesde != null && montoHasta != null) {
+					
+					log.info("llegue hasta aqui dsitinto de null");
+					log.info("montoDesde: "+montoDesde);
+					log.info("montoHasta: "+montoHasta);
+					if(montoSerch(montoDesde).compareTo(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto()))) < 0) {
+						log.info("entro por fuera rango");
+						listaError.add(MENSAJEFUERARANGO);
+						model.addAttribute(LISTAERROR, listaError);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+					}
+					
+					if(montoHasta.compareTo(montoDesde) < 0) { 
+						log.info("entro monto desde menor que monto hasta");
+						listaError.add(MENSAJEMONTOSINVALIDAS);
+						model.addAttribute(LISTAERROR, listaError);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+					}
+					log.info("llegue hasta aqui filtra por montos");
+					
+					
+					filtros.setMontoDesde(montoDesde);
+					filtros.setMontoHasta(montoHasta);
+					
+					if(!fechaDesde.equals("") && !fechaHasta.equals("")) {
+						if(isFechaHoraValidaDesdeHasta(fechaDesde, fechaHasta)) {
+							String[] arrOfFechaD = fechaDesde.split("T");
+							String fechaDesdeT = arrOfFechaD[0];
+							String horaDesde = arrOfFechaD[1];
+							String[] arrOfFechaH = fechaHasta.split("T");
+							String fechaHastaT = arrOfFechaH[0];
+							String horaHasta = arrOfFechaH[1];
+							fechaDesdeT = getFechaDiaMesAno(fechaDesdeT);
+							horaDesde = getHora(horaDesde);
+							fechaDesdeT = fechaDesdeT+" "+horaDesde+":00.000000";
+							log.info("fechaDesdeT: "+fechaDesdeT);
+						
+							fechaHastaT = getFechaDiaMesAno(fechaHastaT);
+							horaHasta = getHora(horaHasta);
+							fechaHastaT = fechaHastaT+" "+horaHasta+":59.000000";
+							log.info("fechaHastaT: "+fechaHastaT);
+				        
+							filtros.setFechaDesde(fechaDesdeT);
+							filtros.setFechaHasta(fechaHastaT);
+				        
+						}
+					}
+					
+					
+					
+					if(!bancoEmisor.equals(""))
+						filtros.setBancoBeneficiario(bancoEmisor);
+					
+					if(!nroIdEmisor.equals(""))
+						filtros.setNroIdEmisor(nroIdEmisor);
+					
+					aprobacionesConsultasRequest.setFiltros(filtros);
+					log.info("filtros: "+filtros);
+					AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
+					
+					if(aprobacionesConsultasResponse != null) {
+						listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
+						listaBCVLBTPorAprobar = convertirListaBCVLT(listaBCVLBTPorAprobar);
+						datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
+						if(listaBCVLBTPorAprobar.isEmpty()) {
+							model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+						}
+						model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						model.addAttribute(DATOSPAGINACION,datosPaginacion);
+						model.addAttribute("montoDesde", montoDesde);
+						model.addAttribute("montoHasta", montoHasta);
+						model.addAttribute("bancoEmisor", bancoEmisor);
+						model.addAttribute("nroIdEmisor", nroIdEmisor);
+						model.addAttribute("fechaDesde", fechaDesde);
+						model.addAttribute("fechaHasta", fechaHasta);
+						return URLLISTAOPERACIONESPORAPROBARAALTOVALORPAGINATE;
+					}else {
+						listaError.add(MENSAJENORESULTADO);
+						model.addAttribute(LISTAERROR, listaError);
+						model.addAttribute(LISTABANCOS, listaBancos);
+						return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+					}
+					
+				}
+				log.info("llegue hasta aqui no hay montos");
+				filtros.setMontoDesde(libreriaUtil.stringToBigDecimal(libreriaUtil.formatNumber(cceMontoMaximoAproAuto.getMonto())));
+				filtros.setMontoHasta(montoTopeMaximoAproAuto);
+				
+				
+				if(!fechaDesde.equals("") && !fechaHasta.equals("")) {
+					if(isFechaHoraValidaDesdeHasta(fechaDesde, fechaHasta)) {
+						String[] arrOfFechaD = fechaDesde.split("T");
+						String fechaDesdeT = arrOfFechaD[0];
+						String horaDesde = arrOfFechaD[1];
+						String[] arrOfFechaH = fechaHasta.split("T");
+						String fechaHastaT = arrOfFechaH[0];
+						String horaHasta = arrOfFechaH[1];
+						fechaDesdeT = getFechaDiaMesAno(fechaDesdeT);
+						horaDesde = getHora(horaDesde);
+						fechaDesdeT = fechaDesdeT+" "+horaDesde+":00.000000";
+						log.info("fechaDesdeT: "+fechaDesdeT);
+					
+						fechaHastaT = getFechaDiaMesAno(fechaHastaT);
+						horaHasta = getHora(horaHasta);
+						fechaHastaT = fechaHastaT+" "+horaHasta+":59.000000";
+						log.info("fechaHastaT: "+fechaHastaT);
+			        
+						filtros.setFechaDesde(fechaDesdeT);
+						filtros.setFechaHasta(fechaHastaT);
+			        
+					}
+				}
+				
+				
+				
+				
+				
+				if(!bancoEmisor.equals(""))
+					filtros.setBancoBeneficiario(bancoEmisor);
+				
+				if(!nroIdEmisor.equals(""))
+					filtros.setNroIdEmisor(nroIdEmisor);
+				
+				aprobacionesConsultasRequest.setFiltros(filtros);
+				log.info("filtros: "+filtros);
+				AprobacionesConsultasResponse aprobacionesConsultasResponse =bcvlbtService.listaTransaccionesPorAporbarAltoValorPaginacion(aprobacionesConsultasRequest);
+				
+				if(aprobacionesConsultasResponse != null) {
+					listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
+					listaBCVLBTPorAprobar = convertirListaBCVLT(listaBCVLBTPorAprobar);
+					datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
+					if(listaBCVLBTPorAprobar.isEmpty()) {
+						model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					}
+					model.addAttribute(LISTABCVLBTPORAPROBAR,listaBCVLBTPorAprobar);
+					model.addAttribute(LISTABANCOS, listaBancos);
+					model.addAttribute(DATOSPAGINACION,datosPaginacion);
+					model.addAttribute("montoDesde", montoDesde);
+					model.addAttribute("montoHasta", montoHasta);
+					model.addAttribute("bancoEmisor", bancoEmisor);
+					model.addAttribute("nroIdEmisor", nroIdEmisor);
+					model.addAttribute("fechaDesde", fechaDesde);
+					model.addAttribute("fechaHasta", fechaHasta);
+					return URLLISTAOPERACIONESPORAPROBARAALTOVALORPAGINATE;
+				}else {
+					
+					listaError.add(MENSAJENORESULTADO);
+					model.addAttribute(LISTAERROR, listaError);
+					model.addAttribute(LISTABANCOS, listaBancos);
+					return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+				}
+				
+			
+			
+			
+		} catch (CustomException e) {
+			e.printStackTrace();
+			model.addAttribute(LISTAERROR, e.getMessage());
+			model.addAttribute(LISTABANCOS, listaBancos);
+			return URLFORMCONSULTAROPERACIONESAPORBARALTOBAJOVALOR;
+		}
+	}
+	
 	
 	
 	@GetMapping("/exportarExcelMoviminetos")
@@ -623,8 +980,9 @@ public class CceTransaccionController {
 	@GetMapping("/searchMonto")
 	public String searchMonto(@ModelAttribute("cceTransaccionDtoSearch") CceTransaccionDto cceTransaccionDtoSearch,
 			BindingResult result, Model model) {
-		log.info("montoDesde: " + cceTransaccionDtoSearch.getMontoDesde());
-		log.info("montoHasta: " + cceTransaccionDtoSearch.getMontoHasta());
+		
+		log.info("montoDesdeValor: " + cceTransaccionDtoSearch.getMontoDesde());
+		log.info("montoHastaValor: " + cceTransaccionDtoSearch.getMontoHasta());
 		List<String> listaError = new ArrayList<>();
 		List<Banco> listaBancos = new ArrayList<>();
 		List<BCVLBT> listaBCVLBTPorAprobar = new ArrayList<>();

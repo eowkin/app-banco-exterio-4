@@ -32,19 +32,35 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	@Autowired 
 	private Mapper mapper;
 	
-	@Value("${des.ConnectTimeout}")
+	@Value("${${app.ambiente}"+".ConnectTimeout}")
     private int connectTimeout;
     
-    @Value("${des.SocketTimeout}")
+    @Value("${${app.ambiente}"+".SocketTimeout}")
     private int socketTimeout;
     
-    @Value("${des.limitesPersonalizados.urlConsulta}")
+    @Value("${${app.ambiente}"+".limitesPersonalizados.urlConsulta}")
     private String urlConsulta;
     
-    @Value("${des.limitesPersonalizados.urlActualizar}")
+    @Value("${${app.ambiente}"+".limitesPersonalizados.urlActualizar}")
     private String urlActualizar;
     
     private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio limites personalizados";
+    
+    private static final String LIMITESPERSONALIZADOSSERVICELISTAI = "[==== INICIO Lista LimitesPersonalizados Consultas - Service ====]";
+	
+	private static final String LIMITESPERSONALIZADOSSERVICELISTAF = "[==== FIN Lista LimitesPersonalizados Consultas - Service ====]";
+	
+	private static final String LIMITESPERSONALIZADOSSERVICEBUSCARI = "[==== INICIO Buscar LimitesPersonalizados Consultas - Service ====]";
+	
+	private static final String LIMITESPERSONALIZADOSSERVICEBUSCARF = "[==== FIN Buscar LimitesPersonalizados Consultas - Service ====]";
+	
+	private static final String LIMITESPERSONALIZADOSSERVICEACTUALIZARI = "[==== INICIO Actualizar LimitesPersonalizados - Service ====]";
+	
+	private static final String LIMITESPERSONALIZADOSSERVICEACTUALIZARF = "[==== FIN Actualizar LimitesPersonalizados - Service ====]";
+	
+	private static final String LIMITESPERSONALIZADOSSERVICECREARI = "[==== INICIO Crear LimitesPersonalizados - Service ====]";
+	
+	private static final String LIMITESPERSONALIZADOSSERVICECREARF = "[==== FIN Crear LimitesPersonalizados - Service ====]";
 
     public WSRequest getWSRequest() {
     	WSRequest wsrequest = new WSRequest();
@@ -58,22 +74,26 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	@Override
 	public List<LimitesPersonalizados> listaLimitesPersonalizados(
 			LimitesPersonalizadosRequest limitesPersonalizadosRequest) throws CustomException {
+		
+		log.info(LIMITESPERSONALIZADOSSERVICELISTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
 		limitesPersonalizadosRequestJSON = new Gson().toJson(limitesPersonalizadosRequest);
 		wsrequest.setBody(limitesPersonalizadosRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisasclientes/consultas");
-		log.info("antes de llamarte WS en listaLimitesPersonalizados");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(LIMITESPERSONALIZADOSSERVICELISTAF);
 				return respuesta2xxListaLimitesPersonalizados(retorno);
 			}else {
+				log.error(respuesta4xxListaLimitesPersonalizados(retorno));
 				throw new CustomException(respuesta4xxListaLimitesPersonalizados(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -83,7 +103,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			LimitesPersonalizadosResponse limiteResponse = mapper.jsonToClass(retorno.getBody(), LimitesPersonalizadosResponse.class);
 			return limiteResponse.getLimitesPersonalizados();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -94,7 +114,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -102,22 +122,24 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	@Override
 	public LimitesPersonalizados buscarLimitesPersonalizados(LimitesPersonalizadosRequest limitesPersonalizadosRequest)
 			throws CustomException {
+		log.info(LIMITESPERSONALIZADOSSERVICEBUSCARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
 		limitesPersonalizadosRequestJSON = new Gson().toJson(limitesPersonalizadosRequest);
 		wsrequest.setBody(limitesPersonalizadosRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisasclientes/consultas");
-			
-		log.info("antes de llamarte WS en consultar");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(LIMITESPERSONALIZADOSSERVICEBUSCARF);
 				return respuesta2xxBuscarLimitesPersonalizados(retorno);
 			}else {
+				log.error(respuesta4xxListaLimitesPersonalizados(retorno));
 				throw new CustomException(respuesta4xxListaLimitesPersonalizados(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -131,7 +153,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	        	return null;
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
         
@@ -139,21 +161,24 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	
 	@Override
 	public String actualizar(LimitesPersonalizadosRequest limitesPersonalizadosRequest) throws CustomException {
+		log.info(LIMITESPERSONALIZADOSSERVICEACTUALIZARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
 		limitesPersonalizadosRequestJSON = new Gson().toJson(limitesPersonalizadosRequest);
 		wsrequest.setBody(limitesPersonalizadosRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisasclientes");
-		log.info("antes de llamarte WS en actualizar");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.put(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(LIMITESPERSONALIZADOSSERVICEACTUALIZARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
+				log.error(respuesta4xxActualizarCrear(retorno));
 				throw new CustomException(respuesta4xxActualizarCrear(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -163,7 +188,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 		
@@ -174,29 +199,31 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
 	
 	@Override
 	public String crear(LimitesPersonalizadosRequest limitesPersonalizadosRequest) throws CustomException {
+		log.info(LIMITESPERSONALIZADOSSERVICECREARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
 		limitesPersonalizadosRequestJSON = new Gson().toJson(limitesPersonalizadosRequest);
 		wsrequest.setBody(limitesPersonalizadosRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisasclientes");
-			
-		log.info("antes de llamarte WS en crear");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(LIMITESPERSONALIZADOSSERVICECREARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
+				log.error(respuesta4xxActualizarCrear(retorno));
 				throw new CustomException(respuesta4xxActualizarCrear(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}

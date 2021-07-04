@@ -36,37 +36,30 @@
 		        <strong>Consulta de Operaciones Aprobar Alto Valor</strong>
 		      </div>
 		      <div class="card-body">
-		        <form  th:action = "@{/ccetransacciones/procesarConsultaOperacionesAprobarAltoBajoValorPageable}"   method="post" th:object="${cceTransaccionDto}"   class="form-horizontal">
+		        <form  th:action = "@{/ccetransacciones/procesarConsultaOperacionesAprobarAltoBajoValorPageable}"   method="get" th:object="${cceTransaccionDto}"   class="form-horizontal">
 		          <div th:if="${listaError != null}" class="alert alert-danger" role="alert">
 		            		Por favor corrija los siguientes errores:
 		            		<ul>
 		            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
 		            		</ul>
 		            	</div>
-
-		         <div class="form-group row">
-			            <label class="col-sm-5 col-form-label" for="input-large">Monto Maximo:</label>
-			            <div class="col-sm-6">
-			              <input type="text" class="form-control" th:field="*{montoDesde}" id="montoDesde" name="montoDesde" required="required">
-			            </div>
-			          </div>
-		          <div class="form-group row">
-			          	<label class="col-sm-5 col-form-label" for="input-large">Monto Desde:</label>
+		            <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="montoDesde">Monto Desde:</label>
 			            <div class="col-sm-3">
-			              <input type="text" class="form-control" th:field="*{montoDesde}" id="montoDesde" name="montoDesde" required="required">
+			              <input type="text" class="form-control" th:field="*{montoDesde}" id="montoDesde" name="montoDesde">
 			              
 			            </div>
-			      </div>
-			      <div class="form-group row">
-			          	<label class="col-sm-5 col-form-label" for="input-large">Monto Hasta:</label>
+			          </div>  	
+		            <div class="form-group row">
+			          	<label class="col-sm-5 col-form-label" for="montoHasta">Monto Hasta:</label>
 			            <div class="col-sm-3">
 			              <input type="text" class="form-control" th:field="*{montoHasta}" id="montoHasta" name="montoHasta">
 			              
 			            </div>
-			      </div>
-			          
-			      <div class="form-group row">
-		            <label class="col-sm-5 col-form-label" for="bancoEmisor">Banco Beneficiario:</label>
+			          </div>	
+		            	
+					<div class="form-group row">
+		            <label class="col-sm-5 col-form-label" for="bancoDestino">Banco Ordenante/Banco Beneficiario:</label>
 		            <div class="col-sm-4">
 		              <select  class="form-control"  name="bancoDestino" th:field="*{bancoDestino}">
 		                <option value="">----Selecionar Banco----</option>
@@ -75,25 +68,28 @@
 		            </div>
 		          </div>     
 			      <div class="form-group row">
-			          	<label class="col-sm-5 col-form-label" for="numeroIdentificacion">Nro. Emisor:</label>
+			          	<label class="col-sm-5 col-form-label" for="numeroIdentificacion">Rif/CI Cliente:</label>
 			            <div class="col-sm-3">
-			              <input type="text" class="form-control" th:field="*{numeroIdentificacion}" id="nroIdEmisor" name="nroIdEmisor">
+			              <input type="text" class="form-control" th:field="*{numeroIdentificacion}" id="numeroIdentificacion" name="numeroIdentificacion">
 			              
 			            </div>
-			      </div>      
+			          </div>      
+		         
 		          
+			          
+			      
 		          
 		          <div class="form-group row">
 					<label class="col-sm-5 col-form-label" for="input-large">Fecha Desde:</label>
 			            <div class="col-sm-3">
-				           <input type="datetime-local" class="form-control" th:field="*{fechaDesde}" name="fechaDesde" id="fechaDesde" placeholder="Fecha desde" required="required">
+				           <input type="datetime-local" class="form-control" th:field="*{fechaDesde}" name="fechaDesde" id="fechaDesde" placeholder="Fecha desde">
 			            </div>
 		          </div>
 							          
 		          <div class="form-group row">
 			         <label class="col-sm-5 col-form-label" for="input-large">Fecha Hasta:</label>
 				       <div class="col-sm-3">
-						     <input type="datetime-local" class="form-control" th:field="*{fechaHasta}" name="fechaHasta" id="fechaHasta" placeholder="Fecha hasta" required="required">
+						     <input type="datetime-local" class="form-control" th:field="*{fechaHasta}" name="fechaHasta" id="fechaHasta" placeholder="Fecha hasta">
 					    </div>
 				  </div>
 		          

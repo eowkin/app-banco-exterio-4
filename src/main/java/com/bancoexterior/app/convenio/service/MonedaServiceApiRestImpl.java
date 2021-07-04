@@ -36,19 +36,39 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
     @Autowired 
 	private Mapper mapper;
 	
-    @Value("${des.ConnectTimeout}")
+    @Value("${${app.ambiente}"+".ConnectTimeout}")
     private int connectTimeout;
     
-    @Value("${des.SocketTimeout}")
+    @Value("${${app.ambiente}"+".SocketTimeout}")
     private int socketTimeout;
     
-    @Value("${des.moneda.urlConsulta}")
+    @Value("${${app.ambiente}"+".moneda.urlConsulta}")
     private String urlConsulta;
     
-    @Value("${des.moneda.urlActualizar}")
+    @Value("${${app.ambiente}"+".moneda.urlActualizar}")
     private String urlActualizar;
 
     private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio Monedas";
+    
+    private static final String MONEDASERVICELISTAMONEDASI = "[==== INICIO Lista Monedas Consultas - Service ====]";
+	
+	private static final String MONEDASERVICELISTAMONEDASF = "[==== FIN Lista Monedas Consultas - Service ====]";
+	
+	private static final String MONEDASERVICEEXISTEMONEDAI = "[==== INICIO Existe Monedas Consultas - Service ====]";
+	
+	private static final String MONEDASERVICEEXISTEMONEDAF = "[==== FIN Existe Monedas Consultas - Service ====]";
+	
+	private static final String MONEDASERVICEBUSCARMONEDAI = "[==== INICIO Buscar Monedas Consultas - Service ====]";
+	
+	private static final String MONEDASERVICEBUSCARMONEDAF = "[==== FIN Buscar Monedas Consultas - Service ====]";
+	
+	private static final String MONEDASERVICEACTUALIZARMONEDAI = "[==== INICIO Actualizar Monedas - Service ====]";
+	
+	private static final String MONEDASERVICEACTUALIZARMONEDAF = "[==== FIN Actualizar Monedas - Service ====]";
+	
+	private static final String MONEDASERVICECREARMONEDAI = "[==== INICIO Crear Monedas - Service ====]";
+	
+	private static final String MONEDASERVICECREARMONEDAF = "[==== FIN Crear Monedas - Service ====]";
     
     public WSRequest getWSRequest() {
     	WSRequest wsrequest = new WSRequest();
@@ -62,24 +82,24 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public List<Moneda> listaMonedas(MonedasRequest monedasRequest) throws CustomException {
+		log.info(MONEDASERVICELISTAMONEDASI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
 		monedasRequestJSON = new Gson().toJson(monedasRequest);
 		wsrequest.setBody(monedasRequestJSON);
-		log.info("monedasRequestJSON: "+monedasRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/monedas/consultas");
-		log.info("urlConsulta: "+urlConsulta);
-		log.info("antes de llamarte WS en consultar lista moneda");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
-		log.info("retorno: "+retorno);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MONEDASERVICELISTAMONEDASF);
 	            return respuesta2xxlistaMonedas(retorno);
 			}else {
+				log.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -89,7 +109,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			MonedaResponse monedaResponse = mapper.jsonToClass(retorno.getBody(), MonedaResponse.class);
 			return monedaResponse.getMonedas();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return new ArrayList<>();
 		}
        
@@ -99,21 +119,24 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public boolean existe(MonedasRequest monedasRequest) throws CustomException {
+		log.info(MONEDASERVICEEXISTEMONEDAI);  
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
 		monedasRequestJSON = new Gson().toJson(monedasRequest);
 		wsrequest.setBody(monedasRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/monedas/consultas");
-		log.info("antes de llamarte WS en consultar existe moneda");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MONEDASERVICEEXISTEMONEDAF);
 				return respuesta2xxExiste(retorno);
 			}else {
+				log.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -124,7 +147,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			MonedaResponse monedaResponse = mapper.jsonToClass(retorno.getBody(), MonedaResponse.class);
 			return monedaResponse.getResultado().getCodigo().equals("0000") ? true:false;
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return false;
 		}
 
@@ -136,28 +159,31 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			return resultado.getDescripcion();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
 	public Moneda buscarMoneda(MonedasRequest monedasRequest) throws CustomException {
+		log.info(MONEDASERVICEBUSCARMONEDAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
 		monedasRequestJSON = new Gson().toJson(monedasRequest);
 		wsrequest.setBody(monedasRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/monedas/consultas");
-		log.info("antes de llamarte WS en buscarMoneda");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MONEDASERVICEBUSCARMONEDAF);
 				return respuest2xxBuscarMoneda(retorno);
 			}else {
+				log.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -173,7 +199,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 	        	return null;
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
         
@@ -181,22 +207,25 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public String actualizar(MonedasRequest monedasRequest) throws CustomException{
+		log.info(MONEDASERVICEACTUALIZARMONEDAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
 		monedasRequestJSON = new Gson().toJson(monedasRequest);
 		wsrequest.setBody(monedasRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/monedas");
-		log.info("antes de llamarte WS en actualizarWs");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.put(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MONEDASERVICEACTUALIZARMONEDAF);
 				return respuesta2xxActualizarCrear(retorno);
 				
 			}else {
+				log.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -207,7 +236,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
        
@@ -221,22 +250,25 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public String crear(MonedasRequest monedasRequest) throws CustomException {
+		log.info(MONEDASERVICECREARMONEDAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
 		monedasRequestJSON = new Gson().toJson(monedasRequest);
 		wsrequest.setBody(monedasRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/monedas");
-		log.info("antes de llamarte WS en crearWs");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MONEDASERVICECREARMONEDAF);
 				return respuesta2xxActualizarCrear(retorno);
 				
 			}else {
+				log.error(respuesta4xxCrear(retorno));
 				throw new CustomException(respuesta4xxCrear(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -246,7 +278,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}

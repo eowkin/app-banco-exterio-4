@@ -44,7 +44,7 @@ public class MonedaController {
 	@Autowired
 	private LibreriaUtil libreriaUtil; 
 	
-	@Value("${des.canal}")
+	@Value("${${app.ambiente}"+".canal}")
     private String canal;	
 
 	private static final String URLINDEX = "convenio/moneda/listaMonedas";
@@ -61,9 +61,39 @@ public class MonedaController {
 	
 	private static final String MENSAJE = "mensaje";
 	
+	private static final String MONEDACONTROLLERINDEXI = "[==== INICIO Index Monedas Consultas - Controller ====]";
+	
+	private static final String MONEDACONTROLLERINDEXF = "[==== FIN Index Monedas Consultas - Controller ====]";
+	
+	private static final String MONEDACONTROLLERACTIVARI = "[==== INICIO Activar Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERACTIVARF = "[==== FIN Activar Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERDESACTIVARI = "[==== INICIO Desactivar Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERDESACTIVARF = "[==== FIN Desactivar Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLEREDITARI = "[==== INICIO Editar Moneda Consulta - Controller ====]";
+	
+	private static final String MONEDACONTROLLEREDITARF = "[==== FIN Editar Moneda Consulta - Controller ====]";
+	
+	private static final String MONEDACONTROLLERGUARDARI = "[==== INICIO Guardar Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERGUARDARF = "[==== FIN Guardar Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERSAVEI = "[==== INICIO Save Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERSAVEF = "[==== FIN Save Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERSEARHCODIGOI = "[==== INICIO SearchCodigo Moneda - Controller ====]";
+	
+	private static final String MONEDACONTROLLERSEARHCODIGOF = "[==== FIN SearchCodigo Moneda - Controller ====]";
+	
+	
+	
 	@GetMapping("/index")
 	public String indexWs(Model model, RedirectAttributes redirectAttributes) {
-		log.info("si me llamo a index listaMonedasWs");
+		log.info(MONEDACONTROLLERINDEXI);
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda moneda = new Moneda();
 		monedasRequest.setMoneda(moneda);
@@ -80,18 +110,18 @@ public class MonedaController {
 			model.addAttribute(LISTAMONEDAS, listMonedas);
 	    	
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMONEDAS, listMonedas);
 			
 		}
-		
+		log.info(MONEDACONTROLLERINDEXF);
 		return URLINDEX; 
 	}
 	
 	@GetMapping("/activar/{codMoneda}")
 	public String activarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes) {
-		log.info("activarWs");
-		log.info(codMoneda);
+		log.info(MONEDACONTROLLERACTIVARI);
 		Moneda monedaEdit = new Moneda();
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda monedaBuscar = new Moneda();
@@ -104,18 +134,20 @@ public class MonedaController {
 			monedaEdit.setFlagActivo(true);
 			monedasRequest.setMoneda(monedaEdit);
 			String respuesta = monedaServiceApiRest.actualizar(monedasRequest);
+			log.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 			
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 		}
+		log.info(MONEDACONTROLLERACTIVARF);
 		return REDIRECTINDEX;
 	}	
 	
 	@GetMapping("/desactivar/{codMoneda}")
 	public String desactivarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes) {
-		log.info("desactivarWs");
-		log.info(codMoneda);
+		log.info(MONEDACONTROLLERDESACTIVARI);
 		Moneda monedaEdit = new Moneda();
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda monedaBuscar = new Moneda();
@@ -128,17 +160,19 @@ public class MonedaController {
 			monedaEdit.setFlagActivo(false);
 			monedasRequest.setMoneda(monedaEdit);
 			String respuesta = monedaServiceApiRest.actualizar(monedasRequest);
+			log.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 		}
+		log.info(MONEDACONTROLLERDESACTIVARF);
 		return REDIRECTINDEX;
 	}
 	
 	@GetMapping("/edit/{codMoneda}")
 	public String editarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes) {
-		log.info("editarWs");
-		log.info(codMoneda);
+		log.info(MONEDACONTROLLEREDITARI);
 		Moneda monedaEdit = new Moneda();
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda monedaBuscar = new Moneda();
@@ -148,12 +182,15 @@ public class MonedaController {
 			monedaEdit = monedaServiceApiRest.buscarMoneda(monedasRequest);
 			if(monedaEdit != null) {
 				model.addAttribute("moneda", monedaEdit);
+				log.info(MONEDACONTROLLEREDITARF);
         		return URLFORMMONEDAEDIT;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, "Operacion Exitosa.La consulta no arrojo resultado.");
+				log.info(MONEDACONTROLLEREDITARF);
 				return REDIRECTINDEX;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -163,18 +200,19 @@ public class MonedaController {
 	@PostMapping("/guardar")
 	public String guardarWs(Moneda moneda, BindingResult result,  RedirectAttributes redirectAttributes) {
 		
-		log.info("guardar");
-		log.info("moneda: "+moneda);
-			
+		log.info(MONEDACONTROLLERGUARDARI);	
 		MonedasRequest monedasRequest = getMonedasRequest();
 		monedasRequest.setMoneda(moneda);
 		
 		
 		try {
 			String respuesta = monedaServiceApiRest.actualizar(monedasRequest);
+			log.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
+			log.info(MONEDACONTROLLERGUARDARF);
 			return REDIRECTINDEX;
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return URLFORMMONEDAEDIT;
 		}
@@ -186,8 +224,7 @@ public class MonedaController {
 	@PostMapping("/save")
 	public String saveWs(@Valid  Moneda moneda, BindingResult result, RedirectAttributes redirectAttributes) {
 		
-		log.info("saveWs");
-		log.info("moneda: "+moneda);
+		log.info(MONEDACONTROLLERSAVEI);
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
 				log.info("Ocurrio un error: " + error.getDefaultMessage());
@@ -203,9 +240,12 @@ public class MonedaController {
 		
 		try {
 			String respuesta = monedaServiceApiRest.crear(monedasRequest);
+			log.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
+			log.info(MONEDACONTROLLERSAVEF);
 			return REDIRECTINDEX;
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			result.addError(new ObjectError("codMoneda", e.getMessage()));
 			return URLFORMMONEDA;
 		}
@@ -223,7 +263,7 @@ public class MonedaController {
 	@GetMapping("/searchCodigo")
 	public String searchCodigo(@ModelAttribute("monedaSearch") Moneda monedaSearch,
 			Model model, RedirectAttributes redirectAttributes) {
-		log.info("si me llamo a searchCodigo");
+		log.info(MONEDACONTROLLERSEARHCODIGOI);
 		
 		
 		
@@ -253,11 +293,12 @@ public class MonedaController {
 			
 			
 		} catch (CustomException e) {
-			log.error("error: "+e);
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMONEDAS, listMonedas);
 			
 		}
+		log.info(MONEDACONTROLLERSEARHCODIGOF);
 		return URLINDEX;
 	}
 	

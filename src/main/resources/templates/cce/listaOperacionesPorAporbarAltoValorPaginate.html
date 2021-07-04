@@ -50,78 +50,8 @@
 		      <div class="col-lg-1-12">
 		        <div class="card">
 		          <div class="card-header">
-		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar
-		            <p align="right"></p>
-		            <div class="my-2">
-		            		
-         					<form th:action="@{/ccetransacciones/searchBancoBeneficiario}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-horizontal">
-        						<div class="form-group row">
-						            <div class="col-sm-6">
-						              <select  class="form-control"  name="bancoDestino" th:field="*{bancoDestino}">
-						                <option value="">----Selecionar Banco----</option>
-						                <option th:each = "banco: ${listaBancos}" th:value="${banco.codBanco}" th:text="${banco.nbBanco}"></option>
-						              </select>
-						            </div>
-						          </div>
-					            <div>
-					            	<button type="submit" class="btn btn-primary mb-3">Buscar por Banco</button>
-					            </div>	            
-          					</form>
-        			</div>
-        			<div class="my-2">
-		            		<div th:if="${listaError}" class="alert alert-danger" role="alert">
-				            		Por favor corrija los siguientes errores:
-				            		<ul>
-				            			<li th:each="error : ${listaError}"  th:text="${error}"></li>
-				            		</ul>
-				            	</div>
-         					<form th:action="@{/ccetransacciones/searchMonto}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-inline">
-        						
-        						<input type="text"  class="form-control mb-3"  th:field="*{montoDesde}" maxlength="16" placeholder="Monto Desde" required="required">&nbsp;
-        						<input type="text"  class="form-control mb-3"  th:field="*{montoHasta}" maxlength="16" placeholder="Monto Hasta" required="required">&nbsp;
-            					<button type="submit" class="btn btn-primary mb-3">Buscar por Monto</button>            
-          					</form>
-        			</div>
-		            <div class="my-2">
-		            		
-         					<form th:action="@{/ccetransacciones/searchOredenante}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-inline">
-        						
-        						<input type="text"  class="form-control mb-3"  th:field="*{numeroIdentificacion}" maxlength="16" placeholder="Escriba una búsqueda" >&nbsp;
-            					<button type="submit" class="btn btn-primary mb-3">Buscar por Rif-CI Ordenante</button>            
-          					</form>
-        			</div>
-		             
-		            
-        			
-        			<div class="my-2">
-        				<div th:if="${listaErrorFecha}" class="alert alert-danger" role="alert">
-				            		Por favor corrija los siguientes errores:
-				            		<ul>
-				            			<li th:each="error : ${listaErrorFecha}"  th:text="${error}"></li>
-				            		</ul>
-				            	</div>
-		            		<form th:action="@{/ccetransacciones/searchFechaHora}"  th:object="${cceTransaccionDtoSearch}"  method="get" class="form-horizontal">
-        						  	<div class="form-group row">
-							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Desde:</label>
-							            <div class="col-sm-4">
-							              <input type="datetime-local" class="form-control" th:field="*{fechaDesde}" name="fechaDesde" id="fechaDesde" placeholder="Fecha desde" required="required">
-							            </div>
-							          </div>
-							          
-							          <div class="form-group row">
-							            <label class="col-sm-2 col-form-label" for="input-large">Fecha Hasta:</label>
-							            <div class="col-sm-4">
-							              <input type="datetime-local" class="form-control" th:field="*{fechaHasta}" name="fechaHasta" id="fechaHasta" placeholder="Fecha hasta" required="required">
-							            </div>
-							          </div>
-            						  	
-            					
-            					<div>
-		        					<button type="submit" class="btn btn-primary">Consultar</button>
-		      	 				 </div>
-            					         
-          					</form>
-          				</div>	
+		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar Final
+		            <p align="right"></p>	
 		            <div class="my-2 text-right">
 		            	<input type="checkbox"  /> Seleccionar todos
 		            </div>
@@ -179,13 +109,13 @@
 		            <nav th:if="${datosPaginacion.totalPaginas > 0}" aria-label="Page navigation example" > 
 		            	<ul class="pagination justify-content-center">         
 		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == 1 ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValor/{page}  (page=${datosPaginacion.paginaActual - 1})}" class="page-link">Anterior</a>
+		            			<a th:href="@{/ccetransacciones/consultaOperacionesAprobarAltoBajoValorPageable(page=${datosPaginacion.paginaActual - 1}, montoDesde=${montoDesde}, montoHasta=${montoHasta}, bancoEmisor=${bancoEmisor}, nroIdEmisor=${nroIdEmisor}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Anterior</a>
 		            		</li> 
 		            		<li class="page-item">
 								<a class="page-link"  th:text="${'Pagina '+ datosPaginacion.paginaActual + ' -  '+ datosPaginacion.totalPaginas}" th:title="${'Page '+ datosPaginacion.paginaActual}" data-toggle="tooltip"></a>
 							</li>
 		            		<li class="page-item" th:classappend="${datosPaginacion.paginaActual == (datosPaginacion.totalPaginas) ? 'disabled' : ''}">
-		            			<a th:href="@{/ccetransacciones/procesarMovimientosPorAprobarAltoValor/{page}  (page=${datosPaginacion.paginaActual + 1})}" class="page-link">Siguiente</a>
+		            			<a th:href="@{/ccetransacciones/consultaOperacionesAprobarAltoBajoValorPageable(page=${datosPaginacion.paginaActual + 1}, montoDesde=${montoDesde}, montoHasta=${montoHasta}, bancoEmisor=${bancoEmisor}, nroIdEmisor=${nroIdEmisor}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Siguiente</a>
 		            		</li>  
 		            	</ul> 
 		            </nav>	

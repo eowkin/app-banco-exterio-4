@@ -68,10 +68,10 @@ public class SolicitudController {
 	@Autowired
 	private LibreriaUtil libreriaUtil; 
 	
-	@Value("${des.canal}")
+	@Value("${${app.ambiente}"+".canal}")
     private String canal;
 	
-	@Value("${des.movimientos.numeroRegistroPage}")
+	@Value("${${app.ambiente}"+".movimientos.numeroRegistroPage}")
     private int numeroRegistroPage;
 	
 	private static final String VENTAACUMULADOUSD = "ventaAcumuladoUSD";
@@ -156,8 +156,77 @@ public class SolicitudController {
 	
 	private static final String REDIRECTINICIO = "redirect:/";
 	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASI = "[==== INICIO ListaMovimientosAprobarVentas Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASF = "[==== FIN ListaMovimientosAprobarVentas Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASI = "[==== INICIO ListaMovimientosAprobarCompras Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASF = "[==== FIN ListaMovimientosAprobarCompras Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASI = "[==== INICIO ListaMovimientosVentas Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASF = "[==== FIN ListaMovimientosVentas Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASI = "[==== INICIO ListaMovimientosCompras Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASF = "[==== FIN ListaMovimientosCompras Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERPROCESARCOMPRAI = "[==== INICIO ProcesarCompra Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERPROCESARCOMPRAF = "[==== FIN ProcesarCompra Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERGUARDARCOMPRAI = "[==== INICIO GuardarCompra Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERGUARDARCOMPRAF = "[==== FIN GuardarCompra Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERPROCESARVENTAI = "[==== INICIO ProcesarVenta Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERPROCESARVENTAF = "[==== FIN ProcesarVenta Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERGUARDARVENTAI = "[==== INICIO GuardarVenta Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERGUARDARVENTAF = "[==== FIN GuardarVenta Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERRECHAZARCOMPRAI = "[==== INICIO RechazarCompra Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERRECHAZARCOMPRAF = "[==== FIN RechazarCompra Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERAPROBARCOMPRAI = "[==== INICIO AprobarCompra Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERAPROBARCOMPRAF = "[==== FIN AprobarCompra Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERRECHAZARVENTAI = "[==== INICIO RechazarVenta Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERRECHAZARVENTAF = "[==== FIN RechazarVenta Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERAPROBARVENTAI = "[==== INICIO AprobarVenta Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERAPROBARVENTAF = "[==== FIN AprobarVenta Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLEREXPORTEXCELI = "[==== INICIO ExportExcel Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLEREXPORTEXCELF = "[==== FIN ExportExcel Movimientos - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERSEARCHESTATUSVENTAI = "[==== INICIO SearchEstatusVenta Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERSEARCHESTATUSVENTAF = "[==== FIN SearchEstatusVenta Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAI = "[==== INICIO ListaConsultaSearchEstatusVenta Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAF = "[==== FIN ListaConsultaSearchEstatusVenta Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAI = "[==== INICIO SearchEstatusCompra Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAF = "[==== FIN SearchEstatusCompra Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAI = "[==== INICIO ListaConsultaSearchEstatusCompra Movimientos Consultas - Controller ====]";
+	
+	private static final String SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF = "[==== FIN ListaConsultaSearchEstatusCompra Movimientos Consultas - Controller ====]";
+	
 	@GetMapping("/listaSolicitudesMovimientosPorAprobarVentas/{page}")
 	public String consultaMovimientoPorAprobarVenta(@PathVariable("page") int page,Model model) {
+		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASI);
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -249,7 +318,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 					
 					
@@ -258,6 +327,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 				}
 				
@@ -265,6 +335,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -300,6 +371,7 @@ public class SolicitudController {
 	
 	@GetMapping("/listaSolicitudesMovimientosPorAprobarCompra/{page}")
 	public String consultaMovimientoPorAprobarCompra(@PathVariable("page") int page,Model model) {
+		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASI);
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -390,7 +462,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 					
 					
@@ -399,6 +471,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 				}
 				
@@ -406,6 +479,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -440,6 +514,7 @@ public class SolicitudController {
 	
 	@GetMapping("/listaSolicitudesMovimientosVentas/{page}")
 	public String consultaMovimientoVenta(@PathVariable("page") int page,Model model) {
+		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASI);
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		
@@ -483,7 +558,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASF);
 					return URLLISTAMOVIMIENTOSVENTA;
 					
 					
@@ -492,6 +567,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASF);
 					return URLLISTAMOVIMIENTOSVENTA;
 				}
 				
@@ -499,6 +575,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -512,6 +589,7 @@ public class SolicitudController {
 	
 	@GetMapping("/listaSolicitudesMovimientosCompras/{page}")
 	public String consultaMovimientoCompra(@PathVariable("page") int page,Model model) {
+		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASI);
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		
@@ -555,7 +633,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASF);
 					return URLLISTAMOVIMIENTOSCOMPRA;
 					
 					
@@ -564,6 +642,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASF);
 					return URLLISTAMOVIMIENTOSCOMPRA;
 				}
 				
@@ -571,6 +650,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -584,7 +664,7 @@ public class SolicitudController {
 	@GetMapping("/procesarCompra/{codOperacion}/{page}")
 	public String procesarCompra(@PathVariable("codOperacion") String codOperacion, @PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes, Movimiento movimiento ) {
-		log.info("procesarCompra");
+		log.info(SOLICITUDCONTROLLERPROCESARCOMPRAI);
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
@@ -604,6 +684,7 @@ public class SolicitudController {
 				movimientoProcesar.setPaginaActual(page);
 				model.addAttribute(PAGINAACTUAL, page);
 				model.addAttribute("movimiento", movimientoProcesar);
+				log.info(SOLICITUDCONTROLLERPROCESARCOMPRAF);
 				return URLFORMSOLICITUD;
 			}else {
 				String mensajeError = response.getResultado().getDescripcion();
@@ -611,6 +692,7 @@ public class SolicitudController {
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 			}	
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 		}
@@ -619,6 +701,7 @@ public class SolicitudController {
 	@PostMapping("/guardarProcesarCompra")
 	public String guardarProcesarCompra(Movimiento movimiento, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request) {
+		log.info(SOLICITUDCONTROLLERGUARDARCOMPRAI);
 		List<String> listaError = new ArrayList<>();
 		model.addAttribute(PAGINAACTUAL, movimiento.getPaginaActual());
 		if (result.hasErrors()) {
@@ -653,10 +736,13 @@ public class SolicitudController {
 		
 		try {
 			String respuesta = movimientosApiRest.aprobarCompra(aprobarRechazarRequest);
+			log.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
+			log.info(SOLICITUDCONTROLLERGUARDARCOMPRAF);
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+movimiento.getPaginaActual();
 			
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR, e.getMessage()));
 			listaError.add(e.getMessage());
 			model.addAttribute(LISTAERROR, listaError);
@@ -668,7 +754,7 @@ public class SolicitudController {
 	@GetMapping("/procesarVenta/{codOperacion}/{page}")
 	public String procesarVenta(@PathVariable("codOperacion") String codOperacion, @PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes, Movimiento movimiento ) {
-		log.info("procesarVenta");
+		log.info(SOLICITUDCONTROLLERPROCESARVENTAI);
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
@@ -687,6 +773,7 @@ public class SolicitudController {
 				movimientoProcesar.setPaginaActual(page);
 				model.addAttribute(PAGINAACTUAL, page);
 				model.addAttribute("movimiento", movimientoProcesar);
+				log.info(SOLICITUDCONTROLLERPROCESARVENTAF);
 				return URLFORMSOLICITUDVENTA;
 			}else {
 				String mensajeError = response.getResultado().getCodigo() + " " + response.getResultado().getDescripcion();
@@ -698,6 +785,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERRORVENTA,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 		}
@@ -707,7 +795,7 @@ public class SolicitudController {
 	@PostMapping("/guardarProcesarVenta")
 	public String guardarProcesarVenta(Movimiento movimiento, BindingResult result, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request) {
-
+		log.info(SOLICITUDCONTROLLERGUARDARVENTAI);
 		List<String> listaError = new ArrayList<>();
 		model.addAttribute(PAGINAACTUAL, movimiento.getPaginaActual());
 		if (result.hasErrors()) {
@@ -741,10 +829,13 @@ public class SolicitudController {
 		
 		try {
 			String respuesta = movimientosApiRest.aprobarVenta(aprobarRechazarRequest);
+			log.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJEVENTA, respuesta);
+			log.info(SOLICITUDCONTROLLERGUARDARVENTAF);
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+movimiento.getPaginaActual();
 			
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR, e.getMessage()));
 			listaError.add(e.getMessage());
 			model.addAttribute(LISTAERROR, listaError);
@@ -757,7 +848,7 @@ public class SolicitudController {
 	public String rechazarCompra(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info("rechazarCompra");
+		log.info(SOLICITUDCONTROLLERRECHAZARCOMPRAI);
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
@@ -789,7 +880,9 @@ public class SolicitudController {
 				aprobarRechazarRequest.setEstatus(2);
 				
 				String respuesta = movimientosApiRest.rechazarCompra(aprobarRechazarRequest);
+				log.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
+				log.info(SOLICITUDCONTROLLERRECHAZARCOMPRAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 				
 				
@@ -799,6 +892,7 @@ public class SolicitudController {
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 		}
@@ -808,7 +902,7 @@ public class SolicitudController {
 	public String aprobarCompra(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info("aprobarCompra");
+		log.info(SOLICITUDCONTROLLERAPROBARCOMPRAI);
 		
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
@@ -837,7 +931,9 @@ public class SolicitudController {
 				aprobarRechazarRequest.setEstatus(1);
 				
 				String respuesta = movimientosApiRest.aprobarCompra(aprobarRechazarRequest);
+				log.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
+				log.info(SOLICITUDCONTROLLERAPROBARCOMPRAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 				
 				
@@ -852,6 +948,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 		}
@@ -861,10 +958,7 @@ public class SolicitudController {
 	public String rechazarVenta(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info("rechazarVenta");
-		
-		
-		
+		log.info(SOLICITUDCONTROLLERRECHAZARVENTAI);
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
@@ -894,7 +988,9 @@ public class SolicitudController {
 				
 				
 				String respuesta = movimientosApiRest.rechazarVenta(aprobarRechazarRequest);
+				log.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJEVENTA, respuesta);
+				log.info(SOLICITUDCONTROLLERRECHAZARVENTAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 				
 				
@@ -908,6 +1004,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERRORVENTA,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 		}
@@ -917,7 +1014,7 @@ public class SolicitudController {
 	public String aprobarVenta(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info("aprobarVenta");
+		log.info(SOLICITUDCONTROLLERAPROBARVENTAI);
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
@@ -946,7 +1043,9 @@ public class SolicitudController {
 				
 				
 				String respuesta = movimientosApiRest.aprobarVenta(aprobarRechazarRequest);
+				log.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJEVENTA, respuesta);
+				log.info(SOLICITUDCONTROLLERAPROBARVENTAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 				
 				
@@ -959,6 +1058,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERRORVENTA,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 		}
@@ -1035,6 +1135,7 @@ public class SolicitudController {
 				model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR,e.getMessage()));
 			 listaError.add(e.getMessage());
 			 model.addAttribute(LISTAERROR, listaError);			
@@ -1045,7 +1146,7 @@ public class SolicitudController {
 	
 	
     public void exportToExcelConsulta(List<Movimiento> listaMovimientos, HttpServletResponse response) {
-		log.info("exportToExcelConsulta");
+		log.info(SOLICITUDCONTROLLEREXPORTEXCELI);
         
 		
 		
@@ -1061,8 +1162,9 @@ public class SolicitudController {
 					excelExporter.export(response);
 					response.getOutputStream().flush();
 					 response.getOutputStream().close();
+					 log.info(SOLICITUDCONTROLLEREXPORTEXCELF);
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error(e.getMessage());
 				}
 		
     }
@@ -1245,7 +1347,7 @@ public class SolicitudController {
 	public String searchEstatus(@ModelAttribute("movimientoSearch") Movimiento movimientoSearch, 
 			Model model, RedirectAttributes redirectAttributes) {
 		
-		log.info("searchEstatus");
+		log.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAI);
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
@@ -1338,6 +1440,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 					
 					
@@ -1346,6 +1449,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 				}
 				
@@ -1353,6 +1457,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1367,7 +1472,7 @@ public class SolicitudController {
 	@GetMapping("/listaSolicitudesMovimientosVentas/{page}/{estatus}/{fechaDesde}/{fechaHasta}")
 	public String consultaMovimientoVentaSearchEstatus(@PathVariable("page") int page,@PathVariable("estatus") int estatus, 
 			@PathVariable("fechaDesde") String fechaDesde, @PathVariable("fechaHasta") String fechaHasta,Model model) {
-
+		log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAI);
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -1408,6 +1513,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 					
 					
@@ -1457,7 +1563,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					
+					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 					
 					
@@ -1466,6 +1572,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 				}
 				
@@ -1473,6 +1580,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1487,7 +1595,7 @@ public class SolicitudController {
 	public String searchEstatusCompra(@ModelAttribute("movimientoSearch") Movimiento movimientoSearch, 
 			Model model, RedirectAttributes redirectAttributes) {
 		
-		log.info("searchEstatusCompra");
+		log.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAI);
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
@@ -1552,6 +1660,7 @@ public class SolicitudController {
 					model.addAttribute(ESTATUS, movimientoSearch.getEstatus());
 					model.addAttribute(FECHADESDE, movimientoSearch.getFechas().getFechaDesde());
 					model.addAttribute(FECHAHASTA, movimientoSearch.getFechas().getFechaHasta());
+					log.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 					
 					
@@ -1560,6 +1669,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 				}
 				
@@ -1567,6 +1677,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			model.addAttribute(MENSAJEERRORCOMPRA, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1581,7 +1692,7 @@ public class SolicitudController {
 	@GetMapping("/listaSolicitudesMovimientosCompras/{page}/{estatus}/{fechaDesde}/{fechaHasta}")
 	public String consultaMovimientoCompraSearchEstatus(@PathVariable("page") int page,@PathVariable("estatus") int estatus,
 			@PathVariable("fechaDesde") String fechaDesde, @PathVariable("fechaHasta") String fechaHasta,Model model) {
-		
+		log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAI);
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		
@@ -1640,6 +1751,7 @@ public class SolicitudController {
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
 					model.addAttribute(ESTATUS, estatus);
+					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 					
 					
@@ -1648,6 +1760,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
+					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 				}
 				
@@ -1681,6 +1794,7 @@ public class SolicitudController {
 			model.addAttribute(LISTAMONEDAS, listaMonedas);
 			return URLFORMSOLICITUDGENERARREPORTE;
 		} catch (CustomException e) {
+			log.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return "redirect:/solicitudes/listaSolicitudesMovimientosVentas/1";
 		}

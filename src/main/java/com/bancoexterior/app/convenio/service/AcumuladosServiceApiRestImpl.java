@@ -30,16 +30,24 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
     @Autowired 
 	private Mapper mapper;
 	
-    @Value("${des.ConnectTimeout}")
+    @Value("${${app.ambiente}"+".ConnectTimeout}")
     private int connectTimeout;
     
-    @Value("${des.SocketTimeout}")
+    @Value("${${app.ambiente}"+".SocketTimeout}")
     private int socketTimeout;
     
-    @Value("${des.acumulados.urlConsulta}")
+    @Value("${${app.ambiente}"+".acumulados.urlConsulta}")
     private String urlConsulta;
+       
+    private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio Acumulados";
     
-    String errorMicroCOnexion = "No hubo conexion con el micreoservicio acumulados";
+    private static final String ACUMULADOSSERVICECONSULTARDIARIOSBANCOI = "[==== INICIO AcumuladosDiariosBanco Acumulados Consultas - Service ====]";
+	
+	private static final String ACUMULADOSSERVICECONSULTARDIARIOSBANCOF = "[==== FIN AcumuladosDiariosBanco Acumulados Consultas - Service ====]";
+	
+	private static final String ACUMULADOSSERVICECONSULTARCOMPRAVENTAI = "[==== INICIO AcumuladosCompraVenta Acumulados Consultas - Service ====]";
+	
+	private static final String ACUMULADOSSERVICECONSULTARCOMPRAVENTAF = "[==== FIN AcumuladosCompraVenta Acumulados Consultas - Service ====]";
     
     public WSRequest getWSRequest() {
     	WSRequest wsrequest = new WSRequest();
@@ -54,45 +62,41 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 		WSRequest wsrequest = getWSRequest();
 		String acumuladoRequestJSON;
 		acumuladoRequestJSON = new Gson().toJson(acumuladoRequest);
-		log.info("acumuladoRequestJSON: "+acumuladoRequestJSON);
-		
 		wsrequest.setBody(acumuladoRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/montosacumulados");
-			
-		log.info("antes de llamarte WS en consultarAcumulados");
-		WSResponse retorno = wsService.post(wsrequest);
+		wsrequest.setUrl(urlConsulta);	
+		wsService.post(wsrequest);
 		return null;
 	}
 
 	@Override
 	public AcumuladoResponse consultarAcumuladosDiariosBanco(AcumuladoRequest acumuladoRequest) throws CustomException {
+		log.info(ACUMULADOSSERVICECONSULTARDIARIOSBANCOI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String acumuladoRequestJSON;
 		acumuladoRequestJSON = new Gson().toJson(acumuladoRequest);
 		wsrequest.setBody(acumuladoRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/montosacumulados");
-			
-		log.info("antes de llamarte WS en consultarAcumuladosDiariosBanco");
+		wsrequest.setUrl(urlConsulta);	
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(ACUMULADOSSERVICECONSULTARDIARIOSBANCOF);
 				return respuesta2xxConsultarAcumuladosDiariosBanco(retorno);
 			}else {
+				log.error(respuesta4xxConsultarAcumuladosDiariosBanco(retorno));
 				throw new CustomException(respuesta4xxConsultarAcumuladosDiariosBanco(retorno));
 			}
 		}else {
-			throw new CustomException(errorMicroCOnexion);
+			log.error(ERRORMICROCONEXION);
+			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
 	
 	public AcumuladoResponse respuesta2xxConsultarAcumuladosDiariosBanco(WSResponse retorno) {
 		 try {
-			 AcumuladoResponse acumuladoResponse = mapper.jsonToClass(retorno.getBody(), AcumuladoResponse.class);
-         	 log.info(acumuladoResponse.getResultado().getCodigo());
-	         return acumuladoResponse;
+			 return mapper.jsonToClass(retorno.getBody(), AcumuladoResponse.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;	
 		}
 	}
@@ -102,7 +106,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado() .getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -110,34 +114,34 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 	@Override
 	public AcumuladoCompraVentaResponse consultarAcumuladosCompraVenta(AcumuladoRequest acumuladoRequest)
 			throws CustomException {
+		log.info(ACUMULADOSSERVICECONSULTARCOMPRAVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String acumuladoRequestJSON;
 		acumuladoRequestJSON = new Gson().toJson(acumuladoRequest);
 		wsrequest.setBody(acumuladoRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/montosacumulados");
-			
-		log.info("antes de llamarte WS en consultarAcumuladosCompraVenta");
+		wsrequest.setUrl(urlConsulta);	
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(ACUMULADOSSERVICECONSULTARCOMPRAVENTAF);
 				return respuesta2xxconsultarConsultarAcumuladosCompraVenta(retorno);
 	        }else {
+	        	log.error(respuesta4xxConsultarAcumuladosCompraVenta(retorno));
 				throw new CustomException(respuesta4xxConsultarAcumuladosCompraVenta(retorno));
 			}
 		}else {
-			throw new CustomException(errorMicroCOnexion);
+			log.error(ERRORMICROCONEXION);
+			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
 	}
 	
 	public AcumuladoCompraVentaResponse respuesta2xxconsultarConsultarAcumuladosCompraVenta(WSResponse retorno) {
 		try {
-			AcumuladoCompraVentaResponse acumuladoCompraVentaResponse = mapper.jsonToClass(retorno.getBody(), AcumuladoCompraVentaResponse.class);
-        	log.info(acumuladoCompraVentaResponse.getResultado().getCodigo());
-            return acumuladoCompraVentaResponse;
+			return mapper.jsonToClass(retorno.getBody(), AcumuladoCompraVentaResponse.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -148,7 +152,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 			return response.getResultado().getDescripcion();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}

@@ -34,28 +34,65 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
     @Autowired 
 	private Mapper mapper;
     
-    @Value("${des.ConnectTimeout}")
+    @Value("${${app.ambiente}"+".ConnectTimeout}")
     private int connectTimeout;
     
-    @Value("${des.SocketTimeout}")
+    @Value("${${app.ambiente}"+".SocketTimeout}")
     private int socketTimeout;
     
-    @Value("${des.movimientos.consultarMovimientosPorAprobar}")
+    @Value("${${app.ambiente}"+".movimientos.consultarMovimientosPorAprobar}")
     private String urlConsultarMovimientosPorAprobar;
+    //https://172.19.148.51:8443/api/des/V1/divisas/consultasmovimientos?sort=codMoneda,desc&sort=tasaCliente,desc&sort=montoDivisa,asc
     
-    @Value("${des.movimientos.consultarMovimientosPorAprobarVenta}")
+    @Value("${${app.ambiente}"+".movimientos.consultarMovimientosPorAprobarVenta}")
     private String urlConsultarMovimientosPorAprobarVenta;
+    //https://172.19.148.51:8443/api/des/V1/divisas/consultasmovimientos?sort=codMoneda,desc&sort=tasaCliente,asc&sort=montoDivisa,desc
     
-    @Value("${des.movimientos.consultarMovimientos}")
+    @Value("${${app.ambiente}"+".movimientos.consultarMovimientos}")
     private String urlConsultarMovimientos;
+    //https://172.19.148.51:8443/api/des/V1/divisas/consultasmovimientos
     
-    @Value("${des.movimientos.compra.actualizar}")
+    @Value("${${app.ambiente}"+".movimientos.compra.actualizar}")
     private String urlActualizarMovimientosCompra;
+    //https://172.19.148.51:8443/api/des/V1/divisas/aprobacionescompras
     
-    @Value("${des.movimientos.venta.actualizar}")
+    @Value("${${app.ambiente}"+".movimientos.venta.actualizar}")
     private String urlActualizarMovimientosVenta;
+    //https://172.19.148.51:8443/api/des/V1/divisas/aprobacionesventas
     
     private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio Movimientos";
+    
+    private static final String MOVIMIENTOSSERVICECONSULTARPORAPROBARI = "[==== INICIO ConsultarMovimientosPorAprobar Movimientos Consultas - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICECONSULTARPORAPROBARF = "[==== FIN ConsultarMovimientosPorAprobar Movimientos Consultas - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAI = "[==== INICIO ConsultarMovimientosPorAprobarVenta Movimientos Consultas - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAF = "[==== FIN ConsultarMovimientosPorAprobarVenta Movimientos Consultas - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSI = "[==== INICIO ConsultarMovimientos Movimientos Consultas - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSF = "[==== FIN ConsultarMovimientos Movimientos Consultas - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICERECHAZARCOMPRAI = "[==== INICIO RechazarCompra Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICERECHAZARCOMPRAF = "[==== FIN RechazarCompra Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICEAPROBARCOMPRAI = "[==== INICIO AprobarCompra Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICEAPROBARCOMPRAF = "[==== FIN AprobarCompra Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICERECHAZARVENTAI = "[==== INICIO RechazarVenta Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICERECHAZARVENTAF = "[==== FIN RechazarVenta Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICEAPROBARVENTAI = "[==== INICIO AprobarVenta Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICEAPROBARVENTAF = "[==== FIN AprobarVenta Movimientos - Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSI = "[==== INICIO GetListaMvimientos Movimientos Consultas- Service ====]";
+	
+	private static final String MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSF = "[==== FIN GetListaMovimientos Movimientos Consultas- Service ====]";
     
     
     public WSRequest getWSRequest() {
@@ -69,22 +106,24 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	
 	@Override
 	public MovimientosResponse consultarMovimientosPorAprobar(MovimientosRequest movimientosRequest) throws CustomException {
+		log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
 		movimientosRequestJSON = new Gson().toJson(movimientosRequest);
 		wsrequest.setBody(movimientosRequestJSON);
-		//wsrequest.setUrl(urlConsultarMovimientosPorAprobar);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/consultasmovimientos?sort=codMoneda,desc&sort=tasaCliente,desc&sort=montoDivisa,asc");
-		
+		wsrequest.setUrl(urlConsultarMovimientosPorAprobar);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARF);
 				return respuesta2xxConsultarMovimientosPorAprobar(retorno);
 			}else {
+				log.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 				throw new CustomException(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -94,7 +133,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		try {
 			return mapper.jsonToClass(retorno.getBody(), MovimientosResponse.class);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
        
@@ -105,7 +144,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado() .getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -114,22 +153,24 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	@Override
 	public MovimientosResponse consultarMovimientosPorAprobarVenta(MovimientosRequest movimientosRequest)
 			throws CustomException {
+		log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
 		movimientosRequestJSON = new Gson().toJson(movimientosRequest);
 		wsrequest.setBody(movimientosRequestJSON);
-		//wsrequest.setUrl(urlConsultarMovimientosPorAprobarVenta);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/consultasmovimientos?sort=codMoneda,desc&sort=tasaCliente,asc&sort=montoDivisa,desc");
-		log.info("antes de llamarte WS en consultar");
+		wsrequest.setUrl(urlConsultarMovimientosPorAprobarVenta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAF);
 				return respuesta2xxConsultarMovimientosPorAprobar(retorno);
 			}else {
+				log.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 				throw new CustomException(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -139,50 +180,55 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	
 	@Override
 	public MovimientosResponse consultarMovimientos(MovimientosRequest movimientosRequest) throws CustomException {
+		log.info(MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
 		movimientosRequestJSON = new Gson().toJson(movimientosRequest);
 		wsrequest.setBody(movimientosRequestJSON);
-		//wsrequest.setUrl(urlConsultarMovimientos);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/consultasmovimientos");
-		log.info("antes de llamarte WS en consultar");
+		wsrequest.setUrl(urlConsultarMovimientos);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSF);
 				return respuesta2xxConsultarMovimientosPorAprobar(retorno);
 			}else {
+				log.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 				throw new CustomException(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
 
 	@Override
 	public String rechazarCompra(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
+		log.info(MOVIMIENTOSSERVICERECHAZARCOMPRAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
 		aprobarRechazarRequestJSON = new Gson().toJson(aprobarRechazarRequest);
 		wsrequest.setBody(aprobarRechazarRequestJSON);								 
-		//wsrequest.setUrl(urlActualizarMovimientosCompra);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/aprobacionescompras");
-		log.info("antes de llamarte WS en rechazarCompraSolicitud");
+		wsrequest.setUrl(urlActualizarMovimientosCompra);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICERECHAZARCOMPRAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);
 			}else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
+					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
+						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -200,7 +246,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
             	return resultado.getDescripcion();
             }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -211,7 +257,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			return response.getResultado().getDescripcion();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -222,7 +268,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			Resultado resultado = aprobarRechazarResponse.getResultado();
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 		
@@ -230,28 +276,31 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	
 	@Override
 	public String aprobarCompra(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
+		log.info(MOVIMIENTOSSERVICEAPROBARCOMPRAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
 		aprobarRechazarRequestJSON = new Gson().toJson(aprobarRechazarRequest);
 		wsrequest.setBody(aprobarRechazarRequestJSON);
-		//wsrequest.setUrl(urlActualizarMovimientosCompra);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/aprobacionescompras");
-		log.info("antes de llamarte WS en aprobarCompraSolicitud");
+		wsrequest.setUrl(urlActualizarMovimientosCompra);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICEAPROBARCOMPRAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);
 			}else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
+					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
+						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -259,28 +308,31 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 
 	@Override
 	public String rechazarVenta(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
+		log.info(MOVIMIENTOSSERVICERECHAZARVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
 		aprobarRechazarRequestJSON = new Gson().toJson(aprobarRechazarRequest);
 		wsrequest.setBody(aprobarRechazarRequestJSON);
-		//wsrequest.setUrl(urlActualizarMovimientosVenta);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/aprobacionesventas");
-		log.info("antes de llamarte WS en rechazarVentaSolicitud");
+		wsrequest.setUrl(urlActualizarMovimientosVenta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICERECHAZARVENTAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);
 			}else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
+					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
+						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -288,28 +340,31 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 
 	@Override
 	public String aprobarVenta(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
+		log.info(MOVIMIENTOSSERVICEAPROBARVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
 		aprobarRechazarRequestJSON = new Gson().toJson(aprobarRechazarRequest);
 		wsrequest.setBody(aprobarRechazarRequestJSON);										 
-		//wsrequest.setUrl(urlActualizarMovimientosVenta);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/aprobacionesventas");
-		log.info("antes de llamarte WS en aprobarVentaSolicitud");
+		wsrequest.setUrl(urlActualizarMovimientosVenta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICEAPROBARVENTAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);		 
 		     }else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
+					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
+						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -317,21 +372,24 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 
 	@Override
 	public List<Movimiento> getListaMovimientos(MovimientosRequest movimientosRequest) throws CustomException {
+		log.info(MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
 		movimientosRequestJSON = new Gson().toJson(movimientosRequest);
 		wsrequest.setBody(movimientosRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/divisas/consultasmovimientos");
-		log.info("antes de llamarte WS buscarListaMovimientos");
+		wsrequest.setUrl(urlConsultarMovimientos);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSF);
 				return respuesta2xxGetListaMovimientos(retorno);
 	       	}else {
+	       		log.error(respuesta4xxGetListaMovimientos(retorno));
 	       		throw new CustomException(respuesta4xxGetListaMovimientos(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -342,7 +400,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
         	return movimientosResponse.getMovimientos();
         	
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return new ArrayList<>();
 		}
        
@@ -353,7 +411,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado() .getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}

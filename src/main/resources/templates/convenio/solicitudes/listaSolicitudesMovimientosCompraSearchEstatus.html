@@ -210,7 +210,7 @@
 		              <thead>
 		                <tr>
 		                  <th>Cod. Operacion</th>
-		                  <th>Nombre/Razon social</th>
+		                  <th>Rif/CI</th>
 		                  <th>Fecha Operacion</th>
 		                  <th>Cuenta en divisas</th>
 		                  <th>Cuenta en Bolivares</th>
@@ -222,7 +222,7 @@
 		              <tbody>
 		                <tr th:each = "movimientoCompra: ${listaMovimientosCompra}">
 		                  <td th:text="${movimientoCompra.codOperacion}"></td>
-		                  <td th:text="${movimientoCompra.nombreCliente}"></td>
+		                  <td th:text="${movimientoCompra.nroIdCliente}"></td>
 		                  <td th:text="${movimientoCompra.fechaOperacion}"></td>
 		                  <td th:text="${movimientoCompra.cuentaDivisa}"></td>
 		                  <td th:text="${movimientoCompra.cuentaNacional}"></td>

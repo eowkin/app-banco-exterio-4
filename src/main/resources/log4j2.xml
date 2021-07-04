@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+<Configuration status="DEBUG" monitorInterval="30">
+    <Properties>
+        <Property name="LOG_PATTERN_FILE">TID:[%t %tid] %d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%M:%L - [%m]%n</Property>
+        
+        <Property name="LOG_PATTERN_CONSOLE">TID:[%t %tid] %d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%M:%L - [%m]%n</Property>       
+    </Properties>
+    <Appenders>
+        <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true" ignoreExceptions="true">
+            <PatternLayout>
+		        <Pattern>${LOG_PATTERN_CONSOLE}</Pattern>
+		    </PatternLayout>
+        </Console>
+        
+		<RollingFile name="FileAppender" fileName="/app/monitor/logs/app-banco-exterior-monitor.log" 
+		             filePattern="logs/app-banco-exterior-monitor-%d{yyyy-MM-dd}-%i.log">
+		    <PatternLayout>
+		        <Pattern>${LOG_PATTERN_FILE}</Pattern>
+		    </PatternLayout>
+		    <Policies>
+		        
+		    </Policies>
+		 
+		</RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.bancoexterior.microservicio" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="FileAppender" />
+        </Logger>
+
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender" />
+            <AppenderRef ref="FileAppender" />
+        </Root>
+    </Loggers>
+</Configuration>

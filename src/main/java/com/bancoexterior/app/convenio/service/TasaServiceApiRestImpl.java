@@ -32,19 +32,35 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 	@Autowired 
 	private Mapper mapper;
     
-	@Value("${des.ConnectTimeout}")
+	@Value("${${app.ambiente}"+".ConnectTimeout}")
     private int connectTimeout;
     
-    @Value("${des.SocketTimeout}")
+    @Value("${${app.ambiente}"+".SocketTimeout}")
     private int socketTimeout;
     
-    @Value("${des.tasa.urlConsulta}")
+    @Value("${${app.ambiente}"+".tasa.urlConsulta}")
     private String urlConsulta;
     
-    @Value("${des.tasa.urlActualizar}")
+    @Value("${${app.ambiente}"+".tasa.urlActualizar}")
     private String urlActualizar;
     
     private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio tasa";
+    
+    private static final String TASASERVICELISTATASASI = "[==== INICIO Lista Tasas Consultas - Service ====]";
+	
+	private static final String TASASERVICELISTATASASF = "[==== FIN Lista Tasas Consultas - Service ====]";
+	
+	private static final String TASASERVICEBUSACRTASAI = "[==== INICIO Buscar Tasas Consultas - Service ====]";
+	
+	private static final String TASASERVICEBUSCARTASAF = "[==== FIN Buscar Tasas Consultas - Service ====]";
+	
+	private static final String TASASERVICEACTUALIZARTASAI = "[==== INICIO Actualizar Tasas - Service ====]";
+	
+	private static final String TASASERVICEACTUALIZARTASAF = "[==== FIN Actualizar Tasas - Service ====]";
+	
+	private static final String TASASERVICECREARTASAI = "[==== INICIO Crear Tasas - Service ====]";
+	
+	private static final String TASASERVICECREARTASAF = "[==== FIN Crear Tasas - Service ====]";
 	
 	public WSRequest getWSRequest() {
     	WSRequest wsrequest = new WSRequest();
@@ -56,21 +72,24 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 	
 	@Override
 	public List<Tasa> listaTasas(TasaRequest tasaRequest) throws CustomException {
+		log.info(TASASERVICELISTATASASI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String tasaRequestJSON;
 		tasaRequestJSON = new Gson().toJson(tasaRequest);
 		wsrequest.setBody(tasaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/tasas/consultas");
-		log.info("antes de llamarte WS en consultar la lista de tasas");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(TASASERVICELISTATASASF);
 				return respuesta2xxListaTasa(retorno);
 			}else {
+				log.error(respuesta4xxListaTasas(retorno));
 				throw new CustomException(respuesta4xxListaTasas(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -80,7 +99,7 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 			TasaResponse tasaResponse = mapper.jsonToClass(retorno.getBody(), TasaResponse.class);
 			return tasaResponse.getTasa();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return new ArrayList<>();
 		}
        
@@ -92,29 +111,31 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 			return resultado.getDescripcion();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
 	public Tasa buscarTasa(TasaRequest tasaRequest) throws CustomException {
+		log.info(TASASERVICEBUSACRTASAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String tasaRequestJSON;
 		tasaRequestJSON = new Gson().toJson(tasaRequest);
 		wsrequest.setBody(tasaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/tasas/consultas");
-			
-		log.info("antes de llamarte WS en buscarTasa");
+		wsrequest.setUrl(urlConsulta);	
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(TASASERVICEBUSCARTASAF);
 				return respuesta2xxBuscarTasa(retorno);
 			}else {
+				log.error(respuesta4xxListaTasas(retorno));
 				throw new CustomException(respuesta4xxListaTasas(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 
@@ -129,7 +150,7 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 	        	return null;
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
         
@@ -137,21 +158,24 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 
 	@Override
 	public String actualizar(TasaRequest tasaRequest) throws CustomException {
+		log.info(TASASERVICEACTUALIZARTASAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String tasaRequestJSON;
 		tasaRequestJSON = new Gson().toJson(tasaRequest);
 		wsrequest.setBody(tasaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/tasas");
-		log.info("antes de llamarte WS en actualizar");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.put(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(TASASERVICEACTUALIZARTASAF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
+				log.error(respuesta4xxActualizar(retorno));
 				throw new CustomException(respuesta4xxActualizar(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}	
 	}
@@ -162,7 +186,7 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 		
@@ -174,35 +198,39 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
 	public String crear(TasaRequest tasaRequest) throws CustomException {
+		log.info(TASASERVICECREARTASAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String tasaRequestJSON;
 		tasaRequestJSON = new Gson().toJson(tasaRequest);
 		wsrequest.setBody(tasaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/tasas");
-		log.info("antes de llamarte WS en crear");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(TASASERVICECREARTASAF);
 				return respuesta2xxActualizarCrear(retorno);
 				
 			}else {
 				if (retorno.getStatus() == 422) {
+					log.error(respuesta422Crear(retorno));
 					throw new CustomException(respuesta422Crear(retorno));
 				}else {
 					if (retorno.getStatus() == 400 || retorno.getStatus() == 600) {
+						log.error(respuesta400Crear(retorno));
 						throw new CustomException(respuesta400Crear(retorno));
 					}
 				}	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -213,7 +241,7 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -223,7 +251,7 @@ public class TasaServiceApiRestImpl implements ITasaServiceApiRest{
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}

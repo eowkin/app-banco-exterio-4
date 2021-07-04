@@ -32,19 +32,35 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	@Autowired 
 	private Mapper mapper;
 	
-	@Value("${des.ConnectTimeout}")
+	@Value("${${app.ambiente}"+".ConnectTimeout}")
     private int connectTimeout;
     
-    @Value("${des.SocketTimeout}")
+    @Value("${${app.ambiente}"+".SocketTimeout}")
     private int socketTimeout;
     
-    @Value("${des.agencia.urlConsulta}")
+    @Value("${${app.ambiente}"+".agencia.urlConsulta}")
     private String urlConsulta;
     
-    @Value("${des.agencia.urlActualizar}")
+    @Value("${${app.ambiente}"+".agencia.urlActualizar}")
     private String urlActualizar;
 	
     private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio Agencias";
+    
+    private static final String AGENCIASERVICELISTAI = "[==== INICIO Lista Agencias Consultas - Service ====]";
+	
+	private static final String AGENCIASERVICELISTAF = "[==== FIN Lista Agencias Consultas - Service ====]";
+	
+	private static final String AGENCIASERVICEBUSCARI = "[==== INICIO Buscar Agencia Consultas - Service ====]";
+	
+	private static final String AGENCIASERVICEBUSCARF = "[==== FIN Buscar Agencia Consultas - Service ====]";
+	
+	private static final String AGENCIASERVICEACTUALIZARI = "[==== INICIO Actualizar Agencia - Service ====]";
+	
+	private static final String AGENCIASERVICEACTUALIZARF = "[==== FIN Actualizar Agencia - Service ====]";
+	
+	private static final String AGENCIASERVICECREARI = "[==== INICIO Crear Agencia - Service ====]";
+	
+	private static final String AGENCIASERVICECREARF = "[==== FIN Crear Agencia - Service ====]";
     
     public WSRequest getWSRequest() {
     	WSRequest wsrequest = new WSRequest();
@@ -57,21 +73,24 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
     
 	@Override
 	public List<Agencia> listaAgencias(AgenciaRequest agenciaRequest) throws CustomException {
+		log.info(AGENCIASERVICELISTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
 		agenciaRequestJSON = new Gson().toJson(agenciaRequest);
 		wsrequest.setBody(agenciaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/agencias/consultas");								
-		log.info("antes de llamarte WS en consultar listaAgencias");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(AGENCIASERVICELISTAF);
 				return respuesta2xxListaAgencias(retorno);
 			}else {
+				log.error(respuesta4xxListaAgencias(retorno));
 				throw new CustomException(respuesta4xxListaAgencias(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -79,10 +98,9 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	public List<Agencia> respuesta2xxListaAgencias(WSResponse retorno){
 		try {
 			AgenciaResponse agenciaResponse = mapper.jsonToClass(retorno.getBody(), AgenciaResponse.class);
-			log.info(agenciaResponse.getResultado().getCodigo());
 	        return agenciaResponse.getListaAgencias();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -93,28 +111,31 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
 	
 	@Override
 	public Agencia buscarAgencia(AgenciaRequest agenciaRequest) throws CustomException {
+		log.info(AGENCIASERVICEBUSCARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
 		agenciaRequestJSON = new Gson().toJson(agenciaRequest);
 		wsrequest.setBody(agenciaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/agencias/consultas");								
-		log.info("antes de llamarte WS en consultar buscarAgencia");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(AGENCIASERVICEBUSCARF);
 				return respuesta2xxBuscarAgencia(retorno);
 			}else {
+				log.error(respuesta4xxListaAgencias(retorno));
 				throw new CustomException(respuesta4xxListaAgencias(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -122,15 +143,13 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	public Agencia respuesta2xxBuscarAgencia(WSResponse retorno){
 		try {
 			AgenciaResponse agenciaResponse = mapper.jsonToClass(retorno.getBody(), AgenciaResponse.class);
-			log.info(agenciaResponse.getResultado().getCodigo());
 	        if(agenciaResponse.getResultado().getCodigo().equals("0000")){
-	        	log.info("Respusta codigo 0000 si existe la agencia");
 	        	return agenciaResponse.getListaAgencias().get(0);
 	        }else {
 	        	return null;
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
         
@@ -139,32 +158,34 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	
 	@Override
 	public String actualizar(AgenciaRequest agenciaRequest) throws CustomException {
+		log.info(AGENCIASERVICEACTUALIZARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
 		agenciaRequestJSON = new Gson().toJson(agenciaRequest);
 		wsrequest.setBody(agenciaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/agencias");								
-		log.info("antes de llamarte WS en actualizar");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.put(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(AGENCIASERVICEACTUALIZARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
+				log.error(respuesta4xxActualizarCrear(retorno));
 				throw new CustomException(respuesta4xxActualizarCrear(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
 
 	public String respuesta2xxActualizarCrear(WSResponse retorno) {
-		log.info("Respusta codigo 200 en Actualizar agencia por codigo");
 		try {
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 		
@@ -176,7 +197,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();		
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -184,28 +205,32 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	
 	@Override
 	public String crear(AgenciaRequest agenciaRequest) throws CustomException {
+		log.info(AGENCIASERVICECREARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
 		agenciaRequestJSON = new Gson().toJson(agenciaRequest);
 		wsrequest.setBody(agenciaRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/agencias");								
-		log.info("antes de llamarte WS en creear");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(AGENCIASERVICECREARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
 				if (retorno.getStatus() == 422) {
+					log.error(respuesta4xxActualizarCrear(retorno));
 					throw new CustomException(respuesta4xxActualizarCrear(retorno));
 					
 				}else {
 					if (retorno.getStatus() == 400 || retorno.getStatus() == 600) {
+						log.error(respuesta4xxListaAgencias(retorno));
 						throw new CustomException(respuesta4xxListaAgencias(retorno));
 					}
 				}
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;

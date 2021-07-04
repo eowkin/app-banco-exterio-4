@@ -32,20 +32,35 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 	@Autowired 
 	private Mapper mapper;
 	
-	@Value("${des.ConnectTimeout}")
+	@Value("${${app.ambiente}"+".ConnectTimeout}")
 	private int connectTimeout;
 	    
-	@Value("${des.SocketTimeout}")
+	@Value("${${app.ambiente}"+".SocketTimeout}")
 	private int socketTimeout;
 	
-	@Value("${des.limitesGenerales.urlConsulta}")
+	@Value("${${app.ambiente}"+".limitesGenerales.urlConsulta}")
 	private String urlConsulta;
 	    
-	@Value("${des.limitesGenerales.urlActualizar}")
+	@Value("${${app.ambiente}"+".limitesGenerales.urlActualizar}")
 	private String urlActualizar;
 	
 	private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio LimitesGenerales";
 	
+	private static final String LIMITESGENERALESSERVICELISTAI = "[==== INICIO Lista LimitesGenerales Consultas - Service ====]";
+	
+	private static final String LIMITESGENERALESSERVICELISTAF = "[==== FIN Lista LimitesGenerales Consultas - Service ====]";
+	
+	private static final String LIMITESGENERALESSERVICEBUSCARI = "[==== INICIO Buscar LimitesGenerales Consultas - Service ====]";
+	
+	private static final String LIMITESGENERALESSERVICEBUSCARF = "[==== FIN Buscar LimitesGenerales Consultas - Service ====]";
+	
+	private static final String LIMITESGENERALESSERVICEACTUALIZARI = "[==== INICIO Actualizar LimitesGenerales - Service ====]";
+	
+	private static final String LIMITESGENERALESSERVICEACTUALIZARF = "[==== FIN Actualizar LimitesGenerales - Service ====]";
+	
+	private static final String LIMITESGENERALESSERVICECREARI = "[==== INICIO Crear LimitesGenerales - Service ====]";
+	
+	private static final String LIMITESGENERALESSERVICECREARF = "[==== FIN Crear LimitesGenerales - Service ====]";
 	
 	public WSRequest getWSRequest() {
 	   WSRequest wsrequest = new WSRequest();
@@ -60,23 +75,25 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 	
 	@Override
 	public List<LimitesGenerales> listaLimitesGenerales(LimiteRequest limiteRequest) throws CustomException {
+		log.info(LIMITESGENERALESSERVICELISTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
 		limiteRequestJSON = new Gson().toJson(limiteRequest);
 		wsrequest.setBody(limiteRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisas/consultas");
-			
-		log.info("antes de llamarte WS en consultar listaLimitesGenerales");
+		wsrequest.setUrl(urlConsulta);	
 		retorno = wsService.post(wsrequest);
 		
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(LIMITESGENERALESSERVICELISTAF);
 				return respuesta2xxListaLimitesGenerales(retorno);
 			}else {
+				log.error(respuesta4xxListaLimitesGenerales(retorno));
 				throw new CustomException(respuesta4xxListaLimitesGenerales(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -86,7 +103,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			LimiteResponse limiteResponse = mapper.jsonToClass(retorno.getBody(), LimiteResponse.class);
 			return limiteResponse.getLimites();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -97,29 +114,32 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
 	public LimitesGenerales buscarLimitesGenerales(LimiteRequest limiteRequest) throws CustomException {
+		log.info(LIMITESGENERALESSERVICEBUSCARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
 		limiteRequestJSON = new Gson().toJson(limiteRequest);
 		wsrequest.setBody(limiteRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisas/consultas");
-		log.info("antes de llamarte WS en consultar buscarLimitesGenerales");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(LIMITESGENERALESSERVICEBUSCARF);
 				return respuesta2xxbuscarLimitesGenerales(retorno);
 			}else {
+				log.error(respuesta4xxbuscarLimitesGenerales(retorno));
 				throw new CustomException(respuesta4xxbuscarLimitesGenerales(retorno));	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -133,7 +153,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 	        	return null;
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
         
@@ -146,29 +166,31 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			return response.getResultado().getDescripcion();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
 	
 	@Override
 	public String actualizar(LimiteRequest limiteRequest) throws CustomException {
+		log.info(LIMITESGENERALESSERVICEACTUALIZARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
 		limiteRequestJSON = new Gson().toJson(limiteRequest);
 		wsrequest.setBody(limiteRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisas");
-			
-		log.info("antes de llamarte WS en actualizar limitesGenerales");
+		wsrequest.setUrl(urlActualizar);	
 		retorno = wsService.put(wsrequest);
 			if(retorno.isExitoso()) {
 				if(retorno.getStatus() == 200) {
+					log.info(LIMITESGENERALESSERVICEACTUALIZARF);
 					return respuesta2xxActualizarCrear(retorno);
 				}else {
+					log.error(respuesta4xxbuscarLimitesGenerales(retorno));
 					throw new CustomException(respuesta4xxbuscarLimitesGenerales(retorno));
 				}
 			}else {
+				log.error(ERRORMICROCONEXION);
 				throw new CustomException(ERRORMICROCONEXION);
 			}	
 	}
@@ -178,7 +200,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 		
@@ -187,21 +209,24 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 	
 	@Override
 	public String crear(LimiteRequest limiteRequest) throws CustomException {
+		log.info(LIMITESGENERALESSERVICECREARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
 		limiteRequestJSON = new Gson().toJson(limiteRequest);
 		wsrequest.setBody(limiteRequestJSON);
-		wsrequest.setUrl("https://172.19.148.51:8443/api/des/V1/parametros/limitesdivisas");
-		log.info("antes de llamarte WS en crear");
+		wsrequest.setUrl(urlActualizar);
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(LIMITESGENERALESSERVICECREARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
+				log.error(respuesta4xxbuscarLimitesGenerales(retorno));
 				throw new CustomException(respuesta4xxbuscarLimitesGenerales(retorno));
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}

@@ -4,8 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
+@PropertySource( value = "file:"+"${${app.ambiente}"+".seed.ruta}", ignoreResourceNotFound = false)
 public class AppBancoExterior4Application extends SpringBootServletInitializer{
 
 	@Override
