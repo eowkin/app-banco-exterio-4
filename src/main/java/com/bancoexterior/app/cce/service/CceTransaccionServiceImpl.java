@@ -27,6 +27,20 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 	@Autowired
 	private Mapper mapper;
 	
+	private static final String CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEI = "[==== INICIO ConsultaMovimientosConFechasPage CceTransaccion Consultas - Service ====]";
+	
+	private static final String CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEF = "[==== FIN ConsultaMovimientosConFechasPage CceTransaccion Consultas - Service ====]";
+	
+	private static final String CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASI = "[==== INICIO ConsultaMovimientosConFechas CceTransaccion Consultas - Service ====]";
+	
+	private static final String CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASF = "[==== FIN ConsultaMovimientosConFechas CceTransaccion Consultas - Service ====]";
+	
+	private static final String CCETRANSACCIONSERVICEFINDBYENDTOENDIDI = "[==== INICIO FindByEndtoendId CceTransaccion Consultas - Service ====]";
+	
+	private static final String CCETRANSACCIONSERVICEFINDBYENDTOENDIDF = "[==== FIN FindByEndtoendId CceTransaccion Consultas - Service ====]";
+	
+	//findByEndtoendId
+	
 	@Override
 	public List<CceTransaccionDto> consultar() {
 		List<CceTransaccion> listaCceTransacciones = repo.findAll();
@@ -54,7 +68,7 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 	@Override
 	public List<CceTransaccionDto> consultaMovimientosConFechas(String codTransaccion, String bancoDestino,
 			String numeroIdentificacion, String fechaDesde, String fechaHasta) {
-		log.info("consultaMovimientosConFechas");
+		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASI);
 		
 		fechaDesde = fechaDesde +" 00:00:00";
 		fechaHasta = fechaHasta +" 23:59:00";
@@ -70,6 +84,7 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 			CceTransaccionDto cceTransaccionDto = mapper.map(cceTransaccion, CceTransaccionDto.class);
 			listaCceTransaccionesDto.add(cceTransaccionDto);
 		}
+		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASF);
 		return listaCceTransaccionesDto;
 	}
 
@@ -100,7 +115,7 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 	@Override
 	public Page<CceTransaccion> consultaMovimientosConFechas(String codTransaccion, String bancoDestino,
 			String numeroIdentificacion, String fechaDesde, String fechaHasta, Pageable page) {
-		log.info("consultaMovimientosConFechasPageable");
+		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEI);
 		
 		fechaDesde = fechaDesde +" 00:00:00";
 		fechaHasta = fechaHasta +" 23:59:00";
@@ -109,7 +124,7 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 		log.info("numeroIdentificacion: "+numeroIdentificacion);
 		log.info("fechaDesde: "+fechaDesde);
 		log.info("fechaHasta: "+fechaHasta);
-		
+		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEF);
 		return repo.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion, fechaDesde, fechaHasta, page); 
 	}
 
@@ -117,10 +132,13 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 
 	@Override
 	public CceTransaccionDto findByEndtoendId(String endtoendId) {
+		log.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDI);
 		CceTransaccion cceTransaccion = repo.findById(endtoendId).orElse(null);
 		if(cceTransaccion != null) {
+			log.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDF);
 			return mapper.map(cceTransaccion, CceTransaccionDto.class);
 		}
+		log.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDF);
 		return null;
 	}
 

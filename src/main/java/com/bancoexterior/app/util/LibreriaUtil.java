@@ -5,13 +5,21 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.stereotype.Component;
 
+import com.bancoexterior.app.cce.controller.CceTransaccionController;
+import com.bancoexterior.app.cce.model.BCVLBT;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Component
 public class LibreriaUtil {
 	
@@ -19,7 +27,10 @@ public class LibreriaUtil {
     public static final String NUMEROFORMAT                       = "#,##0.00";
 	//public static final String NUMEROFORMAT                       = "###0.00";
     public static final char COMA                                 = ',';
+    
     public static final char PUNTO                                = '.';
+    
+    private static final String STRDATEFORMET = "yyyy-MM-dd";
 
 	
 	public String obtenerIdSesion() {
@@ -198,4 +209,168 @@ public class LibreriaUtil {
     	return bancoEmisor+obtenerIdSesion()+referencia;
     }
     
+    
+    
+    
+    
+    
+    
+    
+    
+    public boolean isFechaValidaDesdeHasta(String fechaDesde, String fechaHasta) {
+		
+		SimpleDateFormat formato = new SimpleDateFormat(STRDATEFORMET);
+		
+        try {
+        	
+        	
+        	Date fechaDate1 = formato.parse(fechaDesde);
+        	Date fechaDate2 = formato.parse(fechaHasta);
+        	
+        	if ( fechaDate2.before(fechaDate1) ){
+        	    log.info("La fechaHasta es menor que la fechaDesde");
+        		return false;
+        	}else{
+        	     if ( fechaDate1.before(fechaDate2) ){
+        	    	 log.info("La fechaDesde es menor que la fechaHasta");
+        	    	 return true;
+        	     }else{
+        	    	 log.info("La fechaDesde es igual que la fechaHasta");
+        	    	 return true;
+        	     } 
+        	}
+        } 
+        catch (ParseException ex) 
+        {
+        	log.error(ex.getMessage());
+        }
+        
+        return false;
+	}
+    
+    public boolean isFechaHoraValidaDesdeHasta(String fechaHoraDesde, String fechaHoraHasta) {
+		
+		String[] arrOfFechaD = fechaHoraDesde.split("T");
+        for (String a: arrOfFechaD)
+            log.info(a);
+        
+        String fechaDesde = arrOfFechaD[0];
+        String horaDesde = arrOfFechaD[1];
+        
+        String[] arrOfFechaH = fechaHoraHasta.split("T");
+        for (String a: arrOfFechaH)
+        	log.info(a);
+        String fechaHasta = arrOfFechaH[0];
+        String horaHasta = arrOfFechaH[1];
+        
+        if(isFechaValidaDesdeHasta(fechaDesde, fechaHasta)){
+        	return isHoraValidaDesdeHasta(fechaDesde, fechaHasta, horaDesde, horaHasta);
+        }else {
+        	return false;
+        }
+		
+	}
+    
+    public boolean isHoraValidaDesdeHasta(String fechaDesde, String fechaHasta,String horaDesde, String horaHasta) {
+		log.info("isHoraValidaDesdeHasta");
+		String[] arrOfHoraD = horaDesde.split(":");
+        for (String a: arrOfHoraD)
+            log.info(a);
+        
+        String hDesde = arrOfHoraD[0];
+        //int hDesdeInt = Integer.valueOf(hDesde).intValue();
+        int hDesdeInt = Integer.parseInt(hDesde);
+        String minutoDesde = arrOfHoraD[1];
+        int minutoDesdeInt = Integer.valueOf(minutoDesde).intValue();
+        
+        String[] arrOfHoraH = horaHasta.split(":");
+        for (String a: arrOfHoraH)
+            log.info(a);
+        
+        String hHasta = arrOfHoraH[0];
+        int hHastaInt = Integer.valueOf(hHasta).intValue();
+        String minutoHasta = arrOfHoraH[1];
+        int minutoHastaInt = Integer.valueOf(minutoHasta).intValue();
+        
+		if(isFechaDesdeHastaIgual(fechaDesde, fechaHasta)) {
+			log.info("isFechaDesdeHastaIgual");
+			if(hDesdeInt == hHastaInt) {
+				if(minutoDesdeInt == minutoHastaInt) {
+					return true;
+				}else {
+					if(minutoDesdeInt > minutoHastaInt) {
+						return false;
+					}else {
+						return true;
+					}
+				}	
+			}else {
+				if(hDesdeInt < hHastaInt)
+					return true;
+				else 
+					return false;
+				
+			}
+		}
+		
+		return true;
+	}
+    
+    public boolean isFechaDesdeHastaIgual(String fechaDesde, String fechaHasta) {
+		
+		SimpleDateFormat formato = new SimpleDateFormat(STRDATEFORMET);
+		
+        try {
+        	
+        	
+        	Date fechaDate1 = formato.parse(fechaDesde);
+        	Date fechaDate2 = formato.parse(fechaHasta);
+        	
+        	if ( fechaDate2.before(fechaDate1) ){
+        	    log.info("La fechaHasta es menor que la fechaDesde");
+        		return false;
+        	}else{
+        	     if ( fechaDate1.before(fechaDate2) ){
+        	    	 log.info("La fechaDesde es menor que la fechaHasta");
+        	    	 return false;
+        	     }else{
+        	    	 log.info("La fechaDesde es igual que la fechaHasta");
+        	    	 return true;
+        	     } 
+        	}
+        } 
+        catch (ParseException ex) 
+        {
+        	log.error(ex.getMessage());
+        }
+        
+        return false;
+	}
+    
+    public BigDecimal montoSerch(BigDecimal numero) {
+		if(numero != null) {
+			return stringToBigDecimal(formatNumber(numero));
+		}
+		return new BigDecimal("0.00");
+	}
+	
+	public BigDecimal montoAprobacionesLotes(List<BCVLBT> listaBCVLBTPorAprobarLotes) {
+		
+		BigDecimal montoAprobacionesLotes = new BigDecimal(0.00);
+		
+		for (BCVLBT bcvlbt : listaBCVLBTPorAprobarLotes) {
+			log.info("montoLote: "+bcvlbt.getMonto());
+			montoAprobacionesLotes = montoAprobacionesLotes.add(bcvlbt.getMonto());
+		}
+		
+		return montoAprobacionesLotes;
+	}
+	
+	public boolean isMontoDesdeMontoHastaDistintoNull(BigDecimal montoDesde, BigDecimal montoHasta) {
+		if(montoDesde != null && montoHasta != null) 
+			return true;
+		else 
+			return false;
+		
+	}
 }

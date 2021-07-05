@@ -53,7 +53,7 @@
 		            <i class="fa fa-align-justify"></i> Operaciones de Alto Valor por Aprobar Final
 		            <p align="right"></p>	
 		            <div class="my-2 text-right">
-		            	<input type="checkbox"  /> Seleccionar todos
+		            	<input th:onclick="|window.location.href='@{/ccetransacciones/seleccionarTodosAprobarOperaciones(page=${datosPaginacion.paginaActual}, montoDesde=${montoDesde}, montoHasta=${montoHasta}, bancoEmisor=${bancoEmisor}, nroIdEmisor=${nroIdEmisor}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}'|" type="checkbox"  /> Seleccionar todos
 		            </div>
 		          </div><!--/.card-header-->
 		          

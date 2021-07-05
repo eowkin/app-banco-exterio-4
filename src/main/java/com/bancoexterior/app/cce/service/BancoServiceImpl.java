@@ -31,13 +31,27 @@ public class BancoServiceImpl implements IBancoService{
     @Autowired 
 	private Mapper mapper;
 	
-    @Value("${des.ConnectTimeout}")
+    @Value("${${app.ambiente}"+".ConnectTimeout}")
     private int connectTimeout;
     
-    @Value("${des.SocketTimeout}")
+    @Value("${${app.ambiente}"+".SocketTimeout}")
     private int socketTimeout;
+    
+    @Value("${${app.ambiente}"+".banco.urlConsulta}")
+    private String urlConsulta;
+    
+    @Value("${${app.ambiente}"+".banco.urlConsultaBuscarBanco}")
+    private String urlConsultaBuscarBanco;
 	
     private static final String ERRORMICROCONEXION = "No hubo conexion con el micreoservicio Bancos";
+    
+    private static final String BANCOSERVICELISTABANCOSI = "[==== INICIO Lista Bancos Consultas - Service ====]";
+	
+	private static final String BANCOSERVICELISTABANCOSF = "[==== FIN Lista Bancos Consultas - Service ====]";
+	
+	private static final String BANCOSERVICEBUSCARBANCOSI = "[==== INICIO Buscar Bancos Consultas - Service ====]";
+	
+	private static final String BANCOSERVICEBUSCARBANCOSF = "[==== FIN Buscar Bancos Consultas - Service ====]";
     
     public WSRequest getWSRequest() {
     	WSRequest wsrequest = new WSRequest();
@@ -54,27 +68,26 @@ public class BancoServiceImpl implements IBancoService{
     
 	@Override
 	public List<Banco> listaBancos(BancoRequest bancoRequest) throws CustomException {
+		log.info(BANCOSERVICELISTABANCOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String bancoRequestJSON;
 		bancoRequestJSON = new Gson().toJson(bancoRequest);
 		
 		wsrequest.setBody(bancoRequestJSON);
-		log.info("bancoRequestJSON: "+bancoRequestJSON);
-		//
-		//https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos
-		log.info("urlConsulta: "+"https://172.19.148.51:8443/api/v1/bancos/cdinme/listadosbancos");
-		wsrequest.setUrl("https://172.19.148.51:8443/api/v1/bancos/cdinme/listadosbancos");
-		log.info("antes de llamarte WS en consultar listaBancos");
+		//wsrequest.setUrl("https://172.19.148.51:8443/api/v1/bancos/cdinme/listadosbancos");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
-		log.info("retorno: "+retorno);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(BANCOSERVICELISTABANCOSF);
 	            return respuest2xxlistaBancos(retorno);
 			}else {
+				log.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -88,7 +101,7 @@ public class BancoServiceImpl implements IBancoService{
 	        	return new ArrayList<>();
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -100,7 +113,7 @@ public class BancoServiceImpl implements IBancoService{
 			return resultado.getDescripcion();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -114,7 +127,7 @@ public class BancoServiceImpl implements IBancoService{
 	        	return null;
 	        }
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
         
@@ -125,30 +138,25 @@ public class BancoServiceImpl implements IBancoService{
 
 	@Override
 	public Banco buscarBanco(BancoRequest bancoRequest) throws CustomException {
+		log.info(BANCOSERVICEBUSCARBANCOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String bancoRequestJSON;
 		bancoRequestJSON = new Gson().toJson(bancoRequest);
-		
 		wsrequest.setBody(bancoRequestJSON);
-		log.info("bancoRequestJSON: "+bancoRequestJSON);
-		//
-		//http://172.19.148.7:9047/api/v1/bancos/cdinme/consultasbancos
-		//https://172.19.148.8:8443/api/v1/bancos/cdinme/listadosbancos
-		log.info("urlConsulta: "+"http://172.19.148.7:9047/api/v1/bancos/cdinme/consultasbancos");
-		//log.info("urlConsulta: "+"https://172.19.148.51:8443/api/v1/bancos/cdinme/consultasbancos");
-		//wsrequest.setUrl("https://172.19.148.51:8443/api/v1/bancos/cdinme/consultasbancos");
-		wsrequest.setUrl("http://172.19.148.7:9047/api/v1/bancos/cdinme/consultasbancos");
-		log.info("antes de llamarte WS en buscarBanco");
+		//wsrequest.setUrl("http://172.19.148.7:9047/api/v1/bancos/cdinme/consultasbancos");
+		wsrequest.setUrl(urlConsultaBuscarBanco);
 		retorno = wsService.post(wsrequest);
-		log.info("retorno: "+retorno);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
+				log.info(BANCOSERVICEBUSCARBANCOSF);
 	            return respuest2xxBanco(retorno);
 			}else {
+				log.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
+			log.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
