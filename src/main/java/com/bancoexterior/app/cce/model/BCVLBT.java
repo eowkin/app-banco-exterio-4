@@ -85,6 +85,7 @@ public class BCVLBT implements Serializable{
 	
 	private BigDecimal montoHasta;
 	
+	private boolean seleccionado;
 	/**
 	 * 
 	 */
