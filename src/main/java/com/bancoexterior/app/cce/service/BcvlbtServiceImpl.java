@@ -66,8 +66,8 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 		log.info("aprobacionesConsultasRequestJSON: "+aprobacionesConsultasRequestJSON);
 		wsrequest.setBody(aprobacionesConsultasRequestJSON);
 		//wsrequest.setUrl("http://172.19.50.104:9001/api/des/V1/lbtr/aprobaciones/consultas");
-		wsrequest.setUrl("http://localhost:9001/api/des/V1/lbtr/aprobaciones/consultas");
-		//wsrequest.setUrl(urlConsulta);
+		//wsrequest.setUrl("http://localhost:9001/api/des/V1/lbtr/aprobaciones/consultas");
+		wsrequest.setUrl(urlConsulta);
 		retorno = wsService.post(wsrequest);
 		if (retorno.isExitoso()) {
 			if (retorno.getStatus() == 200) {

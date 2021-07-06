@@ -366,6 +366,23 @@ public class LibreriaUtil {
 		return montoAprobacionesLotes;
 	}
 	
+	
+	
+	public BigDecimal montoAprobarOperacionesSeleccionadas(List<BCVLBT> listaBCVLBTPorAprobarLotes) {
+		
+		BigDecimal montoAprobarOperacionesSeleccionadas = new BigDecimal(0.00);
+		
+		for (BCVLBT bcvlbt : listaBCVLBTPorAprobarLotes) {
+			if(bcvlbt.isSeleccionado()) {
+				log.info("montoLote: "+bcvlbt.getMonto());
+				montoAprobarOperacionesSeleccionadas = montoAprobarOperacionesSeleccionadas.add(bcvlbt.getMonto());
+			}
+				
+		}
+		
+		return montoAprobarOperacionesSeleccionadas;
+	}
+	
 	public boolean isMontoDesdeMontoHastaDistintoNull(BigDecimal montoDesde, BigDecimal montoHasta) {
 		if(montoDesde != null && montoHasta != null) 
 			return true;
