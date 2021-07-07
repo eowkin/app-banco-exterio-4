@@ -61,7 +61,7 @@ public class AgenciaController {
 	
 	private static final String AGENCIA = "agencia";
 	
-	private static final String MENSAJENORESULTADO = "Operacion Exitosa.La consulta no arrojo resultado.";
+	private static final String MENSAJENORESULTADO = "La consulta no arrojo resultado.";
 	
 	private static final String AGENCIACONTROLLERINDEXI = "[==== INICIO Index Agencia Consultas - Controller ====]";
 	
@@ -376,7 +376,7 @@ public class AgenciaController {
 				
 			}else {
 				model.addAttribute(LISTAAGENCIAS, listaAgencias);
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 			}
 		} catch (CustomException e) {
 			log.error(e.getMessage());
@@ -415,7 +415,7 @@ public class AgenciaController {
 				model.addAttribute(LISTAAGENCIAS, listaAgencias);
 			}else {
 				model.addAttribute(LISTAAGENCIAS, listaAgencias);
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 			}
 		} catch (CustomException e) {
 			log.error(e.getMessage());

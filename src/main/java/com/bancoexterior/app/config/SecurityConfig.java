@@ -1,22 +1,39 @@
 package com.bancoexterior.app.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	@Value("${ldap.domain}")
+	private String ldapDomain;
+
+	@Value("${ldap.url}")
+	private String ldapUrl;
+	
+	@Value("${ldap.base.dn}")
+	private String ldapBaseDn;
+	
+	
+	
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
-		
+		log.info("entre 1");
+	
 		
 		http.authorizeRequests()
 		.antMatchers("/css/**", "/").permitAll()
@@ -26,35 +43,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/js/**",
 				"/scss/**",
 				"/node_modules/**").permitAll() 
-		.antMatchers("/monedas/**").hasAnyAuthority("ROLE_USER") 
-		.antMatchers("/limitesGenerales/**").hasAnyAuthority("ROLE_USER")
-		.antMatchers("/clientesPersonalizados/**").hasAnyAuthority("ROLE_USER")
-		.antMatchers("/tasas/**").hasAnyAuthority("ROLE_USER")
-		.antMatchers("/agencias/**").hasAnyAuthority("ROLE_USER")
-		.antMatchers("/solicitudes/**").hasAnyAuthority("ROLE_USER")
+		//.antMatchers("/login*").permitAll()	
 		.anyRequest().authenticated()
-		.and().formLogin().loginPage("/login").failureUrl("/login-error").defaultSuccessUrl("/").permitAll()
+		.and().formLogin().loginPage("/login").failureUrl("/login-error").defaultSuccessUrl("/index").permitAll()
+		.usernameParameter("username")
+	    .passwordParameter("password")
+	    .defaultSuccessUrl("/index")
 		.and().logout().permitAll();
-			
 		
 	}
 	
-	
-	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+
+		@Override
+		protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
+				auth.authenticationProvider(activeDirectoryLdapAuthenticationProvider(ldapDomain, ldapUrl, ldapBaseDn));
 		
-		auth
-        .inMemoryAuthentication()
-        .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
-        .and()
-        .withUser("user-cce").password(passwordEncoder().encode("123456")).roles("ADMIN")
-        .and()
-        .withUser("admin").password(passwordEncoder().encode("admin")).roles("ADMIN");
-		
-	}
-	
+		}
+
+		@Bean
+		public AuthenticationProvider activeDirectoryLdapAuthenticationProvider(String domain, String url, String rootDn) {
+			CustomActiveDirectoryLdapAuthenticationProvider provider = new CustomActiveDirectoryLdapAuthenticationProvider(
+					domain, url, rootDn);
+			provider.setConvertSubErrorCodesToExceptions(true);
+			provider.setUseAuthenticationRequestCredentials(true);
+			return provider;
+		}
+
+ 	
 	@Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+	public BCryptPasswordEncoder passwordEncoder() {
+		BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+		return bCryptPasswordEncoder;
+
+	}
 }

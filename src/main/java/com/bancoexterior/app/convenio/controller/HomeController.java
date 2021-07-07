@@ -1,10 +1,6 @@
 package com.bancoexterior.app.convenio.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,23 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 public class HomeController {
 
 	@GetMapping("/")
-	public String mostarHome(Authentication auth, HttpSession httpSession) {
-		
-		log.info("auth: "+auth);
-		if(auth != null ) {
-			String username = auth.getName();
-			log.info("username: "+username);
-			for (GrantedAuthority rol : auth.getAuthorities()) {
-				log.info("Rol: "+ rol.getAuthority());
-			}
-			httpSession.setAttribute("auth", auth);
-			
-			
-		}else {
-			return "redirect:login";
-		}
-		
-		
+	public String mostarHome() {
+	
 		return "index";
 	}
 
@@ -67,4 +48,6 @@ public class HomeController {
 		model.addAttribute("loginError", true);
 		return "login";
 	}
+	
+	
 }

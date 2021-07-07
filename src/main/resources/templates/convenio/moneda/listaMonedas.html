@@ -40,12 +40,12 @@
 			        </div><!--/.card-header-->
 			        <div class="card-body">
 			          <div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
-				            		Ocurrio los siguientes errores:
-				            		<ul>
-				            			<li th:text="${mensajeError}"></li>
-				            		</ul>
-				            	</div>
-			          	
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+		              		
 			          <div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>	
 			          <table class="table">
 			            <thead>

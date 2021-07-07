@@ -594,7 +594,9 @@ public class CceTransaccionController {
 				listaBCVLBTPorAprobar = aprobacionesConsultasResponse.getOperaciones();
 				listaBCVLBTPorAprobar = convertirListaBCVLT(listaBCVLBTPorAprobar);
 				listaBCVLBTPorAprobar = convertirListaBCVLTSeleccionadosFalse(listaBCVLBTPorAprobar);
+				log.info("antes de guardar en sesion");
 				httpSession.setAttribute(LISTABCVLBTPORAPROBARSELECCION, listaBCVLBTPorAprobar);
+				log.info("despues de guardar en sesion");
 				BigDecimal montoAprobarOperacionesSeleccionadas = libreriaUtil.montoAprobarOperacionesSeleccionadas(listaBCVLBTPorAprobar);
 				datosPaginacion = aprobacionesConsultasResponse.getDatosPaginacion();
 				if(listaBCVLBTPorAprobar.isEmpty()) {
@@ -1066,6 +1068,7 @@ public class CceTransaccionController {
 		log.info("fechaHasta: "+fechaHasta);
 		log.info("page: "+page);
 		log.info("referencia: "+referencia);
+		
 		BancoRequest bancoRequest = getBancoRequest();
 		List<String> listaError = new ArrayList<>();
 		List<Banco> listaBancos = new ArrayList<>();
@@ -1576,39 +1579,57 @@ public class CceTransaccionController {
 	
 	public List<BCVLBT> convertirListaBCVLTSeleccionadosFalse(List<BCVLBT> listaTransacciones){
 		for (BCVLBT bcvlbt : listaTransacciones) {
-			bcvlbt.setSeleccionado(false);;
+			bcvlbt.setSeleccionado(false);
 		}
 	
 		return listaTransacciones;
 	}
 	
 	public List<BCVLBT> convertirListaBCVLTSeleccionadosUnaTrue(List<BCVLBT> listaTransacciones, String referencia, HttpSession httpSession){
-		List<BCVLBT> listaBCVLBTPorAprobarSesion =(List<BCVLBT>)httpSession.getAttribute(LISTABCVLBTPORAPROBAR);
-		
+		List<BCVLBT> listaBCVLBTPorAprobarSesion =(List<BCVLBT>)httpSession.getAttribute(LISTABCVLBTPORAPROBARSELECCION);
+		int referenciaInt = Integer.valueOf(referencia).intValue();
 		for (BCVLBT bcvlbt : listaTransacciones) {
-			for (BCVLBT bcvlbtSesion : listaBCVLBTPorAprobarSesion) {
-				if(bcvlbt.getReferencia().equals(bcvlbtSesion.getReferencia())) {
-					if(bcvlbt.getReferencia().equals(referencia)) {
-						bcvlbt.setSeleccionado(true);
-					}else {
-						bcvlbt.setSeleccionado(bcvlbtSesion.isSeleccionado());
-					}
-				}else {
-					bcvlbt.setSeleccionado(false);
-				}
+			if(bcvlbt.getReferencia() == referenciaInt) {
+				bcvlbt.setSeleccionado(true);
+			}else {
+				bcvlbt.setSeleccionado(buscarvalorListaBCVLTSeleccionados(referencia, httpSession));
 			}
 		}
+		
+		
 	
 		return listaTransacciones;
 	}
 	
-	public List<BCVLBT> convertirListaBCVLTSeleccionadosUnaFalse(List<BCVLBT> listaTransacciones, String referencia, HttpSession httpSession){
-		List<BCVLBT> listaBCVLBTPorAprobarSesion =(List<BCVLBT>)httpSession.getAttribute(LISTABCVLBTPORAPROBAR);
+	
+	public boolean buscarvalorListaBCVLTSeleccionados(String referencia, HttpSession httpSession){
+		List<BCVLBT> listaBCVLBTPorAprobarSesion =(List<BCVLBT>)httpSession.getAttribute(LISTABCVLBTPORAPROBARSELECCION);
 		
+		boolean valor = false;
+		int referenciaInt = Integer.valueOf(referencia).intValue();
+		for (BCVLBT bcvlbt : listaBCVLBTPorAprobarSesion) {
+			
+			if(bcvlbt.getReferencia() == referenciaInt) {
+				log.info("bcvlbt.getReferencia(): "+bcvlbt.getReferencia());
+				log.info("bcvlbtSesion.isSeleccionado(): "+bcvlbt.isSeleccionado());
+				valor = bcvlbt.isSeleccionado();
+			}
+			
+		}
+		
+		//log.valor
+	
+		return valor;
+	}
+	
+	
+	public List<BCVLBT> convertirListaBCVLTSeleccionadosUnaFalse(List<BCVLBT> listaTransacciones, String referencia, HttpSession httpSession){
+		List<BCVLBT> listaBCVLBTPorAprobarSesion =(List<BCVLBT>)httpSession.getAttribute(LISTABCVLBTPORAPROBARSELECCION);
+		int referenciaInt = Integer.valueOf(referencia).intValue();
 		for (BCVLBT bcvlbt : listaTransacciones) {
 			for (BCVLBT bcvlbtSesion : listaBCVLBTPorAprobarSesion) {
-				if(bcvlbt.getReferencia().equals(bcvlbtSesion.getReferencia())) {
-					if(bcvlbt.getReferencia().equals(referencia)) {
+				if(bcvlbt.getReferencia() == bcvlbtSesion.getReferencia()) {
+					if(bcvlbt.getReferencia() == referenciaInt) {
 						bcvlbt.setSeleccionado(false);
 					}else {
 						bcvlbt.setSeleccionado(bcvlbtSesion.isSeleccionado());

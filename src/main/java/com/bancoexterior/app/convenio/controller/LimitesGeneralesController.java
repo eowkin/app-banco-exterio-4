@@ -70,7 +70,7 @@ public class LimitesGeneralesController {
 	
 	private static final String MENSAJE = "mensaje";
 	
-	private static final String MENSAJENORESULTADO = "Operacion Exitosa.La consulta no arrojo resultado.";
+	private static final String MENSAJENORESULTADO = "La consulta no arrojo resultado.";
 	
 	private static final String LIMITESGENERALESCONTROLLERINDEXI = "[==== INICIO Index LimitesGenerales Consultas - Controller ====]";
 	
@@ -435,7 +435,7 @@ public class LimitesGeneralesController {
 	    		
 			}else {
 				model.addAttribute(LISTALIMITESGENERALES, listaLimitesGenerales);
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 				
 			}
 			

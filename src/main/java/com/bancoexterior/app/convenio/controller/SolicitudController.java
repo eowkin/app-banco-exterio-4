@@ -136,6 +136,8 @@ public class SolicitudController {
 	
 	private static final String MENSAJE = "mensaje";
 	
+	private static final String MENSAJECOMPRA = "mensajeCompra";
+	
 	private static final String MENSAJEVENTA = "mensajeVenta";
 	
 	private static final String MENSAJEERROR = "mensajeError";
@@ -144,7 +146,7 @@ public class SolicitudController {
 	
 	private static final String MENSAJEERRORCOMPRA = "mensajeErrorCompra";
 	
-	private static final String MENSAJENORESULTADO = "Operacion Exitosa.La consulta no arrojo resultado.";
+	private static final String MENSAJENORESULTADO = "La consulta no arrojo resultado.";
 	
 	private static final String MENSAJEFECHASINVALIDAS = "Los valores de las fechas son invalidos";
 	
@@ -1385,7 +1387,7 @@ public class SolicitudController {
 						if(!listaMovimientosCompra.isEmpty()) {
 							datosPaginacionCompra = responseCompra.getDatosPaginacion();
 						}else {
-							model.addAttribute(MENSAJEERRORCOMPRA, MENSAJENORESULTADO);
+							model.addAttribute(MENSAJECOMPRA, MENSAJENORESULTADO);
 						}
 						
 						model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
@@ -1414,7 +1416,7 @@ public class SolicitudController {
 				if(!listaMovimientosVenta.isEmpty()) {
 					datosPaginacionVenta = responseVenta.getDatosPaginacion();
 				}else {
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 				}
 					
 				
@@ -1436,7 +1438,7 @@ public class SolicitudController {
 					if(!listaMovimientosCompra.isEmpty()) {
 						datosPaginacionCompra = responseCompra.getDatosPaginacion();
 					}else {
-						model.addAttribute(MENSAJEERRORCOMPRA, MENSAJENORESULTADO);
+						model.addAttribute(MENSAJECOMPRA, MENSAJENORESULTADO);
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
@@ -1617,7 +1619,7 @@ public class SolicitudController {
 				if(!listaMovimientosVenta.isEmpty()) {
 					datosPaginacionVenta = responseVenta.getDatosPaginacion();
 				}else {
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);	
+					model.addAttribute(MENSAJE, MENSAJENORESULTADO);	
 				}
 				model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 				model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1653,7 +1655,7 @@ public class SolicitudController {
 					if(!listaMovimientosCompra.isEmpty()) {
 						datosPaginacionCompra = responseCompra.getDatosPaginacion();
 					}else {
-						model.addAttribute(MENSAJEERRORCOMPRA, MENSAJENORESULTADO);
+						model.addAttribute(MENSAJECOMPRA, MENSAJENORESULTADO);
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);

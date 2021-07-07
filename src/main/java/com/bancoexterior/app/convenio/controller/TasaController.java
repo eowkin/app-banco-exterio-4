@@ -69,7 +69,7 @@ public class TasaController {
 	
 	private static final String MENSAJE = "mensaje";
 
-	private static final String MENSAJENORESULTADO = "Operacion Exitosa.La consulta no arrojo resultado.";
+	private static final String MENSAJECONSULTANOARROJORESULTADOS = "La consulta no arrojo resultado";
 	
 	private static final String TASACONTROLLERINDEXI = "[==== INICIO Index Tasas Consultas - Controller ====]";
 	
@@ -143,7 +143,7 @@ public class TasaController {
 				log.info(TASACONTROLLEREDITARF);
             	return URLFORMTASAEDIT;
 			}else {
-				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
 				log.info(TASACONTROLLEREDITARF);
 				return REDIRECTINDEX;
 			}

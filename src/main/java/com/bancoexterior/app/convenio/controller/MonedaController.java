@@ -61,6 +61,8 @@ public class MonedaController {
 	
 	private static final String MENSAJE = "mensaje";
 	
+	private static final String MENSAJECONSULTANOARROJORESULTADOS = "La consulta no arrojo resultado";
+	
 	private static final String MONEDACONTROLLERINDEXI = "[==== INICIO Index Monedas Consultas - Controller ====]";
 	
 	private static final String MONEDACONTROLLERINDEXF = "[==== FIN Index Monedas Consultas - Controller ====]";
@@ -185,7 +187,7 @@ public class MonedaController {
 				log.info(MONEDACONTROLLEREDITARF);
         		return URLFORMMONEDAEDIT;
 			}else {
-				redirectAttributes.addFlashAttribute(MENSAJEERROR, "Operacion Exitosa.La consulta no arrojo resultado.");
+				redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
 				log.info(MONEDACONTROLLEREDITARF);
 				return REDIRECTINDEX;
 			}
@@ -288,7 +290,7 @@ public class MonedaController {
 			}else {
 				
 				model.addAttribute(LISTAMONEDAS, listMonedas);
-				model.addAttribute(MENSAJEERROR, "Operacion Exitosa.La consulta no arrojo resultado.");
+				model.addAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
 			}
 			
 			

@@ -84,6 +84,8 @@ public class ClientesPersonalizadosController {
 	
 	private static final String MENSAJEERROR = "mensajeError";
 	
+	private static final String MENSAJECREARCLIENTE = "Operacion exitosa, cliente creado. Puede crear limites Personalizados al cliente nuevo";
+	
 	private static final String REDIRECTINDEX = "redirect:/clientesPersonalizados/index/";
 	
 	private static final String REDIRECTINDEXLIMITESPERSONALIZADOS = "redirect:/clientesPersonalizados/verLimites/";
@@ -92,7 +94,7 @@ public class ClientesPersonalizadosController {
 	
 	private static final String MENSAJE = "mensaje";
 	
-	private static final String MENSAJENORESULTADO = "Operacion Exitosa.La consulta no arrojo resultado.";
+	private static final String MENSAJENORESULTADO = "La consulta no arrojo resultado.";
 	
 	private static final String CLIENTESPERSONALIZADOS = "clientesPersonalizados";
 														 	
@@ -339,7 +341,8 @@ public class ClientesPersonalizadosController {
 				}else {
 					model.addAttribute("listaLimitesPersonalizados", listaLimitesPersonalizados);
 					model.addAttribute("codigoIbs", codigoIbs);
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					//model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 					log.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESF);
 					return URLINDEXLIMITESPERSONALIZADOS;
 				}
@@ -670,7 +673,7 @@ public class ClientesPersonalizadosController {
 					datosPaginacion.setTotalPaginas(0);
 					model.addAttribute(LISTACLIENTESPERSONALIZADOS, listaClientesPersonalizados);
 					model.addAttribute(DATOSPAGINACION, datosPaginacion);
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 				}
 				
 				
@@ -678,7 +681,7 @@ public class ClientesPersonalizadosController {
 				datosPaginacion.setTotalPaginas(0);
 				model.addAttribute(LISTACLIENTESPERSONALIZADOS, listaClientesPersonalizados);
 				model.addAttribute(DATOSPAGINACION, datosPaginacion);
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 			}
 			
 		} catch (CustomException e) {
@@ -732,7 +735,7 @@ public class ClientesPersonalizadosController {
 					datosPaginacion.setTotalPaginas(0);
 					model.addAttribute(LISTACLIENTESPERSONALIZADOS, listaClientesPersonalizados);
 					model.addAttribute(DATOSPAGINACION, datosPaginacion);
-					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+					model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 					
 				}
 				
@@ -741,7 +744,7 @@ public class ClientesPersonalizadosController {
 				datosPaginacion.setTotalPaginas(0);
 				model.addAttribute(LISTACLIENTESPERSONALIZADOS, listaClientesPersonalizados);
 				model.addAttribute(DATOSPAGINACION, datosPaginacion);
-				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 			
 			}
 			
@@ -833,7 +836,8 @@ public class ClientesPersonalizadosController {
 		
 		try {
 			String respuesta = clientePersonalizadoServiceApiRest.crear(clienteRequest);
-			redirectAttributes.addFlashAttribute(MENSAJE, respuesta+ " Puede crear limites Personalizados al cliiente nuevo");
+			log.info(respuesta);
+			redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECREARCLIENTE);
 			log.info(CLIENTESPERSONALIZADOSCONTROLLERSAVEF);
 			return "redirect:/clientesPersonalizados/formLimiteClientePersonalizado/"+clientesPersonalizados.getCodigoIbs();
 			

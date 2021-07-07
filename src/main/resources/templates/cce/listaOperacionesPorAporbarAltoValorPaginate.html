@@ -92,10 +92,10 @@
 		                  	<span class="badge badge-danger" th:if="${BCVLBT.status == 'I' }">Por aprobar</span>
 		                  </td>
 		                  <td th:if=${BCVLBT.seleccionado}>
-		                  	<input th:onclick="|window.location.href='@{/ccetransacciones/seleccionarUnaAprobarOperaciones(page=${datosPaginacion.paginaActual}, montoDesde=${montoDesde}, montoHasta=${montoHasta}, bancoEmisor=${bancoEmisor}, nroIdEmisor=${nroIdEmisor}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, referencia=${BCVLBT.referencia})}'|"  type="checkbox" checked/>
+		                  	<input th:onclick="|window.location.href='@{/ccetransacciones/deseleccionarUnaAprobarOperaciones(page=${datosPaginacion.paginaActual}, montoDesde=${montoDesde}, montoHasta=${montoHasta}, bancoEmisor=${bancoEmisor}, nroIdEmisor=${nroIdEmisor}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, referencia=${BCVLBT.referencia})}'|"  type="checkbox" checked/>
 		                  </td>
 		                  <td th:unless=${BCVLBT.seleccionado}>
-		                  	<input th:onclick="|window.location.href='@{/ccetransacciones/deseleccionarUnaAprobarOperaciones(page=${datosPaginacion.paginaActual}, montoDesde=${montoDesde}, montoHasta=${montoHasta}, bancoEmisor=${bancoEmisor}, nroIdEmisor=${nroIdEmisor}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, referencia=${BCVLBT.referencia})}'|"  type="checkbox"/>
+		                  	<input th:onclick="|window.location.href='@{/ccetransacciones/seleccionarUnaAprobarOperaciones(page=${datosPaginacion.paginaActual}, montoDesde=${montoDesde}, montoHasta=${montoHasta}, bancoEmisor=${bancoEmisor}, nroIdEmisor=${nroIdEmisor}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta}, referencia=${BCVLBT.referencia})}'|"  type="checkbox"/>
 		                  </td>
 		                </tr>
 		              </tbody>
