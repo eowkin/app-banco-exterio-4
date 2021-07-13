@@ -1,11 +1,14 @@
 package com.bancoexterior.app.config;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -17,6 +20,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.Rdn;
+
 
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.ldap.core.DirContextOperations;
@@ -37,7 +41,14 @@ import org.springframework.security.ldap.authentication.AbstractLdapAuthenticati
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 
-public final class CustomActiveDirectoryLdapAuthenticationProvider extends AbstractLdapAuthenticationProvider {
+
+
+
+import lombok.extern.slf4j.Slf4j;
+
+
+@Slf4j
+public final class CustomActiveDirectoryLdapAuthenticationProvider extends AbstractLdapAuthenticationProvider{
 	
 	private static final Pattern SUB_ERROR_CODE = Pattern.compile(".*data\\s([0-9a-f]{3,4}).*");
 
@@ -73,13 +84,15 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 	
 	@Override
 	public Authentication authenticate(Authentication authentication) {		
-			
+		log.info("authenticate");
 	        	return super.authenticate(authentication);
 	      
 	}
 
 	@Override
 	protected DirContextOperations doAuthentication(UsernamePasswordAuthenticationToken auth) {
+		log.info("doAuthentication");
+		
 		String username = auth.getName().toUpperCase();
 		String password = (String) auth.getCredentials();
 		
@@ -94,19 +107,24 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 			LdapUtils.closeContext(ctx);
 		}
 	}
-
+	
+	
 	private DirContext bindAsUser(String username, String password) {
 		final String bindUrl = url;
+		
+		log.info("bindAsUser");
+		
 		Hashtable<String, String> env = new Hashtable<String, String>();
 		env.put(Context.SECURITY_AUTHENTICATION, "simple");
 		String bindPrincipal = createBindPrincipal(username);
+		log.info("bindPrincipal: "+bindPrincipal);
 		env.put(Context.SECURITY_PRINCIPAL, bindPrincipal);
 		env.put(Context.PROVIDER_URL, bindUrl);
 		env.put(Context.SECURITY_CREDENTIALS, password);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		
 		env.put(Context.OBJECT_FACTORIES, DefaultDirObjectFactory.class.getName());
-
+		log.info("env: "+env);
 		try {
 			return contextFactory.createContext(env);
 			
@@ -231,25 +249,67 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 
 	@Override
 	protected Collection<? extends GrantedAuthority> loadUserAuthorities(DirContextOperations userData, String username, String password) {
-		
+		log.info("[---------------loadUserAuthorities------------------]");
 		String[] groups = userData.getStringAttributes("memberOf");
+		
+		int size = groups.length;
+		for (int i=0; i<size; i++) {
+			log.info("groups: "+groups[i]);
+		}
+		
 		if (groups == null) {
 			throw badCredentials(new Exception());
 		}
-		//List<GrantedAuthority> authorities = createGrantedAuthoritiesFromLdapGroups(groups);
-		//createGrantedAuthoritiesFromLdapGroups(groups);
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		authorities.add(new SimpleGrantedAuthority("GSEG-Nexo-Divisas"));
+		
+		List<GrantedAuthority> authorities = createGrantedAuthoritiesFromLdapGroups(groups);
+		createGrantedAuthoritiesFromLdapGroups(groups);
+		
+		
+		//List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		//authorities.add(new SimpleGrantedAuthority("GSEG-Nexo-Divisas"));
 
 		if (authorities == null || authorities.isEmpty()) {
 			throw badCredentials(new Exception());
 		}
+		log.info("[---------------FIN loadUserAuthorities------------------]");
 		return authorities;
 	}
 	
 	
-	
+	///esta la coloque yo 09072021 ORIGINAL
+	private List<GrantedAuthority> createGrantedAuthoritiesFromLdapGroups(String[] groups) {
+		log.info("[----------------createGrantedAuthoritiesFromLdapGroups---------------]");
+		
+		List<String> privileges = new ArrayList<>();		
+		List<String> groupNames = new ArrayList<>(groups.length);
+		
+		for (String group : groups) {
 
+			for (Rdn rdn : LdapUtils.newLdapName(group).getRdns()) {
+	            if (rdn.getType().equalsIgnoreCase("CN")) {
+	            	groupNames.add((String) rdn.getValue());
+	    			String role = getRole1((String) rdn.getValue());
+	    			if(!role.isEmpty())
+	    			privileges.add(role);
+	            }
+	        }
+		}
+		
+		for (String string : privileges) {
+			log.info("privileges: "+string);
+		}
+		
+		
+		
+		
+		String DEFAULT_ROLE_PREFIX = "ROLE_";
+		//org.apache.commons.lang3.StringUtils.appendIfMissing
+		//return new ArrayList<GrantedAuthority>();
+		log.info("[----------------FIN createGrantedAuthoritiesFromLdapGroups---------------]");
+		return privileges.stream()
+				.map(privilege -> org.apache.commons.lang3.StringUtils.appendIfMissing(DEFAULT_ROLE_PREFIX, privilege))
+				.map(privilege -> new SimpleGrantedAuthority(privilege)).collect(Collectors.toList());
+	}
 
 	/*private Collection<String> createGrantedAuthoritiesFromLdapGroups(String[] groups) {
 	List<String> privileges = new ArrayList<>();		
@@ -277,27 +337,71 @@ return  privileges;*/
 	}*/
 	
 	
-	
+	///esta la coloque yo 09072021 ORIGINAL
 	private static String getRole(String groupName) {
+		log.info("[------------------getRole-------------------]");
 		String roleName = "";
 		String aux = "";
 		String subGroup[] = null;
-		
+		log.info("groupName: "+groupName);
 		int index = groupName.lastIndexOf("GSEG-Nexo-Divisas_");
+		log.info("index: "+index);
 		if(index != -1) {
 			aux = groupName.replaceAll("GSEG-Nexo-Divisas_", "");
-			subGroup = aux.split("_");			
+			log.info("aux: "+aux);
+			subGroup = aux.split("_");
+			log.info("subGroup: "+subGroup);
 			if(subGroup.length == 1) { 
 				  roleName = subGroup[0]; 
+				  log.info("roleName: "+roleName);
 			}else if(subGroup.length == 2){
 				roleName = subGroup[1];
+				log.info("roleName: "+roleName);
 			}else if(subGroup.length > 2) {
 				roleName = subGroup[1]+"_"+subGroup[2];
+				log.info("roleName: "+roleName);
 			}
 		}		
+		log.info("roleName: "+roleName);
+		log.info("[------------------FIN getRole-------------------]");
 		return roleName;
 	}
 
+	
+	///esta la coloque yo 09072021 ORIGINAL
+		private static String getRole1(String groupName) {
+			log.info("[------------------getRole-------------------]");
+			String roleName = "";
+			String aux = "";
+			String subGroup[] = null;
+			log.info("groupName: "+groupName);
+			int index = groupName.lastIndexOf("APP-CACTUS");
+			
+			
+			log.info("index: "+index);
+			if(index != -1) {
+				roleName = groupName;
+			}
+			
+			index = groupName.lastIndexOf("Administrators");
+			log.info("index: "+index);
+			if(index != -1) {
+				roleName = groupName;
+			}
+			
+			index = groupName.lastIndexOf("SIU");
+			log.info("index: "+index);
+			if(index != -1) {
+				roleName = groupName;
+			}
+			
+			
+			
+			log.info("roleName: "+roleName);
+			log.info("[------------------FIN getRole-------------------]");
+			return roleName;
+		}
+	
 	public String getIpOrigen() {
 		return ipOrigen;
 	}
@@ -305,6 +409,8 @@ return  privileges;*/
 	public void setIpOrigen(String ipOrigen) {
 		this.ipOrigen = ipOrigen;
 	}
+
+	
 
 	/*@Override
 	protected Collection<? extends GrantedAuthority> loadUserAuthorities(DirContextOperations userData, String username,

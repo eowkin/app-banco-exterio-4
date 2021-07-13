@@ -13,7 +13,7 @@ import com.bancoexterior.app.seguridad.MiCipher;
 
 
 
-@Configuration
+//@Configuration
 public class DataSourceConfig {
     
 	

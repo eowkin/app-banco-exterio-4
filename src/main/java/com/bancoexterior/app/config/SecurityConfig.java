@@ -1,6 +1,6 @@
 package com.bancoexterior.app.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,11 +9,10 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-import lombok.extern.slf4j.Slf4j;
-@Slf4j
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -32,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		log.info("entre 1");
+		
 	
 		
 		http.authorizeRequests()
@@ -45,11 +44,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				"/node_modules/**").permitAll() 
 		//.antMatchers("/login*").permitAll()	
 		.anyRequest().authenticated()
-		.and().formLogin().loginPage("/login").failureUrl("/login-error").defaultSuccessUrl("/index").permitAll()
+		.and().formLogin().loginPage("/login").failureUrl("/login-error").defaultSuccessUrl("/inicio").permitAll()
 		.usernameParameter("username")
 	    .passwordParameter("password")
-	    .defaultSuccessUrl("/index")
-		.and().logout().permitAll();
+	    .successHandler(new CustomAuthenticationSuccessHandler())
+	    .and()
+	    //.logout().permitAll();
+		 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).clearAuthentication(true)
+		 .logoutSuccessUrl("/login").deleteCookies("JSESSIONID")
+		 .invalidateHttpSession(true);
 		
 	}
 	

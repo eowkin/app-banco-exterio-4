@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bancoexterior.app.convenio.dto.MonedasRequest;
@@ -126,6 +127,41 @@ public class TasaController {
 	@GetMapping("/edit/{codMonedaOrigen}/{codMonedaDestino}/{tipoOperacion}")
 	public String editarWs(@PathVariable("codMonedaOrigen") String codMonedaOrigen, 
 			@PathVariable("codMonedaDestino") String codMonedaDestino, @PathVariable("tipoOperacion") Integer tipoOperacion,
+			Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
+		log.info(TASACONTROLLEREDITARI);
+		Tasa tasaEdit = new Tasa();
+		TasaRequest tasaRequest = getTasaRequest();
+		Tasa tasaBuscar = new Tasa();
+		tasaBuscar.setCodMonedaOrigen(codMonedaOrigen);
+		tasaBuscar.setCodMonedaDestino(codMonedaDestino);
+		tasaBuscar.setTipoOperacion(tipoOperacion);
+		tasaRequest.setTasa(tasaBuscar);
+		
+		try {
+			tasaEdit = tasaServiceApiRest.buscarTasa(tasaRequest);
+			if(tasaEdit != null) {
+				model.addAttribute("tasa", tasaEdit);
+				log.info(TASACONTROLLEREDITARF);
+            	return URLFORMTASAEDIT;
+			}else {
+				redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
+				log.info(TASACONTROLLEREDITARF);
+				return REDIRECTINDEX;
+			}
+		} catch (CustomException e) {
+			log.error(e.getMessage());
+			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
+			return REDIRECTINDEX;
+		}
+		
+		
+		
+	}
+	
+	
+	@GetMapping("/editPrueba")
+	public String editarWsPrueba(@RequestParam("codMonedaOrigen") String codMonedaOrigen, 
+			@RequestParam("codMonedaDestino") String codMonedaDestino, @RequestParam("tipoOperacion") Integer tipoOperacion,
 			Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
 		log.info(TASACONTROLLEREDITARI);
 		Tasa tasaEdit = new Tasa();

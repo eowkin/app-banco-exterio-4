@@ -91,9 +91,9 @@ public class MonedaController {
 	
 	private static final String MONEDACONTROLLERSEARHCODIGOF = "[==== FIN SearchCodigo Moneda - Controller ====]";
 	
+	private static final String INDEX = "/index";
 	
-	
-	@GetMapping("/index")
+	@GetMapping(INDEX)
 	public String indexWs(Model model, RedirectAttributes redirectAttributes) {
 		log.info(MONEDACONTROLLERINDEXI);
 		MonedasRequest monedasRequest = getMonedasRequest();

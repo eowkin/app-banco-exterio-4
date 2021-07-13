@@ -45,6 +45,7 @@
 		            		</ul>
 		            	</div>	
 		          	<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
+							           
 		            <table class="table">
 		              <thead>
 		                <tr>
@@ -73,11 +74,13 @@
 		                  <td th:text="${tasa.codUsuario}"></td>
 		                  <td th:text="${tasa.fechaModificacion}"></td>
 		                  <td>
-		                  	<a  class="btn btn-primary" th:href="@{/tasas/edit/{id}/{id2}/{id3} (id=${tasa.codMonedaOrigen}, id2=${tasa.codMonedaDestino}, id3=${tasa.tipoOperacion}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>
+		                  	<!-- <a  class="btn btn-primary" th:href="@{/tasas/edit/{id}/{id2}/{id3} (id=${tasa.codMonedaOrigen}, id2=${tasa.codMonedaDestino}, id3=${tasa.tipoOperacion}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>  -->
+		                  	<a  class="btn btn-primary" th:href="@{/tasas/editPrueba(codMonedaOrigen=${tasa.codMonedaOrigen}, codMonedaDestino=${tasa.codMonedaDestino}, tipoOperacion=${tasa.tipoOperacion}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>
 		                  </td>
 		                </tr>
 		              </tbody>
 		            </table> 
+		          
 		          </div><!--/.card-body-->
 		        </div><!--/.card-->
 		      </div><!--/.col-lg-1-12-->
