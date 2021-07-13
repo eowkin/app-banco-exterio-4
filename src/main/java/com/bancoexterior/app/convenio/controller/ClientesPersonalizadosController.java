@@ -332,6 +332,12 @@ public class ClientesPersonalizadosController {
 						if(limitesPersonalizados.getFechaModificacion() != null) {
 							String[] arrOfStr = limitesPersonalizados.getFechaModificacion().split(" ", 2);
 							limitesPersonalizados.setFechaModificacion(arrOfStr[0]);
+							limitesPersonalizados.setMontoMinString(libreriaUtil.formatNumber(limitesPersonalizados.getMontoMin()));
+							limitesPersonalizados.setMontoMaxString(libreriaUtil.formatNumber(limitesPersonalizados.getMontoMax()));
+							limitesPersonalizados.setMontoTopeString(libreriaUtil.formatNumber(limitesPersonalizados.getMontoTope()));
+							limitesPersonalizados.setMontoMensualString(libreriaUtil.formatNumber(limitesPersonalizados.getMontoMensual()));
+							limitesPersonalizados.setMontoDiarioString(libreriaUtil.formatNumber(limitesPersonalizados.getMontoDiario()));
+							
 						}
 					}
 					model.addAttribute("listaLimitesPersonalizados", listaLimitesPersonalizados);

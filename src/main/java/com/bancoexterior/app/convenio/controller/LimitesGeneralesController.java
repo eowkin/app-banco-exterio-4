@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bancoexterior.app.convenio.dto.LimiteRequest;
@@ -186,6 +187,45 @@ public class LimitesGeneralesController {
 		}
 		log.info(LIMITESGENERALESCONTROLLERDESACTIVARF);
 		return REDIRECTINDEX;
+	}
+	
+	
+	@GetMapping("/detalle")
+	public String detalleWs1(@RequestParam("codMoneda") String codMoneda, @RequestParam("tipoTransaccion") String tipoTransaccion,
+			@RequestParam("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
+		log.info(LIMITESGENERALESCONTROLLERDETALLEI);
+		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
+		LimiteRequest limiteRequest = getLimiteRequest(); 
+		LimitesGenerales limite = new LimitesGenerales();
+		limite.setCodMoneda(codMoneda);
+		limite.setTipoTransaccion(tipoTransaccion);
+		limite.setTipoCliente(tipoCliente);
+		limiteRequest.setLimite(limite);
+		
+		try {
+			limitesGeneralesEdit = limitesGeneralesServiceApirest.buscarLimitesGenerales(limiteRequest);
+			if(limitesGeneralesEdit != null) {
+				limitesGeneralesEdit.setMontoMinString(libreriaUtil.formatNumber(limitesGeneralesEdit.getMontoMin()));
+				limitesGeneralesEdit.setMontoMaxString(libreriaUtil.formatNumber(limitesGeneralesEdit.getMontoMax()));
+				limitesGeneralesEdit.setMontoTopeString(libreriaUtil.formatNumber(limitesGeneralesEdit.getMontoTope()));
+				limitesGeneralesEdit.setMontoMensualString(libreriaUtil.formatNumber(limitesGeneralesEdit.getMontoMensual()));
+				limitesGeneralesEdit.setMontoDiarioString(libreriaUtil.formatNumber(limitesGeneralesEdit.getMontoDiario()));
+				limitesGeneralesEdit.setMontoBancoString(libreriaUtil.formatNumber(limitesGeneralesEdit.getMontoBanco()));
+				
+				model.addAttribute(LIMITESGENERALES, limitesGeneralesEdit);
+				log.info(LIMITESGENERALESCONTROLLERDETALLEF);
+            	return URLFORMLIMITESGENERALESDETALLE;
+			}else {
+				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
+				return REDIRECTINDEX;
+			}
+		} catch (CustomException e) {
+			log.error(e.getMessage());
+			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
+			return REDIRECTINDEX;
+		}
+		
+	
 	}
 	
 	

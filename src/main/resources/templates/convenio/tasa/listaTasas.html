@@ -46,7 +46,7 @@
 		            	</div>	
 		          	<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
 							           
-		            <table class="table">
+		            <table class="table table-striped table-hover">
 		              <thead>
 		                <tr>
 		                  <th>Cod. Moneda Origen</th>
@@ -69,8 +69,8 @@
 		                  	<span th:if="${tasa.tipoOperacion == 2}">Intervencion</span>
 		                  	<span th:if="${tasa.tipoOperacion == 3}">Menudeo</span>
 		                  </td> 
-		                  <td th:text="${tasa.montoTasaCompra}"></td>
-		                  <td th:text="${tasa.montoTasaVenta}"></td>
+		                  <td th:text="${tasa.montoTasaCompraString}"></td>
+		                  <td th:text="${tasa.montoTasaVentaString}"></td>
 		                  <td th:text="${tasa.codUsuario}"></td>
 		                  <td th:text="${tasa.fechaModificacion}"></td>
 		                  <td>

@@ -68,7 +68,17 @@ public class LimitesGenerales implements Serializable{
 	@JsonProperty("fechaModificacion")
 	private String fechaModificacion;
 	
+	private String montoMinString;
 	
+	private String montoMaxString;
+	
+	private String montoTopeString;
+	
+	private String montoMensualString;
+	
+	private String montoDiarioString;
+	
+	private String montoBancoString;
 	/**
 	 * 
 	 */

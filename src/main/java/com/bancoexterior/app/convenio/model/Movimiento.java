@@ -103,6 +103,12 @@ public class Movimiento implements Serializable{
 	
 	private String tipoCliente;
 	
+	private String tasaClienteString;
+	
+	private String montoDivisaString;
+	
+	private String montoBsClienteString;
+	
 	public Movimiento() {
 		this.fechas = new Fechas();
 	}

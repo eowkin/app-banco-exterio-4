@@ -83,7 +83,7 @@ public class HomeController {
 		//log.info("listaMenu: "+role.getMenus());
 	    
 		//List<Menu> listaMenu = role.getMenus();
-	    List<Menu> listaMenu = serviceMenu.todoMenuRole(valores);
+	    List<Menu> listaMenu = serviceMenu.todoMenuRole(9);
 		
 	    
 	    
@@ -118,7 +118,7 @@ public class HomeController {
 		
 		
 		
-		httpSession.setAttribute("listaMenu", listaMenus);
+		httpSession.setAttribute("listaMenu", listaMenu);
 		return "index";
 	}
 

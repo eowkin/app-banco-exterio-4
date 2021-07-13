@@ -55,7 +55,7 @@
 		          		<!--
   						<table class=".table-responsive{-sm|-md|-lg|-xl}">
     					-->	
-    					<table class="table">
+    					<table class="table table-striped table-hover">
 					              <thead>
 					                <tr>
 					                  <th>Codigo Moneda</th>
@@ -105,7 +105,10 @@
 				                	  </td> -->
 					               	  <td th:text="${limitesGenerales.fechaModificacion}"></td>
 					                  <td>
+					                  	<!--
 			                      		<a  class="btn btn-info" th:href="@{/limitesGenerales/detalle/{id}/{id2}/{id3} (id=${limitesGenerales.codMoneda}, id2=${limitesGenerales.tipoTransaccion}, id3=${limitesGenerales.tipoCliente}) }" role="button" title="Detalle el registro."><i class="fa fa-search" aria-hidden="true"></i></a>
+			                      		-->
+			                      		<a  class="btn btn-info" th:href="@{/limitesGenerales/detalle(codMoneda=${limitesGenerales.codMoneda}, tipoTransaccion=${limitesGenerales.tipoTransaccion}, tipoCliente=${limitesGenerales.tipoCliente}) }" role="button" title="Detalle el registro."><i class="fa fa-search" aria-hidden="true"></i></a>
 			                    	  </td>
 			                    	  
 					                  <td th:if="${limitesGenerales.flagActivo}">

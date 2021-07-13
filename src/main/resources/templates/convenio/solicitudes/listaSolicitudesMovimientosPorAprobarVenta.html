@@ -35,29 +35,9 @@
 							   Ofertas del Día
 				        </div>
 				       <div class="card-body">
-				       	<div><span style="float:right">[[${ventaAcumuladoUSD.monto}]]</span>Monto en Dólares:</div>
-				       	<div><span style="float:right">[[${ventaAcumuladoEUR.monto}]]</span>Monto en Euros:</div>
-				       	<div><span style="float:right">[[${montoBsTotalVenta}]]</span>Monto en Bs:</div>
-				       	<!--<P ALIGN="LEFT">Monto en Dólares:</P><P ALIGN="RIGHT">[[${ventaAcumuladoUSD.monto}]]</P>
-				       	<P ALIGN="LEFT">Monto en Euros:</P><P ALIGN="RIGHT">[[${ventaAcumuladoEUR.monto}]]</P>
-				       	<P ALIGN="LEFT">Monto en Bs:</P><P ALIGN="RIGHT">[[${montoBsTotalVenta}]]</P> 
-				    	  
-				       	  <table class="table">
-						      <tbody>
-						      	<tr style="border: hidden">	
-				              		<td align="left">Monto en Dólares:</td>
-							        <td align="right">[[${ventaAcumuladoUSD.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Euros:</td>
-							        <td align="right">[[${ventaAcumuladoEUR.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Bs:</td>
-							        <td align="right">[[${montoBsTotalVenta}]]</td>
-							    </tr>  
-							  </tbody>
-						  </table>--> 
+				       	<div><span style="float:right">[[${ventaAcumuladoUSD.montoString}]]</span>Monto en Dólares:</div>
+				       	<div><span style="float:right">[[${ventaAcumuladoEUR.montoString}]]</span>Monto en Euros:</div>
+				       	<div><span style="float:right">[[${montoBsTotalVenta}]]</span>Monto en Bs:</div> 
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -67,26 +47,9 @@
 							   Demanda del Día
 				        </div>
 				       <div class="card-body">
-				       	  <div><span style="float:right">[[${compraAcumuladoUSD.monto}]]</span>Monto en Dólares:</div>
-				       	  <div><span style="float:right">[[${compraAcumuladoEUR.monto}]]</span>Monto en Euros:</div>
-				       	  <div><span style="float:right">[[${montoBsTotalCompra}]]</span>Monto en Bs:</div>
-				       	  <!-- 
-				       	  <table class="table">
-						      <tbody>
-						      	<tr style="border: hidden">	
-				              		<td align="left">Monto en Dólares:</td>
-							        <td align="right">[[${compraAcumuladoUSD.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Euros:</td>
-							        <td align="right">[[${compraAcumuladoEUR.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Bs:</td>
-							        <td align="right">[[${montoBsTotalCompra}]]</td>
-							    </tr>  
-							  </tbody>
-						  </table> -->	
+				       	  <div><span style="float:right">[[${compraAcumuladoUSD.montoString}]]</span>Monto en Dólares:</div>
+				       	  <div><span style="float:right">[[${compraAcumuladoEUR.montoString}]]</span>Monto en Euros:</div>
+				       	  <div><span style="float:right">[[${montoBsTotalCompra}]]</span>Monto en Bs:</div>	
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -96,26 +59,9 @@
 							   Ofertas por Aprobar
 				        </div>
 				       <div class="card-body">
-				       	  <div><span style="float:right">[[${ventaPorAprobarUSD.monto}]]</span>Monto en Dólares:</div>
-				       	  <div><span style="float:right">[[${ventaPorAprobarEUR.monto}]]</span>Monto en Euros:</div>
-				       	  <div><span style="float:right">[[${montoBsTotalPorAprobarVenta}]]</span>Monto en Bs:</div>		
-				       	  <!-- 
-				       	  <table class="table">
-						      <tbody>
-						      	<tr style="border: hidden">	
-				              		<td align="left">Monto en Dólares:</td>
-							        <td align="right">[[${ventaPorAprobarUSD.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Euros:</td>
-							        <td align="right">[[${ventaPorAprobarEUR.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Bs:</td>
-							        <td align="right">[[${montoBsTotalPorAprobarVenta}]]</td>
-							    </tr>  
-							  </tbody>
-						  </table> -->		   
+				       	  <div><span style="float:right">[[${ventaPorAprobarUSD.montoString}]]</span>Monto en Dólares:</div>
+				       	  <div><span style="float:right">[[${ventaPorAprobarEUR.montoString}]]</span>Monto en Euros:</div>
+				       	  <div><span style="float:right">[[${montoBsTotalPorAprobarVenta}]]</span>Monto en Bs:</div>				   
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -125,26 +71,9 @@
 							   Demandas por Aprobar
 				        </div>
 				       <div class="card-body">
-				       	  <div><span style="float:right">[[${compraPorAprobarUSD.monto}]]</span>Monto en Dólares:</div>
-				       	  <div><span style="float:right">[[${compraPorAprobarEUR.monto}]]</span>Monto en Euros:</div>
+				       	  <div><span style="float:right">[[${compraPorAprobarUSD.montoString}]]</span>Monto en Dólares:</div>
+				       	  <div><span style="float:right">[[${compraPorAprobarEUR.montoString}]]</span>Monto en Euros:</div>
 				       	  <div><span style="float:right">[[${montoBsTotalPorAprobarCompra}]]</span>Monto en Bs:</div>	
-				       	  <!-- 
-				       	  <table class="table">
-						      <tbody>
-						      	<tr style="border: hidden">	
-				              		<td align="left">Monto en Dólares:</td>
-							        <td align="right">[[${compraPorAprobarUSD.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Euros:</td>
-							        <td align="right">[[${compraPorAprobarEUR.monto}]]</td>
-							    </tr>
-							    <tr style="border: hidden">	
-				              		<td align="left">Monto en Bs:</td>
-							        <td align="right">[[${montoBsTotalPorAprobarCompra}]]</td>
-							    </tr>  
-							  </tbody>
-						  </table> -->	
 						</div>
 				      </div>
 				    </div><!--/.col-->
@@ -173,7 +102,7 @@
 							            	</div>
 						          	
 						          			<div th:if="${mensajeVenta != null}" class="alert alert-success" th:text="${mensajeVenta}" role="alert"></div>
-							            <table class="table">
+							            <table class="table table-striped table-hover">
 							              <thead>
 							                <tr>
 							                  <th>Cod. Operacion</th>
@@ -189,8 +118,8 @@
 							                <tr th:each = "movimiento: ${listaMovimientosVenta}">
 							                  <td th:text="${movimiento.codOperacion}"></td>
 							                  <td th:text="${movimiento.codMoneda}"></td>
-							                  <td th:text="${movimiento.montoDivisa}"></td>
-							                  <td th:text="${movimiento.tasaCliente}"></td>
+							                  <td th:text="${movimiento.montoDivisaString}"></td>
+							                  <td th:text="${movimiento.tasaClienteString}"></td>
 							                  <td>
 							                  	<a onclick="return confirm('¿Estas seguro de aprobar la solicitud de Venta (Oferta)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarVenta/{codOperacion}/{page} (codOperacion=${movimiento.codOperacion}, page=${datosPaginacionVenta.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fa fa-check" aria-hidden="true"></i></a>
 							                  </td>
@@ -245,7 +174,7 @@
 							            	</div>
 						          	
 						          			<div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>
-							            <table class="table">
+							            <table class="table table-striped table-hover">
 							              <thead>
 							                <tr>
 							                  <th>Cod. Operacion</th>
@@ -261,8 +190,8 @@
 							                <tr th:each = "movimientoCompra: ${listaMovimientosCompra}">
 							                  <td th:text="${movimientoCompra.codOperacion}"></td>
 							                  <td th:text="${movimientoCompra.codMoneda}"></td>
-							                  <td th:text="${movimientoCompra.montoDivisa}"></td>
-							                  <td th:text="${movimientoCompra.tasaCliente}"></td>
+							                  <td th:text="${movimientoCompra.montoDivisaString}"></td>
+							                  <td th:text="${movimientoCompra.tasaClienteString}"></td>
 							                  <td>
 							                  	<a  onclick="return confirm('¿Estas seguro de aprobar la solicitud de Compra (Demanda)?')" class="btn btn-success" th:href="@{/solicitudes/aprobarCompra/{codOperacion}/{page} (codOperacion=${movimientoCompra.codOperacion}, page=${datosPaginacionCompra.paginaActual}) }" role="button" title="Aprobar Solicitud."><i class="fa fa-check" aria-hidden="true"></i></a>
 							                  </td>

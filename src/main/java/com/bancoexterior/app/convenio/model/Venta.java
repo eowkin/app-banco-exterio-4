@@ -26,6 +26,8 @@ public class Venta implements Serializable{
 	@JsonProperty("montoBs")
 	private BigDecimal montoBs;
 	
+	private String montoString;
+	
 	/**
 	 * 
 	 */

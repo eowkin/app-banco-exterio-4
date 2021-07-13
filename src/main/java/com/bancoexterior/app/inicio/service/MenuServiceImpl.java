@@ -23,7 +23,7 @@ public class MenuServiceImpl implements IMenuService{
 	}
 
 	@Override
-	public List<Menu> todoMenuRole(String valores) {
+	public List<Menu> todoMenuRole(int valores) {
 		return repo.menuRole(valores);
 	}
 

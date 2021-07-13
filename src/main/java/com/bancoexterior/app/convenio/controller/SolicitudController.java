@@ -257,7 +257,7 @@ public class SolicitudController {
 			model.addAttribute(VENTAACUMULADOEUR, evaluarBigDecimalVenta(ventaAcumuladoEUR));
 			
 			montoBsTotalVenta =  ventaAcumuladoEUR.getMontoBs().add(ventaAcumuladoUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALVENTA, evaluarBigDecimal(montoBsTotalVenta));
+			model.addAttribute(MONTOBSTOTALVENTA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalVenta)));
 			
 			compraAcumuladoUSD = acumuladosCompra("USD");
 			model.addAttribute(COMPRAACUMULADOUSD, evaluarBigDecimalCompra(compraAcumuladoUSD)); 
@@ -266,7 +266,7 @@ public class SolicitudController {
 			model.addAttribute(COMPRAACUMULADOEUR, evaluarBigDecimalCompra(compraAcumuladoEUR));
 			
 			montoBsTotalCompra =  compraAcumuladoEUR.getMontoBs().add(compraAcumuladoUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALCOMPRA, evaluarBigDecimal(montoBsTotalCompra));
+			model.addAttribute(MONTOBSTOTALCOMPRA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalCompra)));
 			
 			ventaPorAprobarUSD = acumuladosPorAprobarVenta("USD");
 			model.addAttribute(VENTAPORAPROBARUSD,  evaluarBigDecimalVenta(ventaPorAprobarUSD));
@@ -275,7 +275,7 @@ public class SolicitudController {
 			model.addAttribute(VENTAPORAPROBAREUR, evaluarBigDecimalVenta(ventaPorAprobarEUR)); 
 			
 			montoBsTotalPorAprobarVenta =  ventaPorAprobarEUR.getMontoBs().add(ventaPorAprobarUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALPORAPROBARVENTA, evaluarBigDecimal(montoBsTotalPorAprobarVenta)); 
+			model.addAttribute(MONTOBSTOTALPORAPROBARVENTA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalPorAprobarVenta))); 
 			
 			compraPorAprobarUSD = acumuladosPorAprobarCompra("USD");
 			model.addAttribute(COMPRAPORAPROBARUSD, evaluarBigDecimalCompra(compraPorAprobarUSD)); 
@@ -285,7 +285,7 @@ public class SolicitudController {
 			log.info("compraPorAprobarEUR: "+compraPorAprobarEUR);
 			
 			montoBsTotalPorAprobarCompra =  compraPorAprobarEUR.getMontoBs().add(compraPorAprobarUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALPORAPROBARCOMPRA, evaluarBigDecimal(montoBsTotalPorAprobarCompra));
+			model.addAttribute(MONTOBSTOTALPORAPROBARCOMPRA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalPorAprobarCompra)));
 			
 			movimientosRequest.setNumeroPagina(page);
 			movimientosRequest.setTamanoPagina(numeroRegistroPage);
@@ -298,6 +298,12 @@ public class SolicitudController {
 				
 				listaMovimientosVenta = responseVenta.getMovimientos();
 				if(!listaMovimientosVenta.isEmpty()) {
+					for (Movimiento movimiento : listaMovimientosVenta) {
+						movimiento.setTasaClienteString(libreriaUtil.formatNumber(movimiento.getTasaCliente()));
+						movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+					}
+					
+					
 					datosPaginacionVenta = responseVenta.getDatosPaginacion();
 				}
 				
@@ -316,6 +322,10 @@ public class SolicitudController {
 					
 					listaMovimientosCompra = responseCompra.getMovimientos();
 					if(!listaMovimientosCompra.isEmpty()) {
+						for (Movimiento movimiento : listaMovimientosCompra) {
+							movimiento.setTasaClienteString(libreriaUtil.formatNumber(movimiento.getTasaCliente()));
+							movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+						}
 						datosPaginacionCompra = responseCompra.getDatosPaginacion();
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
@@ -402,7 +412,7 @@ public class SolicitudController {
 			model.addAttribute(VENTAACUMULADOEUR, evaluarBigDecimalVenta(ventaAcumuladoEUR));
 			
 			montoBsTotalVenta =  ventaAcumuladoEUR.getMontoBs().add(ventaAcumuladoUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALVENTA, evaluarBigDecimal(montoBsTotalVenta));
+			model.addAttribute(MONTOBSTOTALVENTA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalVenta)));
 			
 			compraAcumuladoUSD = acumuladosCompra("USD");
 			model.addAttribute(COMPRAACUMULADOUSD, evaluarBigDecimalCompra(compraAcumuladoUSD)); 
@@ -411,7 +421,7 @@ public class SolicitudController {
 			model.addAttribute(COMPRAACUMULADOEUR, evaluarBigDecimalCompra(compraAcumuladoEUR));
 			
 			montoBsTotalCompra =  compraAcumuladoEUR.getMontoBs().add(compraAcumuladoUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALCOMPRA, evaluarBigDecimal(montoBsTotalCompra));
+			model.addAttribute(MONTOBSTOTALCOMPRA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalCompra)));
 			
 			ventaPorAprobarUSD = acumuladosPorAprobarVenta("USD");
 			model.addAttribute(VENTAPORAPROBARUSD,  evaluarBigDecimalVenta(ventaPorAprobarUSD));
@@ -420,7 +430,7 @@ public class SolicitudController {
 			model.addAttribute(VENTAPORAPROBAREUR, evaluarBigDecimalVenta(ventaPorAprobarEUR)); 
 			
 			montoBsTotalPorAprobarVenta =  ventaPorAprobarEUR.getMontoBs().add(ventaPorAprobarUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALPORAPROBARVENTA, evaluarBigDecimal(montoBsTotalPorAprobarVenta)); 
+			model.addAttribute(MONTOBSTOTALPORAPROBARVENTA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalPorAprobarVenta))); 
 			
 			compraPorAprobarUSD = acumuladosPorAprobarCompra("USD");
 			model.addAttribute(COMPRAPORAPROBARUSD, evaluarBigDecimalCompra(compraPorAprobarUSD)); 
@@ -430,7 +440,7 @@ public class SolicitudController {
 			log.info("compraPorAprobarEUR: "+compraPorAprobarEUR);
 			
 			montoBsTotalPorAprobarCompra =  compraPorAprobarEUR.getMontoBs().add(compraPorAprobarUSD.getMontoBs());
-			model.addAttribute(MONTOBSTOTALPORAPROBARCOMPRA, evaluarBigDecimal(montoBsTotalPorAprobarCompra));
+			model.addAttribute(MONTOBSTOTALPORAPROBARCOMPRA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalPorAprobarCompra)));
 			
 			movimientosRequest.setNumeroPagina(1);
 			movimientosRequest.setTamanoPagina(numeroRegistroPage);
@@ -443,6 +453,10 @@ public class SolicitudController {
 				
 				listaMovimientosVenta = responseVenta.getMovimientos();
 				if(!listaMovimientosVenta.isEmpty()) {
+					for (Movimiento movimiento : listaMovimientosVenta) {
+						movimiento.setTasaClienteString(libreriaUtil.formatNumber(movimiento.getTasaCliente()));
+						movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+					}
 					datosPaginacionVenta = responseVenta.getDatosPaginacion();
 				}
 				model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
@@ -460,6 +474,10 @@ public class SolicitudController {
 					
 					listaMovimientosCompra = responseCompra.getMovimientos();
 					if(!listaMovimientosCompra.isEmpty()) {
+						for (Movimiento movimiento : listaMovimientosCompra) {
+							movimiento.setTasaClienteString(libreriaUtil.formatNumber(movimiento.getTasaCliente()));
+							movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+						}
 						datosPaginacionCompra = responseCompra.getDatosPaginacion();
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
@@ -536,6 +554,10 @@ public class SolicitudController {
 				
 				listaMovimientosVenta = responseVenta.getMovimientos();
 				if(!listaMovimientosVenta.isEmpty()) {
+					for (Movimiento movimiento : listaMovimientosVenta) {
+						movimiento.setMontoBsClienteString(libreriaUtil.formatNumber(movimiento.getMontoBsCliente()));
+						movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+					}
 					datosPaginacionVenta = responseVenta.getDatosPaginacion();
 				}else {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
@@ -554,6 +576,10 @@ public class SolicitudController {
 					
 					listaMovimientosCompra = responseCompra.getMovimientos();
 					if(!listaMovimientosCompra.isEmpty()) {
+						for (Movimiento movimiento : listaMovimientosCompra) {
+							movimiento.setMontoBsClienteString(libreriaUtil.formatNumber(movimiento.getMontoBsCliente()));
+							movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+						}
 						datosPaginacionCompra = responseCompra.getDatosPaginacion();
 					}else {
 						model.addAttribute(MENSAJEERRORCOMPRA, MENSAJENORESULTADO);
@@ -611,6 +637,10 @@ public class SolicitudController {
 				
 				listaMovimientosVenta = responseVenta.getMovimientos();
 				if(!listaMovimientosVenta.isEmpty()) {
+					for (Movimiento movimiento : listaMovimientosVenta) {
+						movimiento.setMontoBsClienteString(libreriaUtil.formatNumber(movimiento.getMontoBsCliente()));
+						movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+					}
 					datosPaginacionVenta = responseVenta.getDatosPaginacion();
 				}else {
 					model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
@@ -629,6 +659,10 @@ public class SolicitudController {
 					
 					listaMovimientosCompra = responseCompra.getMovimientos();
 					if(!listaMovimientosCompra.isEmpty()) {
+						for (Movimiento movimiento : listaMovimientosCompra) {
+							movimiento.setMontoBsClienteString(libreriaUtil.formatNumber(movimiento.getMontoBsCliente()));
+							movimiento.setMontoDivisaString(libreriaUtil.formatNumber(movimiento.getMontoDivisa()));
+						}
 						datosPaginacionCompra = responseCompra.getDatosPaginacion();
 					}else {
 						model.addAttribute(MENSAJEERRORCOMPRA, MENSAJENORESULTADO);
@@ -1183,7 +1217,7 @@ public class SolicitudController {
 		datosConsulta.setFechaHasta(fecha(new Date()));
 		acumuladoRequest.setDatosConsulta(datosConsulta);
 		List<Venta> listaVenta;
-		Venta ventaRes = new Venta("","", new BigDecimal("0.00"), new BigDecimal("0.00"));
+		Venta ventaRes = new Venta("","", new BigDecimal("0.00"), new BigDecimal("0.00"),"");
 		
 		
 		
@@ -1217,7 +1251,7 @@ public class SolicitudController {
 		datosConsulta.setFechaHasta(fecha(new Date()));
 		acumuladoRequest.setDatosConsulta(datosConsulta);
 		List<Compra> listaCompra;
-		Compra compraRes = new Compra("","", new BigDecimal("0.00"), new BigDecimal("0.00"));
+		Compra compraRes = new Compra("","", new BigDecimal("0.00"), new BigDecimal("0.00"), "");
 		AcumuladoCompraVentaResponse acumuladoCompraVentaResponse = acumuladosServiceApiRest.consultarAcumuladosCompraVenta(acumuladoRequest);
 		if(acumuladoCompraVentaResponse.getResultado().getCodigo().equals("0000")) {
 			listaCompra = acumuladoCompraVentaResponse.getAcumuladosCompraVenta().getCompra();
@@ -1246,7 +1280,7 @@ public class SolicitudController {
 		datosConsulta.setFechaHasta(fecha(new Date()));
 		acumuladoRequest.setDatosConsulta(datosConsulta);
 		List<Venta> listaPorAprobarVenta;
-		Venta ventaPorAprobarRes = new Venta("","", new BigDecimal("0.00"), new BigDecimal("0.00"));
+		Venta ventaPorAprobarRes = new Venta("","", new BigDecimal("0.00"), new BigDecimal("0.00"),"");
 		AcumuladoResponse acumuladoResponse = acumuladosServiceApiRest.consultarAcumuladosDiariosBanco(acumuladoRequest);
 		if(acumuladoResponse.getResultado().getCodigo().equals("0000")) {
 			listaPorAprobarVenta = acumuladoResponse.getAcumuladosPorAprobar().getVenta();
@@ -1272,7 +1306,7 @@ public class SolicitudController {
 		datosConsulta.setFechaHasta(fecha(new Date()));
 		acumuladoRequest.setDatosConsulta(datosConsulta);
 		List<Compra> listaPorAprobarCompra;
-		Compra compraPorAprobarRes = new Compra("","", new BigDecimal("0.00"), new BigDecimal("0.00"));
+		Compra compraPorAprobarRes = new Compra("","", new BigDecimal("0.00"), new BigDecimal("0.00"), "");
 		AcumuladoResponse acumuladoResponse = acumuladosServiceApiRest.consultarAcumuladosDiariosBanco(acumuladoRequest);
 		if(acumuladoResponse.getResultado().getCodigo().equals("0000")) {
 			listaPorAprobarCompra = acumuladoResponse.getAcumuladosPorAprobar().getCompra();
@@ -1906,14 +1940,18 @@ public class SolicitudController {
 	public Venta evaluarBigDecimalVenta(Venta ventaAcumulado) {
 		if(ventaAcumulado.getMonto().compareTo(BigDecimal.ZERO) == 0) { 			
 			ventaAcumulado.setMonto(new BigDecimal("0.00"));
+			ventaAcumulado.setMontoString(libreriaUtil.formatNumber(new BigDecimal("0.00")));
 		}
+		ventaAcumulado.setMontoString(libreriaUtil.formatNumber(ventaAcumulado.getMonto()));
 		return ventaAcumulado;
 	}
 	
 	public Compra evaluarBigDecimalCompra(Compra compraAcumulado) {
 		if(compraAcumulado.getMonto().compareTo(BigDecimal.ZERO) == 0) { 			
 			compraAcumulado.setMonto(new BigDecimal("0.00"));
+			compraAcumulado.setMontoString(libreriaUtil.formatNumber(new BigDecimal("0.00")));
 		}
+		compraAcumulado.setMontoString(libreriaUtil.formatNumber(compraAcumulado.getMonto()));
 		return compraAcumulado;
 	}
 	

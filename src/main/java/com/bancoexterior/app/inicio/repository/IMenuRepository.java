@@ -34,6 +34,6 @@ public interface IMenuRepository extends JpaRepository<Menu, Integer>{
 			+ "order by nivel asc, orden asc";
 	
 	@Query(value = SELECTCMENUROLE, nativeQuery = true)
-	public List<Menu> menuRole(String valores);
+	public List<Menu> menuRole(int valores);
 	
 }

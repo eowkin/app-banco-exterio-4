@@ -90,7 +90,7 @@
 		            </div>
 		          </div><!--/.card-header-->
 		          <div class="card-body">
-		            <table class="table">
+		            <table class="table table-striped table-hover">
 		              <thead>
 		                <tr>
 		                  <th>Cod. Operacion</th>
@@ -112,8 +112,8 @@
 		                  <td th:text="${movimiento.cuentaDivisa}"></td>
 		                  <td th:text="${movimiento.cuentaNacional}"></td>
 		                  <td th:text="${movimiento.codMoneda}"></td>
-		                  <td th:text="${movimiento.montoDivisa}"></td>
-		                  <td th:text="${movimiento.montoBsCliente}"></td>
+		                  <td th:text="${movimiento.montoDivisaString}"></td>
+		                  <td th:text="${movimiento.montoBsClienteString}"></td>
 		                  <td>
 		                  	<span th:if="${movimiento.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimiento.estatus == 1}">Aprobada Automática</span>
@@ -197,7 +197,7 @@
 		            </div>
 		          </div><!--/.card-header-->
 		          <div class="card-body">
-		            <table class="table">
+		            <table class="table table-striped table-hover">
 		              <thead>
 		                <tr>
 		                  <th>Cod. Operacion</th>
@@ -219,8 +219,8 @@
 		                  <td th:text="${movimientoCompra.cuentaDivisa}"></td>
 		                  <td th:text="${movimientoCompra.cuentaNacional}"></td>
 		                  <td th:text="${movimientoCompra.codMoneda}"></td>
-		                  <td th:text="${movimientoCompra.montoDivisa}"></td>
-		                  <td th:text="${movimientoCompra.montoBsCliente}"></td>
+		                  <td th:text="${movimientoCompra.montoDivisaString}"></td>
+		                  <td th:text="${movimientoCompra.montoBsClienteString}"></td>
 		                  <td>
 		                  	<span th:if="${movimientoCompra.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimientoCompra.estatus == 1}">Aprobada Automática</span>

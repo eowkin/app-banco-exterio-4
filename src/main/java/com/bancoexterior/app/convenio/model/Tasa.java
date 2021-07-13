@@ -50,6 +50,9 @@ public class Tasa implements Serializable{
 	@JsonProperty("fechaModificacion")
 	private String fechaModificacion;
 	
+	private String montoTasaCompraString;
+	
+	private String montoTasaVentaString;
 	
 	/**
 	 * 

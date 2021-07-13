@@ -2,6 +2,8 @@ package com.bancoexterior.app.convenio.controller;
 
 
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -108,6 +110,8 @@ public class TasaController {
 				if(tasa2.getFechaModificacion() != null) {
 					String[] arrOfStr = tasa2.getFechaModificacion().split(" ", 2);
 					tasa2.setFechaModificacion(arrOfStr[0]);
+					tasa2.setMontoTasaCompraString(libreriaUtil.formatNumber(tasa2.getMontoTasaCompra()));
+					tasa2.setMontoTasaVentaString(libreriaUtil.formatNumber(tasa2.getMontoTasaVenta()));
 				}
 			}
 			model.addAttribute(LISTATASAS, listaTasas);
@@ -140,6 +144,7 @@ public class TasaController {
 		try {
 			tasaEdit = tasaServiceApiRest.buscarTasa(tasaRequest);
 			if(tasaEdit != null) {
+				
 				model.addAttribute("tasa", tasaEdit);
 				log.info(TASACONTROLLEREDITARF);
             	return URLFORMTASAEDIT;
@@ -175,6 +180,8 @@ public class TasaController {
 		try {
 			tasaEdit = tasaServiceApiRest.buscarTasa(tasaRequest);
 			if(tasaEdit != null) {
+				tasaEdit.setMontoTasaCompra(tasaEdit.getMontoTasaCompra().setScale(2, RoundingMode.HALF_UP));
+				tasaEdit.setMontoTasaVenta(tasaEdit.getMontoTasaVenta().setScale(2, RoundingMode.HALF_UP));
 				model.addAttribute("tasa", tasaEdit);
 				log.info(TASACONTROLLEREDITARF);
             	return URLFORMTASAEDIT;

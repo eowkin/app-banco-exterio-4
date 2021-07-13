@@ -8,5 +8,5 @@ public interface IMenuService {
 	
 	public List<Menu> todoMenu();
 	
-	public List<Menu> todoMenuRole(String valores);
+	public List<Menu> todoMenuRole(int valores);
 }
