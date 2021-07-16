@@ -115,8 +115,8 @@
 		                  <td th:text="${movimiento.cuentaDivisa}"></td>
 		                  <td th:text="${movimiento.cuentaNacional}"></td>
 		                  <td th:text="${movimiento.codMoneda}"></td>
-		                  <td th:text="${movimiento.montoDivisa}"></td>
-		                  <td th:text="${movimiento.montoBsCliente}"></td>
+		                  <td th:text="${movimiento.montoDivisaString}"></td>
+		                  <td th:text="${movimiento.montoBsOperacionString}"></td>
 		                  <td>
 		                  	<span th:if="${movimiento.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimiento.estatus == 1}">Aprobada Automática</span>
@@ -131,13 +131,13 @@
 		           <nav th:if="${datosPaginacionVenta.totalPaginas > 0}" aria-label="Page navigation example" > 
 		            	<ul class="pagination justify-content-center">         
 		            		<li class="page-item" th:classappend="${datosPaginacionVenta.paginaActual == 1 ? 'disabled' : ''}">
-		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosVentas/{page}/{estatus}/{fechaDesde}/{fechaHasta}  (page=${datosPaginacionVenta.paginaActual - 1}, estatus=${estatus}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Anterior</a>
+		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosVentasPage(page=${datosPaginacionVenta.paginaActual - 1}, estatus=${estatus}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Anterior</a>
 		            		</li> 
 		            		<li class="page-item">
 								<a class="page-link"  th:text="${'Pagina '+ datosPaginacionVenta.paginaActual + ' - '+ datosPaginacionVenta.totalPaginas}" th:title="${'Page '+ datosPaginacionVenta.paginaActual}" data-toggle="tooltip"></a>
 							</li>
 		            		<li class="page-item" th:classappend="${datosPaginacionVenta.paginaActual == (datosPaginacionVenta.totalPaginas) ? 'disabled' : ''}">
-		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosVentas/{page}/{estatus}/{fechaDesde}/{fechaHasta}  (page=${datosPaginacionVenta.paginaActual + 1}, estatus=${estatus}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Siguiente</a>
+		            			<a th:href="@{/solicitudes/listaSolicitudesMovimientosVentasPage(page=${datosPaginacionVenta.paginaActual + 1}, estatus=${estatus}, fechaDesde=${fechaDesde}, fechaHasta=${fechaHasta})}" class="page-link">Siguiente</a>
 		            		</li>  
 		            	</ul> 
 		            </nav> 
@@ -230,8 +230,8 @@
 		                  <td th:text="${movimientoCompra.cuentaDivisa}"></td>
 		                  <td th:text="${movimientoCompra.cuentaNacional}"></td>
 		                  <td th:text="${movimientoCompra.codMoneda}"></td>
-		                  <td th:text="${movimientoCompra.montoDivisa}"></td>
-		                  <td th:text="${movimientoCompra.montoBsCliente}"></td>
+		                  <td th:text="${movimientoCompra.montoDivisaString}"></td>
+		                  <td th:text="${movimientoCompra.montoBsOperacionString}"></td>
 		                  <td>
 		                  	<span th:if="${movimientoCompra.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimientoCompra.estatus == 1}">Aprobada Automática</span>
@@ -259,28 +259,7 @@
 		            	</ul> 
 		            </nav>
 		            
-		            <!-- vacantes.totalPages = datosPaginacion.totalPaginas -->
-		            <!-- vacantes.number = datosPaginacion.paginaActual -->
-		            <!-- th:href="@{/vacantes/indexPaginate(page=${datosPaginacion.paginaActual - 1})}" -->
-		            <!-- th:href="@{/vacantes/indexPaginate?page={tmpPag} (tmpPag=${i}) }" -->
-		            <!-- th:href="@{/vacantes/indexPaginate(page=${datosPaginacion.paginaActual + 1})}" -->
-		            
-		            <!--
-		            <nav th:if="${datosPaginacionCompra.totalPaginas > 0}" aria-label="Page navigation example" >
-						<ul class="pagination justify-content-center">
-							<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == 1 ? 'disabled' : ''}">
-								<a th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{page}  (page=${datosPaginacionCompra.paginaActual - 1})}" class="page-link">Anterior</a>
-							</li>
-							
-							<li class="page-item" th:classappend="${i eq datosPaginacionCompra.paginaActual} ? 'active'" th:each="i : ${#numbers.sequence( 1, datosPaginacionCompra.totalPaginas, 1)}">
-								<a class="page-link" th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{tmpPag} (tmpPag=${i}) }" th:text="${i}" th:title="${'Page '+ i}" data-toggle="tooltip"></a>
-							</li>
-							<li class="page-item" th:classappend="${datosPaginacionCompra.paginaActual == (datosPaginacionCompra.totalPaginas) ? 'disabled' : ''}">
-								<a  th:href="@{/solicitudes/listaSolicitudesMovimientosCompras/{page}  (page=${datosPaginacionCompra.paginaActual + 1})}"  class="page-link">Siguiente</a>
-							</li>
-						</ul>
-					</nav>-->
-		            
+		           
 		            
 		             
 		          </div><!--/.card-body-->

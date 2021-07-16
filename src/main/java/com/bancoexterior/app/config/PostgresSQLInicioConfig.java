@@ -84,12 +84,9 @@ public class PostgresSQLInicioConfig {
     
     @Bean(name = "userDataSource")
 	public DataSource userDatasource() {
-		/*
-    	DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setUrl(env.getProperty("BD2.db.url"));
-		dataSource.setUsername(env.getProperty("BD2.db.user"));
-		dataSource.setPassword(env.getProperty("BD2.db.password"));
-		dataSource.setDriverClassName(env.getProperty("BD2.driver"));*/
+		
+    	//log.info("UsuarioEncriptMonitor: "+MiCipher.encrypt("BE2848D", sconfigDesKey.trim()));
+    	//log.info("claveEncriptMonitor: "+MiCipher.encrypt("nUsMvLS*RV%s", sconfigDesKey.trim()));
     	
     	db.setUsername(MiCipher.decrypt(usuario.trim(), sconfigDesKey.trim()));
         db.setPassword(MiCipher.decrypt(clave.trim(), sconfigDesKey.trim()));

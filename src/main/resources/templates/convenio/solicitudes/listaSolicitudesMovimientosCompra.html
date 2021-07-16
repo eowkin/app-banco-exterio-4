@@ -113,7 +113,7 @@
 		                  <td th:text="${movimiento.cuentaNacional}"></td>
 		                  <td th:text="${movimiento.codMoneda}"></td>
 		                  <td th:text="${movimiento.montoDivisaString}"></td>
-		                  <td th:text="${movimiento.montoBsClienteString}"></td>
+		                  <td th:text="${movimiento.montoBsOperacionString}"></td>
 		                  <td>
 		                  	<span th:if="${movimiento.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimiento.estatus == 1}">Aprobada Automática</span>
@@ -220,7 +220,7 @@
 		                  <td th:text="${movimientoCompra.cuentaNacional}"></td>
 		                  <td th:text="${movimientoCompra.codMoneda}"></td>
 		                  <td th:text="${movimientoCompra.montoDivisaString}"></td>
-		                  <td th:text="${movimientoCompra.montoBsClienteString}"></td>
+		                  <td th:text="${movimientoCompra.montoBsOperacionString}"></td>
 		                  <td>
 		                  	<span th:if="${movimientoCompra.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimientoCompra.estatus == 1}">Aprobada Automática</span>

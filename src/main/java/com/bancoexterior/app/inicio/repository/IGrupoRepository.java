@@ -3,10 +3,12 @@ package com.bancoexterior.app.inicio.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.bancoexterior.app.inicio.model.Role;
+import com.bancoexterior.app.inicio.model.Grupo;
+
+
 
 @Repository
-public interface IRoleRepository extends JpaRepository<Role, Integer>{
+public interface IGrupoRepository extends JpaRepository<Grupo, Integer>{
 	
-	public Role findByNombre(String nombre);
+	public Grupo findByNombreGrupo(String nombre);
 }

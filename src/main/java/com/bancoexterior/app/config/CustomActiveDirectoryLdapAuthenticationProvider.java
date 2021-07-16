@@ -307,7 +307,7 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 		//return new ArrayList<GrantedAuthority>();
 		log.info("[----------------FIN createGrantedAuthoritiesFromLdapGroups---------------]");
 		return privileges.stream()
-				.map(privilege -> org.apache.commons.lang3.StringUtils.appendIfMissing(DEFAULT_ROLE_PREFIX, privilege))
+				//.map(privilege -> org.apache.commons.lang3.StringUtils.appendIfMissing(DEFAULT_ROLE_PREFIX, privilege))
 				.map(privilege -> new SimpleGrantedAuthority(privilege)).collect(Collectors.toList());
 	}
 
@@ -375,6 +375,7 @@ return  privileges;*/
 			String aux = "";
 			String subGroup[] = null;
 			log.info("groupName: "+groupName);
+			/*
 			int index = groupName.lastIndexOf("APP-CACTUS");
 			
 			
@@ -393,10 +394,10 @@ return  privileges;*/
 			log.info("index: "+index);
 			if(index != -1) {
 				roleName = groupName;
-			}
+			}*/
 			
 			
-			
+			roleName = groupName;
 			log.info("roleName: "+roleName);
 			log.info("[------------------FIN getRole-------------------]");
 			return roleName;

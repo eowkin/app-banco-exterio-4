@@ -93,10 +93,10 @@ public class PostgreSQLCCEConfig {
 		dataSource.setDriverClassName(env.getProperty("postgre.datasource.driver-class-name"));
 		*/
 		
-		log.info("sconfigDesKey: "+sconfigDesKey);
-    	log.info("usuarioCCE: "+usuario);
-    	String usuarioDecryptCCE = MiCipher.decrypt(usuario, sconfigDesKey);
-    	log.info("usuarioDecryptCCE: "+usuarioDecryptCCE);
+		//log.info("sconfigDesKey: "+sconfigDesKey);
+    	//log.info("usuarioCCE: "+usuario);
+    	//String usuarioDecryptCCE = MiCipher.decrypt(usuario, sconfigDesKey);
+    	//log.info("usuarioDecryptCCE: "+usuarioDecryptCCE);
 		 db.setUsername(MiCipher.decrypt(usuario.trim(), sconfigDesKey.trim()));
          db.setPassword(MiCipher.decrypt(clave.trim(), sconfigDesKey.trim()));
          db.setUrl(url);

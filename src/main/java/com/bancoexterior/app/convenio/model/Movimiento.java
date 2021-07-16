@@ -109,6 +109,8 @@ public class Movimiento implements Serializable{
 	
 	private String montoBsClienteString;
 	
+	private String montoBsOperacionString;
+	
 	public Movimiento() {
 		this.fechas = new Fechas();
 	}

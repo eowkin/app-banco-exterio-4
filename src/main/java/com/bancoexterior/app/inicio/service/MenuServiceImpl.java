@@ -5,8 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Order;
 import com.bancoexterior.app.inicio.model.Menu;
 import com.bancoexterior.app.inicio.repository.IMenuRepository;
 
@@ -25,6 +23,18 @@ public class MenuServiceImpl implements IMenuService{
 	@Override
 	public List<Menu> todoMenuRole(int valores) {
 		return repo.menuRole(valores);
+	}
+
+	@Override
+	public List<Menu> todoMenuRoleIn(List<Integer> valores) {
+		
+		return repo.menuRoleIn(valores);
+	}
+
+	@Override
+	public List<Menu> findAll() {
+		
+		return repo.findAll();
 	}
 
 }

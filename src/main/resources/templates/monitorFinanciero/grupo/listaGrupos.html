@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @version v2.1.12
+* @link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+-->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4" lang="en">
+  <head th:insert="fragments/head :: head">
+    
+  </head>
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+    <header class="app-header navbar" th:insert="fragments/header :: header">
+       
+      
+    </header>
+    <div class="app-body">
+      <div class="sidebar" th:insert="fragments/menu :: menu-principal">
+      
+    </div>
+      <main class="main">
+        <!-- Breadcrumb-->
+        <ol class="breadcrumb">
+      		<li class="breadcrumb-item" th:each="uri : ${arrUri}" th:text="${uri}">Home</li>
+      	</ol>
+        <div class="container-fluid">
+          <div class="animated fadeIn">
+			  <div class="row">
+			    <div class="col-lg-1-12">
+			      <div class="card">
+			        <div class="card-header">
+			          <i class="fa fa-align-justify"></i> Listado de Grupos
+			          <p align="right"></p>
+			      	  <div class="my-2 text-right">
+		              	<a class="btn btn-primary" th:href="@{/grupos/formGrupo}" title="Crear nuevo Grupo" role="button"><i class="fa fa-file-o" aria-hidden="true"></i> Crear Grupo</a>
+		              </div>	
+			        </div><!--/.card-header-->
+			        <div class="card-body">
+			          <div th:if="${mensajeError != null}" class="alert alert-danger" role="alert">
+		            		Ocurrio los siguientes errores:
+		            		<ul>
+		            			<li th:text="${mensajeError}"></li>
+		            		</ul>
+		            	</div>
+		              		
+			          <div th:if="${mensaje != null}" class="alert alert-success" th:text="${mensaje}" role="alert"></div>	
+			          <table class="table table-striped table-hover">
+			            <thead>
+			              <tr>
+			                <th>Nombre</th>
+			                <th>Cod. Usuario</th>
+			                <th>Fecha Modificacion</th>
+			                <th>Permiso Menu</th>
+			                <th>Editar</th>
+			              </tr>
+			            </thead>
+			            <tbody>
+			              <tr th:each = "grupo: ${listaGrupos}">
+			                <td th:text="${grupo.nombreGrupo}"></td>
+			                <td th:text="${grupo.codUsuario}"></td>
+			                <td th:text="${#dates.format(grupo.fechaModificacion, 'dd-MM-yyyy')}"></td>
+			               	<td>
+			               		<a  class="btn btn-success" th:href="@{/grupos/permisos(idGrupo=${grupo.idGrupo}) }" role="button" title="Permisos."><i class="fa fa-refresh" aria-hidden="true"></i></a>
+		                  	</td>
+		                  	<td>
+		                  		<a  class="btn btn-primary" th:href="@{/grupos/edit(idGrupo=${grupo.idGrupo}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>
+		                  	</td>
+			              </tr>
+			            </tbody>
+			          </table> 
+			        </div><!--/.card-body-->
+			      </div><!--/.card-->
+			    </div><!--/.col-lg-1-12-->
+			  </div><!--/.row-->    
+			</div><!--/.animated fadeIn-->
+        </div>
+      </main>
+      
+    </div>
+   <footer class="app-footer" th:insert="fragments/footer :: pie-pagina">
+    
+  </footer>
+    <!-- CoreUI and necessary plugins-->
+    <script th:src="@{/node_modules/jquery/dist/jquery.min.js}"></script>
+    <script th:src="@{/node_modules/popper.js/dist/umd/popper.min.js}"></script>
+    <script th:src="@{/node_modules/bootstrap/dist/js/bootstrap.min.js}"></script>
+    <script th:src="@{/node_modules/pace-progress/pace.min.js}"></script>
+    <script th:src="@{/node_modules/perfect-scrollbar/dist/perfect-scrollbar.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui/dist/js/coreui.min.js}"></script>
+    <!-- Plugins and scripts required by this view-->
+    <script th:src="@{/node_modules/chart.js/dist/Chart.min.js}"></script>
+    <script th:src="@{/node_modules/@coreui/coreui-plugin-chartjs-custom-tooltips/dist/js/custom-tooltips.min.js}"></script>
+    <script th:src="@{/js/main.js}"></script>
+  </body>
+</html>

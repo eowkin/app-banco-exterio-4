@@ -1,6 +1,9 @@
 package com.bancoexterior.app.convenio.controller;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -13,11 +16,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.bancoexterior.app.inicio.model.Grupo;
 import com.bancoexterior.app.inicio.model.Menu;
-import com.bancoexterior.app.inicio.model.Role;
-import com.bancoexterior.app.inicio.repository.IRoleRepository;
 import com.bancoexterior.app.inicio.service.IMenuService;
-import com.bancoexterior.app.inicio.service.IRoleService;
+import com.bancoexterior.app.inicio.service.IGrupoService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,98 +31,144 @@ public class HomeController {
 	private IMenuService serviceMenu;
 	
 	@Autowired 
-	private IRoleService serviceRole;
+	private IGrupoService serviceGrupo;
+
 	
-	@Autowired 
-	private IRoleRepository repoRole;
 	
 	@GetMapping("/inicio")
 	public String mostrarHome(Authentication auth, HttpSession httpSession) {
 	    log.info("siempre me llama mostarHome");
 	    log.info("[------------Menu por role--------------]");
-	    List<Menu> listaMenus;
-	    /*
-	    List<Role> listaRoles = serviceRole.findAll();
-		for (Role role : listaRoles) {
-		    log.info("nombre: : "+role.getNombre());
-		    listaMenus = role.getMenus();
-		    if(!listaMenus.isEmpty()) {
-				log.info("[-----Si tiene menu asignado-----]");
-				for (Menu menu : listaMenus) {
-					log.info(menu.getNombre());
-					log.info("Si tiene hijos");
-					for (Menu menu2 : menu.getMenuHijos()) {
-						log.info(menu2.getNombre());
-					}
-				}
-			}else {
-					log.info("[-----no tiene menu asignado-----]");
-			}
-		}*/
-		
-	    
-	    
-		//Role role = serviceRole.findByNombre("ROLE_APP-CACTUS");
-		Role role = serviceRole.findByNombre("ROLE_SIU");
-		String valores="";
-		log.info("nombre: : "+role.getNombre());
-	    listaMenus = role.getMenus();
-	    if(!listaMenus.isEmpty()) {
-			log.info("[-----Si tiene menu asignado-----]");
-			for (Menu menu : listaMenus) {
-				log.info(menu.getNombre());
-				valores = menu.getIdMenu().toString();
-				log.info("Si tiene hijos");
-				for (Menu menu2 : menu.getMenuHijos()) {
-					log.info(menu2.getNombre());
-				}
-			}
-		}else {
-				log.info("[-----no tiene menu asignado-----]");
-		}
-		//Role role = repoRole.findByNombre(1);
-		//log.info("nombre: : "+role.getNombre());
-		//log.info("listaMenu: "+role.getMenus());
-	    
-		//List<Menu> listaMenu = role.getMenus();
-	    List<Menu> listaMenu = serviceMenu.todoMenuRole(9);
-		
-	    
-	    
 	    String username = auth.getName();
 		log.info("username: "+ username);
-		log.info("[-----------------------]");
-		log.info("Sin imprimir hijos");
-		for (Menu menu : listaMenu) {
-			
-			log.info(menu.getNombre());
+	    List<Integer> listaInMenu = bucarListaMenuIn(auth);  
+	    if(!listaInMenu.isEmpty()) {
+			List<Menu> listaMenu = buscarListaMenuMostrar(listaInMenu);
+		    if(!listaMenu.isEmpty()) {
+		    	if(validarListaMenu(listaMenu)) {
+		    		httpSession.setAttribute("listaMenu", listaMenu);
+					return "index";
+		    	}else {
+		    		log.info("[-----no tiene menu asignado-----]");
+					return "redirect:/logout";
+		    	}
+		    	
+				
+		    }else{
+		    	log.info("[-----no tiene menu asignado-----]");
+				return "redirect:/logout";
+		    }
+		}else {
+				log.info("[-----no tiene menu asignado-----]");
+				return "redirect:/logout";	
 		}
 		
-		log.info("[-----------------------]");
-		for (Menu menu : listaMenu) {
-			log.info(menu.getNombre());
-			if(menu.getMenuHijos().size() > 0) {
-				log.info("Si tiene hijos");
-				for (Menu menu2 : menu.getMenuHijos()) {
-					log.info(menu2.getNombre());
+	     
+	    
+	}
+	
+	public List<Menu> buscarListaMenuMostrar(List<Integer> listaInMenu){
+		List<Menu> listaMenu = serviceMenu.todoMenuRoleIn(listaInMenu);;
+		log.info("[-----Si tiene menu asignado-----]");
+		
+	    if(!listaMenu.isEmpty()) {
+	    	
+			log.info("[-----------------------]");
+			log.info("Sin imprimir hijos");
+			for (Menu menu : listaMenu) {
+				log.info(menu.getNombre());
+				menu.setMenuHijos(buscarHijos(listaMenu, menu.getIdMenu()));
+			}
+			
+			
+			return listaMenu;
+	    }else{
+	    	log.info("[-----no tiene menu asignado-----]");
+			return listaMenu;
+	    }
+	}
+	
+	
+	public List<Menu> buscarHijos(List<Menu> menu, int idPapa){
+		List<Menu> menuHijos = new ArrayList<>();
+		for (Menu menu2 : menu) {
+			if(menu2.getNivel() != 1) {
+				if(menu2.getMenuPadre().getIdMenu() == idPapa) {
+					menuHijos.add(menu2);
 				}
+			}
+			
+		}
+		
+		return menuHijos;
+	}
+	
+	public List<Integer> bucarListaMenuIn(Authentication auth){
+		 List<Integer> listaInMenu = new ArrayList<>(); 
+		 List<Menu> listaMenus; 
+		 for (GrantedAuthority rol : auth.getAuthorities()) {
+				log.info("Grupo: "+ rol.getAuthority());
+				Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+				log.info("Luego de Buscar Menu");
+				log.info("grupo: "+ grupo);
 				
-			}else {
-				log.info("No tiene hijos");
+				if(grupo != null) {
+					log.info("grupo distinto de null ");
+					listaMenus = grupo.getMenus();
+					log.info("listaMenus.size(): "+ listaMenus.size());
+					if(!listaMenus.isEmpty()) {
+						for (Menu menu : listaMenus) {
+							log.info(menu.getNombre());
+							listaInMenu.add(menu.getIdMenu());
+						}
+					}	
+				}
+			}
+		 
+		 return listaInMenu;
+	}
+	
+	public boolean validarListaMenu(List<Menu> listaMenu) {
+		boolean validoRaiz = false;
+		boolean validoLink = false;
+		for (Menu menu : listaMenu) {
+			if(menu.getNivel() == 1) {
+				validoRaiz = true;
 			}
 		}
 		
-		for (GrantedAuthority rol : auth.getAuthorities()) {
-			log.info("Rol: "+ rol.getAuthority());
-		}
+		if(validoRaiz)
+			for (Menu menu : listaMenu) {
+				log.info(menu.getNombre());
+				if(menu.getMenuHijos().size() > 0) {
+					List<Menu> menuHijos = menu.getMenuHijos();
+					for (Menu menu2 : menuHijos) {
+						log.info(menu2.getNombre());
+						if(menu2.getDireccion() != null) {
+							validoLink = true;
+						}
+						if(menu2.getMenuHijos().size() > 0) {
+							List<Menu> menuHijos2 = menu2.getMenuHijos();
+							for (Menu menu3 : menuHijos2) {
+								log.info(menu3.getNombre());
+								if(menu3.getDireccion() != null) {
+									validoLink = true;
+								}
+							}
+							
+						}
+						
+					}
+					
+				}
+			}
 		
-		
-		
-		
-		
-		httpSession.setAttribute("listaMenu", listaMenu);
-		return "index";
+		if(validoRaiz && validoLink)
+			return true;
+		else
+			return false;
 	}
+	
 
 	
 	@GetMapping("/index")

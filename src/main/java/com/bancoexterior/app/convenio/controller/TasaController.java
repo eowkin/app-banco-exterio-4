@@ -2,7 +2,7 @@ package com.bancoexterior.app.convenio.controller;
 
 
 
-import java.math.BigDecimal;
+
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
@@ -164,7 +164,7 @@ public class TasaController {
 	}
 	
 	
-	@GetMapping("/editPrueba")
+	@GetMapping("/edit")
 	public String editarWsPrueba(@RequestParam("codMonedaOrigen") String codMonedaOrigen, 
 			@RequestParam("codMonedaDestino") String codMonedaDestino, @RequestParam("tipoOperacion") Integer tipoOperacion,
 			Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
