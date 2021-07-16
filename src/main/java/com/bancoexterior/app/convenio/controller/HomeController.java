@@ -40,6 +40,8 @@ public class HomeController {
 	    log.info("siempre me llama mostarHome");
 	    log.info("[------------Menu por role--------------]");
 	    String username = auth.getName();
+	    /*
+	    
 		log.info("username: "+ username);
 	    List<Integer> listaInMenu = bucarListaMenuIn(auth);  
 	    if(!listaInMenu.isEmpty()) {
@@ -61,9 +63,9 @@ public class HomeController {
 		}else {
 				log.info("[-----no tiene menu asignado-----]");
 				return "redirect:/logout";	
-		}
+		}*/
 		
-	     
+	    return "index"; 
 	    
 	}
 	

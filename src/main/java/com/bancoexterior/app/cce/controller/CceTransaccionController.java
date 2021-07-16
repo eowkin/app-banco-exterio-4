@@ -67,10 +67,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/ccetransacciones")
 public class CceTransaccionController {
 
-	@Autowired
+	//@Autowired
 	private ICceTransaccionService service;
 	
-	@Autowired
+	//@Autowired
 	private ICceMontoMaximoAproAutoService montoMaximoAproAutoService; 
 	
 	@Autowired

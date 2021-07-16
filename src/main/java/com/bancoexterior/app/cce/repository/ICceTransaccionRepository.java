@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bancoexterior.app.cce.model.CceTransaccion;
 
-@Repository
+//@Repository
 public interface ICceTransaccionRepository extends JpaRepository<CceTransaccion, String>{
 
 	public static final String SELECTCCETRANSACCIONFECHAS ="SELECT endtoend_id, referencia, cod_transaccion, cuenta_origen, tipo_identificacion, "

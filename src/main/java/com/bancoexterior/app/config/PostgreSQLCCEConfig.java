@@ -24,11 +24,11 @@ import com.bancoexterior.app.seguridad.MiCipher;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
-@Configuration
-@EnableTransactionManagement
-@EnableJpaRepositories(entityManagerFactoryRef = "adminEntityManagerFactory", transactionManagerRef = "adminTransactionManager", 
-basePackages = { "com.bancoexterior.app.cce.repository" })
+//@Slf4j
+//@Configuration
+//@EnableTransactionManagement
+//@EnableJpaRepositories(entityManagerFactoryRef = "adminEntityManagerFactory", transactionManagerRef = "adminTransactionManager", 
+//basePackages = { "com.bancoexterior.app.cce.repository" })
 public class PostgreSQLCCEConfig {
 
 	@Autowired

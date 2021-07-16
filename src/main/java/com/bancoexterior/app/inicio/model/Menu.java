@@ -21,7 +21,7 @@ import lombok.Data;
 
 
 
-@Data
+//@Data
 @Entity 
 //@Table(name = "\"menu\"", schema = "\"monitor_financiero\"")
 @Table(name = "\"menu\"", schema = "\"monitor_financiero\"")
@@ -58,6 +58,138 @@ public class Menu implements Serializable{
 	@OneToMany(mappedBy = "menuPadre", fetch = FetchType.EAGER)
 	private List<Menu> menuHijos;
 	
+	
+	
+	
+	
+	public Integer getIdMenu() {
+		return idMenu;
+	}
+
+
+
+
+
+	public void setIdMenu(Integer idMenu) {
+		this.idMenu = idMenu;
+	}
+
+
+
+
+
+	public String getNombre() {
+		return nombre;
+	}
+
+
+
+
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+
+
+
+
+	public Integer getNivel() {
+		return nivel;
+	}
+
+
+
+
+
+	public void setNivel(Integer nivel) {
+		this.nivel = nivel;
+	}
+
+
+
+
+
+	public Integer getOrden() {
+		return orden;
+	}
+
+
+
+
+
+	public void setOrden(Integer orden) {
+		this.orden = orden;
+	}
+
+
+
+
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+
+
+
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+
+
+
+
+	public boolean isFlagActivo() {
+		return flagActivo;
+	}
+
+
+
+
+
+	public void setFlagActivo(boolean flagActivo) {
+		this.flagActivo = flagActivo;
+	}
+
+
+
+
+
+	public Menu getMenuPadre() {
+		return menuPadre;
+	}
+
+
+
+
+
+	public void setMenuPadre(Menu menuPadre) {
+		this.menuPadre = menuPadre;
+	}
+
+
+
+
+
+	public List<Menu> getMenuHijos() {
+		return menuHijos;
+	}
+
+
+
+
+
+	public void setMenuHijos(List<Menu> menuHijos) {
+		this.menuHijos = menuHijos;
+	}
+
+
+
+
+
 	/**
 	 * 
 	 */

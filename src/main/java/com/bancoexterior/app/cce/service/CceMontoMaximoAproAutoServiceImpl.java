@@ -9,7 +9,7 @@ import com.bancoexterior.app.cce.repository.ICceMontoMaximoAproAutoRepository;
 @Service
 public class CceMontoMaximoAproAutoServiceImpl implements ICceMontoMaximoAproAutoService{
 
-	@Autowired
+	//@Autowired
 	private ICceMontoMaximoAproAutoRepository repo;
 	
 	@Override

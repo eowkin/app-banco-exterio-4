@@ -22,8 +22,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.bancoexterior.app.inicio.dto.GrupoDto;
 import com.bancoexterior.app.inicio.model.Grupo;
+import com.bancoexterior.app.inicio.model.GruposMenu;
+import com.bancoexterior.app.inicio.model.GruposMenuPk;
 import com.bancoexterior.app.inicio.model.Menu;
 import com.bancoexterior.app.inicio.service.IGrupoService;
+import com.bancoexterior.app.inicio.service.IGruposMenuService;
 import com.bancoexterior.app.inicio.service.IMenuService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +42,8 @@ public class GrupoController {
 	@Autowired
 	private IMenuService menuServicio;
 	
+	@Autowired
+	private IGruposMenuService gruposMenuService;
 	
 	private static final String MENSAJE = "mensaje";
 	
@@ -120,6 +125,7 @@ public class GrupoController {
 		log.info("permisos");
 		
 		GrupoDto grupoEdit = grupoServicio.findById(idGrupo); 
+		grupoEdit.getMenus().size();
 		List<Menu> listaMenu = menuServicio.findAll();
 		for (Menu menu : listaMenu) {
 			log.info("menu: "+menu.getNombre());
@@ -143,7 +149,7 @@ public class GrupoController {
 	
 	@PostMapping("/guardarPermisos")
 	public String guardarPermisos(GrupoDto grupoDto, Model model, RedirectAttributes redirectAttributes) {
-		
+		log.info("guardarPermisos");
 		log.info("getIdGrupo(): "+grupoDto.getIdGrupo());
 		log.info("getNombreGrupo(): "+grupoDto.getNombreGrupo());
 		log.info("grupoDto.getCodUsuario(): "+grupoDto.getCodUsuario());
@@ -151,31 +157,53 @@ public class GrupoController {
 		log.info("grupoDto.getFechaModificacion(): "+grupoDto.getFechaModificacion());
 		log.info("grupoDto.getMenus(): "+grupoDto.getMenus());
 		
+		
+		GruposMenu gruposMenu = new GruposMenu();
+		GruposMenuPk id = new GruposMenuPk();
+		id.setIdGrupoPk(grupoDto.getIdGrupo());
+		
+		log.info("_[---------Lista Actual-----------]");
+		GrupoDto grupoEdit = grupoServicio.findById(grupoDto.getIdGrupo());
+		List<Menu> listaActual = grupoEdit.getMenus();
 		List<Menu> listaMenu = grupoDto.getMenus();
-		for (Menu menu : listaMenu) {
-			log.info("menuid: "+menu.getNombre());
-			log.info("menuNombre: "+menu.getNombre());
-			log.info("menuNivel: "+menu.getNivel());
-			log.info("menuNivel: "+menu.getNivel());
+		if(listaActual.isEmpty()){
+			log.info("_[---------No tiene Menu Actual-----------]");
+			if(listaMenu.isEmpty()){
+				log.info("_[---------No selecciono Menu Lista Selecionada, No hago nada-----------]");
+			}else {
+				log.info("_[---------Si selecciono Menu Lista Selecionada, Voy a Incluir-----------]");
+				for (Menu menu : listaMenu) {
+					id.setIdMenuPk(menu.getIdMenu());
+					gruposMenu.setIdPk(id);
+					gruposMenu.setCodUsuario("prueba");
+					gruposMenuService.guardarGrupoMenus(gruposMenu);
+				}
+			}
+			
+		}else {
+			log.info("_[---------Si tiene Menu Actual, voy a borrar-----------]");
+			for (Menu menu : listaActual) {
+				id.setIdMenuPk(menu.getIdMenu());
+				log.info("id.getIdGrupoPk(): "+id.getIdGrupoPk());
+				log.info("id.getIdMenuPk(): "+id.getIdMenuPk());
+				gruposMenuService.borrarRealcion(id);
+			}
+			
+			for (Menu menu : listaMenu) {
+				id.setIdMenuPk(menu.getIdMenu());
+				gruposMenu.setIdPk(id);
+				gruposMenu.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
+				gruposMenuService.guardarGrupoMenus(gruposMenu);
+			}
 		}
 		
-		String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-		log.info("userName: "+userName);
-		grupoDto.setCodUsuario(userName);
-		log.info("[---------------------Antes del Save------------------ ]");
-		log.info("getIdGrupo(): "+grupoDto.getIdGrupo());
-		log.info("getNombreGrupo(): "+grupoDto.getNombreGrupo());
-		log.info("grupoDto.getCodUsuario(): "+grupoDto.getCodUsuario());
-		log.info("getFechaIngreso(): "+grupoDto.getFechaIngreso());
-		log.info("grupoDto.getFechaModificacion(): "+grupoDto.getFechaModificacion());
-		log.info("grupoDto.getMenus(): "+grupoDto.getMenus());
-		GrupoDto grupoSave =   grupoServicio.save(grupoDto);
-		if(grupoSave != null) {
-			redirectAttributes.addFlashAttribute(MENSAJE, "Operacion Exitosa");
-		}else {
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, "Operacion Fallida");
-		}
+		
+		redirectAttributes.addFlashAttribute(MENSAJE, "Operacion Exitosa");
 		return REDIRECTINDEX;
+		
+		
+		
+		
 	}
 	
 	

@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class CceTransaccionServiceImpl implements ICceTransaccionService{
 
-	@Autowired 
+	//@Autowired 
 	private ICceTransaccionRepository repo;
 	
 	@Autowired

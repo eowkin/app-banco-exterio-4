@@ -12,20 +12,24 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
+import com.bancoexterior.app.inicio.service.IAuditoriaService;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
 @Controller
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-	  private static final int SESSION_TIMEOUT = 180;
+	  
+	private static final int SESSION_TIMEOUT = 180;
 
+	private IAuditoriaService auditoriaService;   
 	  
 	  
-	  
-	public CustomAuthenticationSuccessHandler() {
+	public CustomAuthenticationSuccessHandler(IAuditoriaService auditoriaService) {
 		super();
 		log.info("CustomAuthenticationSuccessHandler");
+		this.auditoriaService = auditoriaService;
 	}
 
 
@@ -36,8 +40,13 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 			Authentication authentication) throws IOException, ServletException {
 		
 		log.info("onAuthenticationSuccess");
+		log.info(authentication.getName());
+		log.info(request.getRemoteAddr());
+		
 		HttpSession session = request.getSession();
 	    session.setMaxInactiveInterval(180);
+	    //Colocar al finalizar el war
+	    //auditoriaService.save(authentication.getName(), "Login", "Iniciar Sesion", "N/A", true, "Inicio de Sesion", request.getRemoteAddr(), 0);
 	    response.sendRedirect(String.valueOf(request.getContextPath()) + "/inicio");
 	}
 
