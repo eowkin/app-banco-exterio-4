@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,13 +32,15 @@ import com.bancoexterior.app.convenio.service.ILimitesGeneralesServiceApirest;
 import com.bancoexterior.app.convenio.service.IMonedaServiceApiRest;
 import com.bancoexterior.app.util.LibreriaUtil;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Controller
 @RequestMapping("/limitesGenerales")
 public class LimitesGeneralesController {
 
+	private static final Logger LOGGER = LogManager.getLogger(LimitesGeneralesController.class);
+	
 	@Autowired
 	private ILimitesGeneralesServiceApirest limitesGeneralesServiceApirest;
 	
@@ -111,7 +115,7 @@ public class LimitesGeneralesController {
 	
 	@GetMapping("/index")
 	public String index(Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLERINDEXI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERINDEXI);
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
 		limiteRequest.setLimite(limite);
@@ -127,18 +131,18 @@ public class LimitesGeneralesController {
 			}
 			model.addAttribute(LISTALIMITESGENERALES, listaLimitesGenerales);
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTALIMITESGENERALES, listaLimitesGenerales);
 		}
-		log.info(LIMITESGENERALESCONTROLLERINDEXF);
+		LOGGER.info(LIMITESGENERALESCONTROLLERINDEXF);
 		return URLINDEX;
 	}
 	
 	@GetMapping("/activar/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
 	public String activarWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
 			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLERACTIVARI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERACTIVARI);
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest();
 		LimitesGenerales limite = new LimitesGenerales();
@@ -152,20 +156,20 @@ public class LimitesGeneralesController {
 			limitesGeneralesEdit.setFlagActivo(true);
 			limiteRequest.setLimite(limitesGeneralesEdit);
 			String respuesta = limitesGeneralesServiceApirest.actualizar(limiteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 		}
-		log.info(LIMITESGENERALESCONTROLLERACTIVARF);
+		LOGGER.info(LIMITESGENERALESCONTROLLERACTIVARF);
 		return REDIRECTINDEX;
 	}	
 	
 	@GetMapping("/desactivar/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
 	public String desactivarWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
 			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLERDESACTIVARI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERDESACTIVARI);
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
@@ -179,13 +183,13 @@ public class LimitesGeneralesController {
 			limitesGeneralesEdit.setFlagActivo(false);
 			limiteRequest.setLimite(limitesGeneralesEdit);
 			String respuesta = limitesGeneralesServiceApirest.actualizar(limiteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 		}
-		log.info(LIMITESGENERALESCONTROLLERDESACTIVARF);
+		LOGGER.info(LIMITESGENERALESCONTROLLERDESACTIVARF);
 		return REDIRECTINDEX;
 	}
 	
@@ -193,7 +197,7 @@ public class LimitesGeneralesController {
 	@GetMapping("/detalle")
 	public String detalleWs1(@RequestParam("codMoneda") String codMoneda, @RequestParam("tipoTransaccion") String tipoTransaccion,
 			@RequestParam("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLERDETALLEI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERDETALLEI);
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
@@ -213,14 +217,14 @@ public class LimitesGeneralesController {
 				limitesGeneralesEdit.setMontoBancoString(libreriaUtil.formatNumber(limitesGeneralesEdit.getMontoBanco()));
 				
 				model.addAttribute(LIMITESGENERALES, limitesGeneralesEdit);
-				log.info(LIMITESGENERALESCONTROLLERDETALLEF);
+				LOGGER.info(LIMITESGENERALESCONTROLLERDETALLEF);
             	return URLFORMLIMITESGENERALESDETALLE;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				return REDIRECTINDEX;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -232,7 +236,7 @@ public class LimitesGeneralesController {
 	@GetMapping("/detalle/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
 	public String detalleWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
 			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLERDETALLEI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERDETALLEI);
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
@@ -245,14 +249,14 @@ public class LimitesGeneralesController {
 			limitesGeneralesEdit = limitesGeneralesServiceApirest.buscarLimitesGenerales(limiteRequest);
 			if(limitesGeneralesEdit != null) {
 				model.addAttribute(LIMITESGENERALES, limitesGeneralesEdit);
-				log.info(LIMITESGENERALESCONTROLLERDETALLEF);
+				LOGGER.info(LIMITESGENERALESCONTROLLERDETALLEF);
             	return URLFORMLIMITESGENERALESDETALLE;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				return REDIRECTINDEX;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -263,7 +267,7 @@ public class LimitesGeneralesController {
 	@GetMapping("/edit/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
 	public String editarWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
 			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLEREDITARI);
+		LOGGER.info(LIMITESGENERALESCONTROLLEREDITARI);
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
@@ -276,14 +280,14 @@ public class LimitesGeneralesController {
 			limitesGeneralesEdit = limitesGeneralesServiceApirest.buscarLimitesGenerales(limiteRequest);
 			if(limitesGeneralesEdit != null) {
 				model.addAttribute(LIMITESGENERALES, limitesGeneralesEdit);
-				log.info(LIMITESGENERALESCONTROLLEREDITARF);
+				LOGGER.info(LIMITESGENERALESCONTROLLEREDITARF);
 				return URLFORMLIMITESGENERALESEDIT;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				return REDIRECTINDEX;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -292,12 +296,12 @@ public class LimitesGeneralesController {
 	@PostMapping("/guardar")
 	public String guardarWs(LimitesGenerales limitesGenerales, BindingResult result,
 			RedirectAttributes redirectAttributes, Model model) {
-		log.info(LIMITESGENERALESCONTROLLERGUARDARI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERGUARDARI);
 		List<String> listaError = new ArrayList<>();
 		
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
-				log.info("Ocurrio un error: " + error.getDefaultMessage());
+				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 				if(error.getCode().equals("typeMismatch")) {
 					listaError.add("Los valores de los montos debe ser numerico");
 				}
@@ -330,12 +334,12 @@ public class LimitesGeneralesController {
 		try {
 			
 			String respuesta = limitesGeneralesServiceApirest.actualizar(limiteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(LIMITESGENERALESCONTROLLERGUARDARF);
+			LOGGER.info(LIMITESGENERALESCONTROLLERGUARDARF);
 			return REDIRECTINDEX;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR, e.getMessage()));
 			listaError.add(e.getMessage());
 			model.addAttribute(LISTAERROR, listaError);
@@ -349,7 +353,7 @@ public class LimitesGeneralesController {
 	@GetMapping("/formLimitesGenerales")
 	public String formLimitesGenerales(LimitesGenerales limitesGenerales,  Model model, RedirectAttributes redirectAttributes) {
 		
-		log.info(LIMITESGENERALESCONTROLLERFORMI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERFORMI);
 		List<Moneda> listaMonedas = new ArrayList<>();
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda moneda = new Moneda();
@@ -359,10 +363,10 @@ public class LimitesGeneralesController {
 		try {
 			listaMonedas = monedaServiceApiRest.listaMonedas(monedasRequest);
 			model.addAttribute(LISTAMONEDAS, listaMonedas);
-			log.info(LIMITESGENERALESCONTROLLERFORMF);
+			LOGGER.info(LIMITESGENERALESCONTROLLERFORMF);
     		return URLFORMLIMITESGENERALES;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -370,7 +374,7 @@ public class LimitesGeneralesController {
 	
 	@PostMapping("/save")
 	public String saveWs(LimitesGenerales limitesGenerales, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLERSAVEI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERSAVEI);
 		List<String> listaError = new ArrayList<>();
 		List<Moneda> listaMonedas;
 		MonedasRequest monedasRequest = getMonedasRequest();
@@ -380,7 +384,7 @@ public class LimitesGeneralesController {
 		try {
 			if (result.hasErrors()) {
 				for (ObjectError error : result.getAllErrors()) {
-					log.info("Ocurrio un error: " + error.getDefaultMessage());
+					LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 					if(error.getCode().equals("typeMismatch")) {
 						listaError.add("Los valores de los montos debe ser numerico");
 					}
@@ -425,12 +429,12 @@ public class LimitesGeneralesController {
 			
 		
 			String respuesta = limitesGeneralesServiceApirest.crear(limiteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(LIMITESGENERALESCONTROLLERSAVEF);
+			LOGGER.info(LIMITESGENERALESCONTROLLERSAVEF);
 			return REDIRECTINDEX;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			try {
 				listaMonedas = monedaServiceApiRest.listaMonedas(monedasRequest);
 				model.addAttribute(LISTAMONEDAS, listaMonedas);
@@ -439,7 +443,7 @@ public class LimitesGeneralesController {
 				model.addAttribute(LISTAERROR, listaError);
 				return URLFORMLIMITESGENERALES;
 			} catch (CustomException e1) {
-				log.error("error: "+e1);
+				LOGGER.error("error: "+e1);
 				result.addError(new ObjectError(LISTAERROR, " Codigo :" +e1.getMessage()));
 				listaError.add(e1.getMessage());
 				model.addAttribute(LISTAERROR, listaError);
@@ -452,7 +456,7 @@ public class LimitesGeneralesController {
 	@GetMapping("/search")
 	public String search(@ModelAttribute("limitesGeneralesSearch") LimitesGenerales limitesGeneralesSearch, 
 			Model model, RedirectAttributes redirectAttributes) {
-		log.info(LIMITESGENERALESCONTROLLERSEARCHI);
+		LOGGER.info(LIMITESGENERALESCONTROLLERSEARCHI);
 		
 		List<LimitesGenerales> listaLimitesGenerales = new ArrayList<>();
 		
@@ -480,13 +484,13 @@ public class LimitesGeneralesController {
 			}
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(LISTALIMITESGENERALES, listaLimitesGenerales);
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			
 		}
 		
-		log.info(LIMITESGENERALESCONTROLLERSEARCHF);
+		LOGGER.info(LIMITESGENERALESCONTROLLERSEARCHF);
 		return URLINDEX;
 	}
 	

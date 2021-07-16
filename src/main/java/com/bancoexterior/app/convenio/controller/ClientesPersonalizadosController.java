@@ -6,7 +6,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,12 +38,14 @@ import com.bancoexterior.app.convenio.service.ILimitesPersonalizadosServiceApiRe
 import com.bancoexterior.app.convenio.service.IMonedaServiceApiRest;
 import com.bancoexterior.app.util.LibreriaUtil;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Controller
 @RequestMapping("/clientesPersonalizados")
 public class ClientesPersonalizadosController {
+	
+	private static final Logger LOGGER = LogManager.getLogger(ClientesPersonalizadosController.class);
 
 	@Autowired
 	private IClientePersonalizadoServiceApiRest clientePersonalizadoServiceApiRest;
@@ -166,7 +169,7 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/index/{page}")
 	public String index(@PathVariable("page") int page,Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERINDEXI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERINDEXI);
 		ClienteRequest clienteRequest = getClienteRequest();
 		clienteRequest.setNumeroPagina(page);
 		clienteRequest.setTamanoPagina(numeroRegistroPage);
@@ -200,12 +203,12 @@ public class ClientesPersonalizadosController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(DATOSPAGINACION, datosPaginacion);
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			
 		}
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERINDEXF);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERINDEXF);
 		return URLINDEX;
 		
 	}	
@@ -213,7 +216,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/activar/{codigoIbs}/{page}")
 	public String activarWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARI);
 		
 
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
@@ -230,12 +233,12 @@ public class ClientesPersonalizadosController {
 			clientesPersonalizadosEdit.setFlagActivo(true);
 			clienteRequest.setCliente(clientesPersonalizadosEdit);
 			String respuesta = clientePersonalizadoServiceApiRest.actualizar(clienteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARF);
 			return REDIRECTINDEX+page;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX+page;
 		}
@@ -245,7 +248,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/desactivar/{codigoIbs}/{page}")
 	public String desactivarWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("page") int page, Model model,
 			RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARI);
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
 
 		ClienteRequest clienteRequest = getClienteRequest();
@@ -260,12 +263,12 @@ public class ClientesPersonalizadosController {
 			clientesPersonalizadosEdit.setFlagActivo(false);
 			clienteRequest.setCliente(clientesPersonalizadosEdit);
 			String respuesta = clientePersonalizadoServiceApiRest.actualizar(clienteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARF);
 			return REDIRECTINDEX+page;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX+page;
 		}
@@ -275,7 +278,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/edit/{codigoIbs}")
 	public String editarWs(@PathVariable("codigoIbs") String codigoIbs, 
 			ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARI);
 
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
 
@@ -288,14 +291,14 @@ public class ClientesPersonalizadosController {
 			clientesPersonalizadosEdit = clientePersonalizadoServiceApiRest.buscarClientesPersonalizados(clienteRequest);
 			if(clientesPersonalizadosEdit != null) {
 				model.addAttribute(CLIENTESPERSONALIZADOS, clientesPersonalizadosEdit);
-				log.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARF);
+				LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARF);
 				return URLFORMCLIENTEPERSONALIZADOEDIT;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				return REDIRECTINDEX+1;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX+1;
 		}
@@ -304,7 +307,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/verLimites/{codigoIbs}")
 	public String verLimitesWs(@PathVariable("codigoIbs") String codigoIbs, 
 			ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESI);
 		List<LimitesPersonalizados> listaLimitesPersonalizados = new ArrayList<>();
 		
 		LimitesPersonalizadosRequest limitesPersonalizadosRequest = getLimitesPersonalizadosRequest();
@@ -342,14 +345,14 @@ public class ClientesPersonalizadosController {
 					}
 					model.addAttribute("listaLimitesPersonalizados", listaLimitesPersonalizados);
 					model.addAttribute("codigoIbs", codigoIbs);
-					log.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESF);
+					LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESF);
 		    		return URLINDEXLIMITESPERSONALIZADOS;
 				}else {
 					model.addAttribute("listaLimitesPersonalizados", listaLimitesPersonalizados);
 					model.addAttribute("codigoIbs", codigoIbs);
 					//model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 					model.addAttribute(MENSAJE, MENSAJENORESULTADO);
-					log.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESF);
+					LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESF);
 					return URLINDEXLIMITESPERSONALIZADOS;
 				}
 			}else {
@@ -357,7 +360,7 @@ public class ClientesPersonalizadosController {
 				return  REDIRECTINDEX+1;
 			}		
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX+1;
 		}
@@ -367,7 +370,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/editLimiteCliente/{codigoIbs}/{codMoneda}/{tipoTransaccion}")
 	public String editarLimiteClienteWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("codMoneda") String codMoneda, 
 			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARLIMITESI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARLIMITESI);
 		
 		LimitesPersonalizados limitesPersonalizadosEdit = new LimitesPersonalizados();
 		LimitesPersonalizadosRequest limitesPersonalizadosRequest = getLimitesPersonalizadosRequest();
@@ -381,14 +384,14 @@ public class ClientesPersonalizadosController {
 			limitesPersonalizadosEdit = limitesPersonalizadosServiceApiRest.buscarLimitesPersonalizados(limitesPersonalizadosRequest);
 			if(limitesPersonalizadosEdit != null) {
 				model.addAttribute("limitesPersonalizados", limitesPersonalizadosEdit);
-				log.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARLIMITESF);
+				LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARLIMITESF);
 				return URLFORMLIMITEPERSONALIZADOEDIT;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				return REDIRECTINDEX+1;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX+1;
 		}
@@ -400,15 +403,15 @@ public class ClientesPersonalizadosController {
 	@PostMapping("/guardarLimiteCliente")
 	public String guardarLimiteClienteWs(LimitesPersonalizados limitesPersonalizados, BindingResult result,
 			RedirectAttributes redirectAttributes, Model model) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARLIMITEI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARLIMITEI);
 		List<String> listaError = new ArrayList<>();
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
 				if(error.getCode().equals("typeMismatch")) {
 					listaError.add("Los valores de los montos debe ser numerico");
 				}
-				log.info("getObjectName(): "+error.getObjectName());
-				log.info("Ocurrio un error: " + error.getDefaultMessage());
+				LOGGER.info("getObjectName(): "+error.getObjectName());
+				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 			}
 			model.addAttribute(LISTAERROR, listaError);
 			return URLFORMLIMITEPERSONALIZADOEDIT;
@@ -437,12 +440,12 @@ public class ClientesPersonalizadosController {
 		try {
 			
 			String respuesta = limitesPersonalizadosServiceApiRest.actualizar(limitesPersonalizadosRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARLIMITEF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARLIMITEF);
 			return REDIRECTINDEXLIMITESPERSONALIZADOS+limitesPersonalizados.getCodigoIbs();
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR,e.getMessage()));
 			listaError.add(e.getMessage());
 			model.addAttribute(LISTAERROR, listaError);
@@ -457,7 +460,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/formLimiteClientePersonalizado/{codigoIbs}")
 	public String formLimiteClientePersonalizado(@PathVariable("codigoIbs") String codigoIbs,LimitesPersonalizados limitesPersonalizados,  Model model, RedirectAttributes redirectAttributes) {
 		
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERFORMLIMITEI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERFORMLIMITEI);
 		List<Moneda> listaMonedas = new ArrayList<>();
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
 
@@ -480,14 +483,14 @@ public class ClientesPersonalizadosController {
 				listaMonedas = monedaServiceApiRest.listaMonedas(monedasRequest);
 				limitesPersonalizados.setCodigoIbs(codigoIbs);
 				model.addAttribute(LISTAMONEDAS, listaMonedas);
-				log.info(CLIENTESPERSONALIZADOSCONTROLLERFORMLIMITEF);
+				LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERFORMLIMITEF);
 	    		return URLFORMLIMITEPERSONALIZADO;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				return REDIRECTINDEX+1;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX+1;
 		}	
@@ -495,7 +498,7 @@ public class ClientesPersonalizadosController {
 	
 	@PostMapping("/saveLimiteCliente")
 	public String saveLimiteClienteWs(LimitesPersonalizados limitesPersonalizados, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERSAVELIMITEI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSAVELIMITEI);
 
 		
 		List<Moneda> listaMonedas;
@@ -508,7 +511,7 @@ public class ClientesPersonalizadosController {
 		try {
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
-				log.info("Ocurrio un error: " + error.getDefaultMessage());
+				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 				if(error.getCode().equals("typeMismatch")) {
 					listaError.add("Los valores de los montos debe ser numerico");
 				}
@@ -551,12 +554,12 @@ public class ClientesPersonalizadosController {
 		
 		
 			String respuesta = limitesPersonalizadosServiceApiRest.crear(limitesPersonalizadosRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERSAVELIMITEF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSAVELIMITEF);
 			return REDIRECTINDEXLIMITESPERSONALIZADOS+limitesPersonalizados.getCodigoIbs();
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			try {
 				listaMonedas = monedaServiceApiRest.listaMonedas(monedasRequest);
 				model.addAttribute(LISTAMONEDAS, listaMonedas);
@@ -565,7 +568,7 @@ public class ClientesPersonalizadosController {
 				model.addAttribute(LISTAERROR, listaError);
 	    		return URLFORMLIMITEPERSONALIZADO;
 			} catch (CustomException e1) {
-				log.error(e.getMessage());
+				LOGGER.error(e.getMessage());
 				result.addError(new ObjectError("codMoneda", " Codigo :" +e1.getMessage()));
 				listaError.add(e1.getMessage());
 				model.addAttribute(LISTAERROR, listaError);
@@ -579,7 +582,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/activarLimiteCliente/{codigoIbs}/{codMoneda}/{tipoTransaccion}")
 	public String activarLimiteClienteWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("codMoneda") String codMoneda, 
 			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARLIMITEI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARLIMITEI);
 		
 		LimitesPersonalizados limitesPersonalizadosEdit = new LimitesPersonalizados();
 		
@@ -595,12 +598,12 @@ public class ClientesPersonalizadosController {
 			limitesPersonalizadosEdit.setFlagActivo(true);
 			limitesPersonalizadosRequest.setLimiteCliente(limitesPersonalizadosEdit);
 			String respuesta = limitesPersonalizadosServiceApiRest.actualizar(limitesPersonalizadosRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARLIMITEF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARLIMITEF);
 			return REDIRECTINDEXLIMITESPERSONALIZADOS+codigoIbs;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEXLIMITESPERSONALIZADOS+codigoIbs;
 		}
@@ -611,10 +614,10 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/desactivarLimiteCliente/{codigoIbs}/{codMoneda}/{tipoTransaccion}")
 	public String desactivarLimiteClienteWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("codMoneda") String codMoneda, 
 			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARLIMITEI);
-		log.info(codigoIbs);
-		log.info(codMoneda);
-		log.info(tipoTransaccion);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARLIMITEI);
+		LOGGER.info(codigoIbs);
+		LOGGER.info(codMoneda);
+		LOGGER.info(tipoTransaccion);
 		
 		LimitesPersonalizados limitesPersonalizadosEdit = new LimitesPersonalizados();
 		
@@ -630,12 +633,12 @@ public class ClientesPersonalizadosController {
 			limitesPersonalizadosEdit.setFlagActivo(false);
 			limitesPersonalizadosRequest.setLimiteCliente(limitesPersonalizadosEdit);
 			String respuesta = limitesPersonalizadosServiceApiRest.actualizar(limitesPersonalizadosRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARLIMITEF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARLIMITEF);
 			return REDIRECTINDEXLIMITESPERSONALIZADOS+codigoIbs;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEXLIMITESPERSONALIZADOS+codigoIbs;
 		}
@@ -647,7 +650,7 @@ public class ClientesPersonalizadosController {
 	public String search(
 			@ModelAttribute("clientesPersonalizadosSearch") ClientesPersonalizados clientesPersonalizadosSearch,
 			Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHI);
 		ClienteRequest clienteRequest = getClienteRequest();
 		clienteRequest.setNumeroPagina(1);
 		clienteRequest.setTamanoPagina(numeroRegistroPage);
@@ -672,7 +675,7 @@ public class ClientesPersonalizadosController {
 						}
 					}
 					datosPaginacion = clienteResponse.getDatosPaginacion();
-					log.info("datosPaginacion: "+datosPaginacion);
+					LOGGER.info("datosPaginacion: "+datosPaginacion);
 					model.addAttribute(LISTACLIENTESPERSONALIZADOS, listaClientesPersonalizados);
 					model.addAttribute(DATOSPAGINACION, datosPaginacion);
 				}else {
@@ -691,13 +694,13 @@ public class ClientesPersonalizadosController {
 			}
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			datosPaginacion.setTotalPaginas(0);
 			model.addAttribute(LISTACLIENTESPERSONALIZADOS, listaClientesPersonalizados);
 			model.addAttribute(DATOSPAGINACION, datosPaginacion);
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 		}
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHF);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHF);
 		return URLINDEX;
 	}	
 	
@@ -706,7 +709,7 @@ public class ClientesPersonalizadosController {
 	public String searchNroIdCliente(
 			@ModelAttribute("clientesPersonalizadosSearch") ClientesPersonalizados clientesPersonalizadosSearch,
 			Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHNROIDI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHNROIDI);
 
 	
 		ClienteRequest clienteRequest = getClienteRequest();
@@ -758,14 +761,14 @@ public class ClientesPersonalizadosController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			datosPaginacion.setTotalPaginas(0);
 			model.addAttribute(LISTACLIENTESPERSONALIZADOS, listaClientesPersonalizados);
 			model.addAttribute(DATOSPAGINACION, datosPaginacion);
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			
 		}
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHNROIDF);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHNROIDF);
 		return URLINDEX;
 	}
 	
@@ -773,7 +776,7 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/searchCrear")
 	public String searchCrear(ClientesPersonalizados clientesPersonalizados,
 			Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHCREARI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHCREARI);
 		ClienteDatosBasicoRequest clienteDatosBasicoRequest = getClienteDatosBasicoRequest();
 		clienteDatosBasicoRequest.setIp(request.getRemoteAddr());
 		if(!clientesPersonalizados.getCodigoIbs().equals(""))
@@ -792,7 +795,7 @@ public class ClientesPersonalizadosController {
 				clientesPersonalizados.setNroIdCliente(datosClientes.getNroIdCliente());
 				clientesPersonalizados.setNombreRif(datosClientes.getNombreLegal());
 				model.addAttribute(CLIENTESPERSONALIZADOS, clientesPersonalizados);
-				log.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHCREARF);
+				LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHCREARF);
 				return URLFORMCLIENTESPERSONALIZADOS;
 			}else {
 				model.addAttribute(MENSAJEERROR, MENSAJENORESULTADO);
@@ -801,7 +804,7 @@ public class ClientesPersonalizadosController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			return URLFORMCLIENTESPERSONALIZADOSBUSCAR;
 		}
@@ -810,7 +813,7 @@ public class ClientesPersonalizadosController {
 
 	@PostMapping("/guardar")
 	public String guardarWs(ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARI);
 		
 		ClienteRequest clienteRequest = getClienteRequest();
 		clientesPersonalizados.setFlagActivo(true);
@@ -818,13 +821,13 @@ public class ClientesPersonalizadosController {
 		
 		try {
 			String respuesta = clientePersonalizadoServiceApiRest.actualizar(clienteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARF);
 			return "redirect:/clientesPersonalizados/index";
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR,e.getMessage());
 			return URLFORMLIMITEPERSONALIZADOEDIT;
 		}
@@ -833,7 +836,7 @@ public class ClientesPersonalizadosController {
 	
 	@PostMapping("/save")
 	public String saveWs(ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
-		log.info(CLIENTESPERSONALIZADOSCONTROLLERSAVEI);
+		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSAVEI);
 		
 		
 		ClienteRequest clienteRequest = getClienteRequest();
@@ -842,13 +845,13 @@ public class ClientesPersonalizadosController {
 		
 		try {
 			String respuesta = clientePersonalizadoServiceApiRest.crear(clienteRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECREARCLIENTE);
-			log.info(CLIENTESPERSONALIZADOSCONTROLLERSAVEF);
+			LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSAVEF);
 			return "redirect:/clientesPersonalizados/formLimiteClientePersonalizado/"+clientesPersonalizados.getCodigoIbs();
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR,e.getMessage());
 			return URLFORMCLIENTESPERSONALIZADOS;
 		}

@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,14 +35,16 @@ import com.bancoexterior.app.convenio.service.IMonedaServiceApiRest;
 import com.bancoexterior.app.convenio.service.ITasaServiceApiRest;
 import com.bancoexterior.app.util.LibreriaUtil;
 
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
+
+
 @Controller
 @RequestMapping("/tasas")
 public class TasaController {
 
+	private static final Logger LOGGER = LogManager.getLogger(TasaController.class);
+	
 	@Autowired
 	private ITasaServiceApiRest tasaServiceApiRest; 
 	
@@ -96,7 +100,7 @@ public class TasaController {
 	
 	@GetMapping("/index")
 	public String index(Model model, RedirectAttributes redirectAttributes) {
-		log.info(TASACONTROLLERINDEXI);
+		LOGGER.info(TASACONTROLLERINDEXI);
 		
 		List<Tasa> listaTasas = new ArrayList<>();
 		
@@ -117,13 +121,13 @@ public class TasaController {
 			model.addAttribute(LISTATASAS, listaTasas);
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTATASAS, listaTasas);
 			
 			
 		}
-		log.info(TASACONTROLLERINDEXF);
+		LOGGER.info(TASACONTROLLERINDEXF);
 		return URLINDEX;
 		
 	}	
@@ -132,7 +136,7 @@ public class TasaController {
 	public String editarWs(@PathVariable("codMonedaOrigen") String codMonedaOrigen, 
 			@PathVariable("codMonedaDestino") String codMonedaDestino, @PathVariable("tipoOperacion") Integer tipoOperacion,
 			Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
-		log.info(TASACONTROLLEREDITARI);
+		LOGGER.info(TASACONTROLLEREDITARI);
 		Tasa tasaEdit = new Tasa();
 		TasaRequest tasaRequest = getTasaRequest();
 		Tasa tasaBuscar = new Tasa();
@@ -146,15 +150,15 @@ public class TasaController {
 			if(tasaEdit != null) {
 				
 				model.addAttribute("tasa", tasaEdit);
-				log.info(TASACONTROLLEREDITARF);
+				LOGGER.info(TASACONTROLLEREDITARF);
             	return URLFORMTASAEDIT;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
-				log.info(TASACONTROLLEREDITARF);
+				LOGGER.info(TASACONTROLLEREDITARF);
 				return REDIRECTINDEX;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -168,7 +172,7 @@ public class TasaController {
 	public String editarWsPrueba(@RequestParam("codMonedaOrigen") String codMonedaOrigen, 
 			@RequestParam("codMonedaDestino") String codMonedaDestino, @RequestParam("tipoOperacion") Integer tipoOperacion,
 			Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
-		log.info(TASACONTROLLEREDITARI);
+		LOGGER.info(TASACONTROLLEREDITARI);
 		Tasa tasaEdit = new Tasa();
 		TasaRequest tasaRequest = getTasaRequest();
 		Tasa tasaBuscar = new Tasa();
@@ -183,15 +187,15 @@ public class TasaController {
 				tasaEdit.setMontoTasaCompra(tasaEdit.getMontoTasaCompra().setScale(2, RoundingMode.HALF_UP));
 				tasaEdit.setMontoTasaVenta(tasaEdit.getMontoTasaVenta().setScale(2, RoundingMode.HALF_UP));
 				model.addAttribute("tasa", tasaEdit);
-				log.info(TASACONTROLLEREDITARF);
+				LOGGER.info(TASACONTROLLEREDITARF);
             	return URLFORMTASAEDIT;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
-				log.info(TASACONTROLLEREDITARF);
+				LOGGER.info(TASACONTROLLEREDITARF);
 				return REDIRECTINDEX;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -203,11 +207,11 @@ public class TasaController {
 	
 	@PostMapping("/guardar")
 	public String guardarWs(Tasa tasa, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		log.info(TASACONTROLLERGUARDARI);
+		LOGGER.info(TASACONTROLLERGUARDARI);
 		List<String> listaError = new ArrayList<>();
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
-				log.info("Ocurrio un error: " + error.getDefaultMessage());
+				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 				if(error.getCode().equals("typeMismatch")) {
 					listaError.add("Los valores de los montos debe ser numerico");
 				}
@@ -228,12 +232,12 @@ public class TasaController {
 		try {
 			
 			String respuesta = tasaServiceApiRest.actualizar(tasaRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(TASACONTROLLERGUARDARF);
+			LOGGER.info(TASACONTROLLERGUARDARF);
 			return REDIRECTINDEX;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR, e.getMessage()));
 			listaError.add(e.getMessage());
 			model.addAttribute(LISTAERROR, listaError);
@@ -246,7 +250,7 @@ public class TasaController {
 	
 	@GetMapping("/formTasa")
 	public String formTasa(Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
-		log.info(TASACONTROLLERFORMI);
+		LOGGER.info(TASACONTROLLERFORMI);
 		List<Moneda> listaMonedas = new ArrayList<>();
 		
 		MonedasRequest monedasRequest = getMonedasRequest();
@@ -257,10 +261,10 @@ public class TasaController {
 		try {
 			listaMonedas = monedaServiceApiRest.listaMonedas(monedasRequest);
 			model.addAttribute(LISTAMONEDAS, listaMonedas);
-			log.info(TASACONTROLLERFORMF);
+			LOGGER.info(TASACONTROLLERFORMF);
 			return URLFORMTASA;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -271,7 +275,7 @@ public class TasaController {
 	
 	@PostMapping("/save")
 	public String saveWs(Tasa tasa, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		log.info(TASACONTROLLERSAVEI);
+		LOGGER.info(TASACONTROLLERSAVEI);
 		List<String> listaError = new ArrayList<>();
 		List<Moneda> listaMonedas;
 		MonedasRequest monedasRequest = getMonedasRequest();
@@ -281,7 +285,7 @@ public class TasaController {
 		
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
-				log.info("Ocurrio un error: " + error.getDefaultMessage());
+				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 				if(error.getCode().equals("typeMismatch")) {
 					listaError.add("Los valores de los montos debe ser numerico");
 				}
@@ -303,12 +307,12 @@ public class TasaController {
 		
 		try {
 			String respuesta = tasaServiceApiRest.crear(tasaRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(TASACONTROLLERSAVEF);
+			LOGGER.info(TASACONTROLLERSAVEF);
 			return REDIRECTINDEX;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			try {
 				listaMonedas = monedaServiceApiRest.listaMonedas(monedasRequest);
 				model.addAttribute(LISTAMONEDAS, listaMonedas);
@@ -317,7 +321,7 @@ public class TasaController {
 				model.addAttribute(LISTAERROR, listaError);
 				return URLFORMTASA;
 			} catch (CustomException e1) {
-				log.error("error: "+e1);
+				LOGGER.error("error: "+e1);
 				result.addError(new ObjectError(LISTAERROR,e1.getMessage()));
 				listaError.add(e1.getMessage());
 				model.addAttribute(LISTAERROR, listaError);

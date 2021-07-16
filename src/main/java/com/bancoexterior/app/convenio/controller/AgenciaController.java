@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,14 +28,16 @@ import com.bancoexterior.app.convenio.model.Agencia;
 import com.bancoexterior.app.convenio.service.IAgenciaServiceApiRest;
 import com.bancoexterior.app.util.LibreriaUtil;
 
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
+
+
 @Controller
 @RequestMapping("/agencias")
 public class AgenciaController {
 
+	private static final Logger LOGGER = LogManager.getLogger(AgenciaController.class);
+	
 	@Autowired 
 	private IAgenciaServiceApiRest agenciaServiceApiRest; 
 	
@@ -105,7 +109,7 @@ public class AgenciaController {
 	
 	@GetMapping("/index")
 	public String index(Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERINDEXI);
+		LOGGER.info(AGENCIACONTROLLERINDEXI);
 		
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -125,17 +129,17 @@ public class AgenciaController {
 			
 			model.addAttribute(LISTAAGENCIAS, listaAgencias);
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 		}
-		log.info(AGENCIACONTROLLERINDEXF);
+		LOGGER.info(AGENCIACONTROLLERINDEXF);
 		return URLINDEX;
 	}	
 	
 	@GetMapping("/activar/{codAgencia}")
 	public String activarWs(@PathVariable("codAgencia") String codAgencia, Model model,
 			RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERACTIVARI);
+		LOGGER.info(AGENCIACONTROLLERACTIVARI);
 	
 		Agencia agenciaEdit = new Agencia(); 
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -149,13 +153,13 @@ public class AgenciaController {
 			agenciaEdit.setFlagActivo(true);
 			agenciaRequest.setAgencia(agenciaEdit);
 			String respuesta = agenciaServiceApiRest.actualizar(agenciaRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 		}
-		log.info(AGENCIACONTROLLERACTIVARF);
+		LOGGER.info(AGENCIACONTROLLERACTIVARF);
 		return REDIRECTINDEX;
 	}	
 	
@@ -163,7 +167,7 @@ public class AgenciaController {
 	@GetMapping("/desactivar/{codAgencia}")
 	public String desactivarWs(@PathVariable("codAgencia") String codAgencia, Model model,
 			RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERDESACTIVARI);
+		LOGGER.info(AGENCIACONTROLLERDESACTIVARI);
 		
 		Agencia agenciaEdit = new Agencia(); 
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -177,13 +181,13 @@ public class AgenciaController {
 			agenciaEdit.setFlagActivo(false);
 			agenciaRequest.setAgencia(agenciaEdit);
 			String respuesta = agenciaServiceApiRest.actualizar(agenciaRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 		}
-		log.info(AGENCIACONTROLLERDESACTIVARF);
+		LOGGER.info(AGENCIACONTROLLERDESACTIVARF);
 		return REDIRECTINDEX;
 	}
 	
@@ -191,7 +195,7 @@ public class AgenciaController {
 	@GetMapping("/edit/{codAgencia}")
 	public String editarWs(@PathVariable("codAgencia") String codAgencia, 
 			Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLEREDITARI);
+		LOGGER.info(AGENCIACONTROLLEREDITARI);
 		
 		Agencia agenciaEdit = new Agencia(); 
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -204,14 +208,14 @@ public class AgenciaController {
 			agenciaEdit = agenciaServiceApiRest.buscarAgencia(agenciaRequest);
 			if(agenciaEdit != null) {
 				model.addAttribute(AGENCIA, agenciaEdit);
-				log.info(AGENCIACONTROLLEREDITARF);
+				LOGGER.info(AGENCIACONTROLLEREDITARF);
 				return URLFORMAGENCIAEDIT;
 			}else {
 				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
 				return REDIRECTINDEX;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -221,7 +225,7 @@ public class AgenciaController {
 	
 	@PostMapping("/guardar")
 	public String guardarWs(Agencia agencia, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERGUARDARI);
+		LOGGER.info(AGENCIACONTROLLERGUARDARI);
 		
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		agencia.setFlagActivo(true);
@@ -233,11 +237,11 @@ public class AgenciaController {
 			
 			String respuesta = agenciaServiceApiRest.actualizar(agenciaRequest);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(respuesta);
-			log.info(AGENCIACONTROLLERGUARDARF);
+			LOGGER.info(respuesta);
+			LOGGER.info(AGENCIACONTROLLERGUARDARF);
 			return REDIRECTINDEX;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			result.addError(new ObjectError("codMoneda", " Codigo :" +e.getMessage()));
 			return URLFORMAGENCIAEDIT;
 		}
@@ -247,7 +251,7 @@ public class AgenciaController {
 	
 	@GetMapping("/formBuscarAgencia")
 	public String fromBuscarAgencia(Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERFORMBUSCARI);
+		LOGGER.info(AGENCIACONTROLLERFORMBUSCARI);
 		
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -258,10 +262,10 @@ public class AgenciaController {
 		try {
 			listaAgencias = agenciaServiceApiRest.listaAgencias(agenciaRequest);
 			model.addAttribute(LISTAAGENCIAS, listaAgencias);
-			log.info(AGENCIACONTROLLERFORMBUSCARF);
+			LOGGER.info(AGENCIACONTROLLERFORMBUSCARF);
 			return URLFORMAGENCIABUSCAR;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return REDIRECTINDEX;
 		}
@@ -276,7 +280,7 @@ public class AgenciaController {
 	
 	@GetMapping("/searchCrear")
 	public String searchCrear(Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERSEACRHCREARI);
+		LOGGER.info(AGENCIACONTROLLERSEACRHCREARI);
 		
 		List<Agencia> listaAgencias = new ArrayList<>();
 		Agencia agenciaEdit = new Agencia(); 
@@ -291,7 +295,7 @@ public class AgenciaController {
 			agenciaEdit = agenciaServiceApiRest.buscarAgencia(agenciaRequest);
 			if(agenciaEdit != null) {
 				model.addAttribute(AGENCIA, agenciaEdit);
-				log.info(AGENCIACONTROLLERSEACRHCREARF);
+				LOGGER.info(AGENCIACONTROLLERSEACRHCREARF);
 				return URLFORMAGENCIA;
 			}else {
 				Agencia agenciaBuscarCargar = new Agencia();
@@ -305,7 +309,7 @@ public class AgenciaController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			Agencia agenciaBuscarCargar = new Agencia();
 			agenciaBuscarCargar.setFlagDivisa(false);
 			agenciaRequest.setAgencia(agenciaBuscarCargar);
@@ -327,7 +331,7 @@ public class AgenciaController {
 	
 	@PostMapping("/save")
 	public String saveWs(Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERSAVEI);
+		LOGGER.info(AGENCIACONTROLLERSAVEI);
 	
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		agencia.setFlagActivo(true);
@@ -338,13 +342,13 @@ public class AgenciaController {
 		
 		try {
 			String respuesta = agenciaServiceApiRest.crear(agenciaRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR,e.getMessage());
 		}
-		log.info(AGENCIACONTROLLERSAVEF);
+		LOGGER.info(AGENCIACONTROLLERSAVEF);
 		return REDIRECTINDEX;
 	}	
 	
@@ -352,7 +356,7 @@ public class AgenciaController {
 	@GetMapping("/search")
 	public String search(@ModelAttribute("agenciaSearch") Agencia agenciaSearch,
 			Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERSEACRHI);
+		LOGGER.info(AGENCIACONTROLLERSEACRHI);
 		
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -379,11 +383,11 @@ public class AgenciaController {
 				model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(LISTAAGENCIAS, listaAgencias);
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 		}
-		log.info(AGENCIACONTROLLERSEACRHF);
+		LOGGER.info(AGENCIACONTROLLERSEACRHF);
 		return URLINDEX;
 	}	
 	
@@ -391,7 +395,7 @@ public class AgenciaController {
 	@GetMapping("/searchNombre")
 	public String searchNombre(@ModelAttribute("agenciaSearch") Agencia agenciaSearch,
 			Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
-		log.info(AGENCIACONTROLLERSEACRHNOMBREI);
+		LOGGER.info(AGENCIACONTROLLERSEACRHNOMBREI);
 		
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -404,7 +408,7 @@ public class AgenciaController {
 		
 		try {
 			listaAgencias = agenciaServiceApiRest.listaAgencias(agenciaRequest);
-			log.info("lista: "+listaAgencias.isEmpty());
+			LOGGER.info("lista: "+listaAgencias.isEmpty());
 			if(!listaAgencias.isEmpty()) {
 				for (Agencia agencia2 : listaAgencias) {
 					if(agencia2.getFechaModificacion() != null) {
@@ -418,12 +422,12 @@ public class AgenciaController {
 				model.addAttribute(MENSAJE, MENSAJENORESULTADO);
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(LISTAAGENCIAS, listaAgencias);
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			
 		}
-		log.info(AGENCIACONTROLLERSEACRHNOMBREF);
+		LOGGER.info(AGENCIACONTROLLERSEACRHNOMBREF);
 		return URLINDEX;
 		
 		

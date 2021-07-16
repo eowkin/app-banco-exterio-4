@@ -44,10 +44,10 @@ import org.springframework.util.StringUtils;
 
 
 
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
+
+
 public final class CustomActiveDirectoryLdapAuthenticationProvider extends AbstractLdapAuthenticationProvider{
 	
 	private static final Pattern SUB_ERROR_CODE = Pattern.compile(".*data\\s([0-9a-f]{3,4}).*");
@@ -84,14 +84,14 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 	
 	@Override
 	public Authentication authenticate(Authentication authentication) {		
-		log.info("authenticate");
+		
 	        	return super.authenticate(authentication);
 	      
 	}
 
 	@Override
 	protected DirContextOperations doAuthentication(UsernamePasswordAuthenticationToken auth) {
-		log.info("doAuthentication");
+		
 		
 		String username = auth.getName().toUpperCase();
 		String password = (String) auth.getCredentials();
@@ -112,19 +112,19 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 	private DirContext bindAsUser(String username, String password) {
 		final String bindUrl = url;
 		
-		log.info("bindAsUser");
+		
 		
 		Hashtable<String, String> env = new Hashtable<String, String>();
 		env.put(Context.SECURITY_AUTHENTICATION, "simple");
 		String bindPrincipal = createBindPrincipal(username);
-		log.info("bindPrincipal: "+bindPrincipal);
+		
 		env.put(Context.SECURITY_PRINCIPAL, bindPrincipal);
 		env.put(Context.PROVIDER_URL, bindUrl);
 		env.put(Context.SECURITY_CREDENTIALS, password);
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
 		
 		env.put(Context.OBJECT_FACTORIES, DefaultDirObjectFactory.class.getName());
-		log.info("env: "+env);
+		
 		try {
 			return contextFactory.createContext(env);
 			
@@ -249,12 +249,12 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 
 	@Override
 	protected Collection<? extends GrantedAuthority> loadUserAuthorities(DirContextOperations userData, String username, String password) {
-		log.info("[---------------loadUserAuthorities------------------]");
+		
 		String[] groups = userData.getStringAttributes("memberOf");
 		
 		int size = groups.length;
 		for (int i=0; i<size; i++) {
-			log.info("groups: "+groups[i]);
+			
 		}
 		
 		if (groups == null) {
@@ -271,14 +271,14 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 		if (authorities == null || authorities.isEmpty()) {
 			throw badCredentials(new Exception());
 		}
-		log.info("[---------------FIN loadUserAuthorities------------------]");
+		
 		return authorities;
 	}
 	
 	
 	///esta la coloque yo 09072021 ORIGINAL
 	private List<GrantedAuthority> createGrantedAuthoritiesFromLdapGroups(String[] groups) {
-		log.info("[----------------createGrantedAuthoritiesFromLdapGroups---------------]");
+		
 		
 		List<String> privileges = new ArrayList<>();		
 		List<String> groupNames = new ArrayList<>(groups.length);
@@ -295,9 +295,7 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 	        }
 		}
 		
-		for (String string : privileges) {
-			log.info("privileges: "+string);
-		}
+		
 		
 		
 		
@@ -305,7 +303,7 @@ public final class CustomActiveDirectoryLdapAuthenticationProvider extends Abstr
 		String DEFAULT_ROLE_PREFIX = "ROLE_";
 		//org.apache.commons.lang3.StringUtils.appendIfMissing
 		//return new ArrayList<GrantedAuthority>();
-		log.info("[----------------FIN createGrantedAuthoritiesFromLdapGroups---------------]");
+		
 		return privileges.stream()
 				//.map(privilege -> org.apache.commons.lang3.StringUtils.appendIfMissing(DEFAULT_ROLE_PREFIX, privilege))
 				.map(privilege -> new SimpleGrantedAuthority(privilege)).collect(Collectors.toList());
@@ -339,42 +337,41 @@ return  privileges;*/
 	
 	///esta la coloque yo 09072021 ORIGINAL
 	private static String getRole(String groupName) {
-		log.info("[------------------getRole-------------------]");
+		
 		String roleName = "";
 		String aux = "";
 		String subGroup[] = null;
-		log.info("groupName: "+groupName);
+		
 		int index = groupName.lastIndexOf("GSEG-Nexo-Divisas_");
-		log.info("index: "+index);
+	
 		if(index != -1) {
 			aux = groupName.replaceAll("GSEG-Nexo-Divisas_", "");
-			log.info("aux: "+aux);
+			
 			subGroup = aux.split("_");
-			log.info("subGroup: "+subGroup);
+			
 			if(subGroup.length == 1) { 
 				  roleName = subGroup[0]; 
-				  log.info("roleName: "+roleName);
+				  
 			}else if(subGroup.length == 2){
 				roleName = subGroup[1];
-				log.info("roleName: "+roleName);
+				
 			}else if(subGroup.length > 2) {
 				roleName = subGroup[1]+"_"+subGroup[2];
-				log.info("roleName: "+roleName);
+				
 			}
 		}		
-		log.info("roleName: "+roleName);
-		log.info("[------------------FIN getRole-------------------]");
+		
 		return roleName;
 	}
 
 	
 	///esta la coloque yo 09072021 ORIGINAL
 		private static String getRole1(String groupName) {
-			log.info("[------------------getRole-------------------]");
+			
 			String roleName = "";
 			String aux = "";
 			String subGroup[] = null;
-			log.info("groupName: "+groupName);
+			
 			/*
 			int index = groupName.lastIndexOf("APP-CACTUS");
 			
@@ -398,8 +395,7 @@ return  privileges;*/
 			
 			
 			roleName = groupName;
-			log.info("roleName: "+roleName);
-			log.info("[------------------FIN getRole-------------------]");
+			
 			return roleName;
 		}
 	
