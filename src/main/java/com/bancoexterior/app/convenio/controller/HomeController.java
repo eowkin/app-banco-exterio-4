@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.bancoexterior.app.inicio.model.Grupo;
 import com.bancoexterior.app.inicio.model.Menu;
 import com.bancoexterior.app.inicio.service.IMenuService;
+
+import jdk.internal.org.jline.utils.Log;
+
 import com.bancoexterior.app.inicio.service.IGrupoService;
 
 
@@ -44,10 +47,11 @@ public class HomeController {
 		LOGGER.info("siempre me llama mostarHome");
 		LOGGER.info("[------------Menu por role--------------]");
 	    String username = auth.getName();
-	    /*
 	    
-		log.info("username: "+ username);
-	    List<Integer> listaInMenu = bucarListaMenuIn(auth);  
+	    
+	    LOGGER.info("username: "+ username);
+	    List<Integer> listaInMenu = bucarListaMenuIn(auth);
+	   
 	    if(!listaInMenu.isEmpty()) {
 			List<Menu> listaMenu = buscarListaMenuMostrar(listaInMenu);
 		    if(!listaMenu.isEmpty()) {
@@ -55,26 +59,55 @@ public class HomeController {
 		    		httpSession.setAttribute("listaMenu", listaMenu);
 					return "index";
 		    	}else {
-		    		log.info("[-----no tiene menu asignado-----]");
+		    		LOGGER.info("[-----no tiene menu asignado-----]");
 					return "redirect:/logout";
 		    	}
 		    	
 				
 		    }else{
-		    	log.info("[-----no tiene menu asignado-----]");
+		    	LOGGER.info("[-----no tiene menu asignado-----]");
 				return "redirect:/logout";
 		    }
 		}else {
-				log.info("[-----no tiene menu asignado-----]");
-				return "redirect:/logout";	
-		}*/
+			LOGGER.info("[-----no tiene menu asignado-----]");
+			return "redirect:/logout";	
+		}  
+	    
+	    
+	    
+	    
+	   
+	    
+	   
 		
-	    return "index"; 
+	     
 	    
 	}
 	
 	public List<Menu> buscarListaMenuMostrar(List<Integer> listaInMenu){
 		List<Menu> listaMenu = serviceMenu.todoMenuRoleIn(listaInMenu);;
+		LOGGER.info("[-----Si tiene menu asignado-----]");
+		
+	    if(!listaMenu.isEmpty()) {
+	    	
+	    	LOGGER.info("[-----------------------]");
+	    	LOGGER.info("Sin imprimir hijos");
+			for (Menu menu : listaMenu) {
+				LOGGER.info(menu.getNombre());
+				menu.setMenuHijos(buscarHijos(listaMenu, menu.getIdMenu()));
+			}
+			
+			
+			return listaMenu;
+	    }else{
+	    	LOGGER.info("[-----no tiene menu asignado-----]");
+			return listaMenu;
+	    }
+	}
+	
+	
+	public List<Menu> buscarListaMenuMostrarPorNombreGrupo(List<String> listaInMenu){
+		List<Menu> listaMenu = serviceMenu.todoMenuNombreGrupoIn(listaInMenu);;
 		LOGGER.info("[-----Si tiene menu asignado-----]");
 		
 	    if(!listaMenu.isEmpty()) {
@@ -124,9 +157,34 @@ public class HomeController {
 					LOGGER.info("listaMenus.size(): "+ listaMenus.size());
 					if(!listaMenus.isEmpty()) {
 						for (Menu menu : listaMenus) {
+							LOGGER.info("añadi a listaInMenu:"+menu.getIdMenu());
 							LOGGER.info(menu.getNombre());
 							listaInMenu.add(menu.getIdMenu());
 						}
+					}	
+				}
+			}
+		 
+		 return listaInMenu;
+	}
+	
+	
+	public List<String> bucarListaMenuInNombre(Authentication auth){
+		 List<String> listaInMenu = new ArrayList<>(); 
+		 List<Menu> listaMenus; 
+		 for (GrantedAuthority rol : auth.getAuthorities()) {
+			 LOGGER.info("Grupo: "+ rol.getAuthority());
+				Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+				LOGGER.info("Luego de Buscar Menu");
+				LOGGER.info("grupo: "+ grupo);
+				
+				if(grupo != null) {
+					LOGGER.info("grupo distinto de null ");
+					listaMenus = grupo.getMenus();
+					LOGGER.info("listaMenus.size(): "+ listaMenus.size());
+					if(!listaMenus.isEmpty()) {
+						LOGGER.info("añadi a lista :"+grupo.getNombreGrupo());
+						listaInMenu.add(grupo.getNombreGrupo());
 					}	
 				}
 			}

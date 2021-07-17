@@ -14,4 +14,6 @@ public interface IMenuService {
 	
 	public List<Menu> todoMenuRoleIn(List<Integer> valores);
 	
+	public List<Menu> todoMenuNombreGrupoIn(List<String>  valores);
+	
 }

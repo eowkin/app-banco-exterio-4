@@ -94,6 +94,7 @@ public class GrupoController {
 	public String save(GrupoDto grupoDto, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 		log.info("grupo: "+grupoDto.getNombreGrupo());
 		grupoDto.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
+		grupoDto.setFlagActivo(true);
 		GrupoDto grupoSave =   grupoServicio.save(grupoDto);
 		if(grupoSave != null) {
 			redirectAttributes.addFlashAttribute(MENSAJE, "Operacion Exitosa");
@@ -175,13 +176,25 @@ public class GrupoController {
 				for (Menu menu : listaMenu) {
 					id.setIdMenuPk(menu.getIdMenu());
 					gruposMenu.setIdPk(id);
-					gruposMenu.setCodUsuario("prueba");
+					gruposMenu.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
 					gruposMenuService.guardarGrupoMenus(gruposMenu);
 				}
 			}
 			
 		}else {
 			log.info("_[---------Si tiene Menu Actual, voy a borrar-----------]");
+			
+			for (Menu menu : listaActual) {
+				log.info("menu.getIdMenu(): "+menu.getIdMenu());
+				log.info("menu.getNombre(): "+menu.getNombre());
+				log.info("menu.getDireccion(): "+menu.getDireccion());
+				log.info("menu.getNivel(): "+menu.getNivel());
+				log.info("menu.getOrden(): "+menu.getOrden());
+				
+				
+			}
+			
+			
 			for (Menu menu : listaActual) {
 				id.setIdMenuPk(menu.getIdMenu());
 				log.info("id.getIdGrupoPk(): "+id.getIdGrupoPk());

@@ -1,0 +1,74 @@
+<nav th:fragment="menu-principal" class="sidebar-nav">
+        
+        <ul class="nav">
+          
+          <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">Gestion de Divisas</a>
+	            <ul class="nav-dropdown-items"> 
+	            		  
+		          	  <li class="nav-item">
+				         <a class="nav-link" th:href="@{/solicitudes/listaSolicitudesMovimientosPorAprobarVentas/1}" style="padding-left:30px;">Operacion de Tesoreria</a>
+				      </li>
+				      <li class="nav-item">
+			         	<a class="nav-link" th:href="@{/solicitudes/listaSolicitudesMovimientosVentas/1}" style="padding-left:30px;">Consulta de Solicitudes </a>
+			      	 </li>  	  
+	          	    	  
+	          	  	  
+	              <li class="nav-item nav-dropdown">
+	            	<a class="nav-link nav-dropdown-toggle" href="#" style="padding-left:30px;">Parametros Generales</a>
+		            <ul class="nav-dropdown-items">
+		              <li class="nav-item">
+		                <a class="nav-link" th:href="@{/monedas/index}" style="padding-left:40px;">Moneda</a>
+		              </li>
+		              <li class="nav-item">
+		                <a class="nav-link" th:href="@{/tasas/index}" style="padding-left:40px;">Tipo de Cambio</a>
+		              </li>
+		              <li class="nav-item">
+		                <a class="nav-link" th:href="@{/limitesGenerales/index}" style="padding-left:40px;">Limites Generales</a>
+		              </li>
+		              <li class="nav-item">
+		                <a class="nav-link" th:href="@{/clientesPersonalizados/index/1}" style="padding-left:40px;">Clientes Personalizados</a>
+		              </li>
+		              <li class="nav-item">
+		                <a class="nav-link" th:href="@{/agencias/index}" style="padding-left:40px;">Agencia</a>
+		              </li>
+		            </ul>
+          		 	</li>
+	  				        
+            </ul>
+          </li>
+          
+          <!--  
+           <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">Camara de Compensacion Electronica</a>
+	            <ul class="nav-dropdown-items"> 	  
+	          	  <li class="nav-item">
+			         <a class="nav-link" th:href="@{/ccetransacciones/formConsultaMovimientosConsultaAltoBajoValor}" style="padding-left:30px;">Consulta de Movimientos</a>
+			      </li>
+			      <li class="nav-item">
+			         <a class="nav-link" th:href="@{/ccetransacciones/formConsultaOperacionesAprobarAltoBajoValor}" style="padding-left:30px;">Aprobacion de Operaciones Alto Valor</a>
+			      </li>  
+			      <li class="nav-item">
+			         <a class="nav-link" th:href="@{/ccetransacciones/formAprobarMovimientosAltoValorLoteAutomatico}" style="padding-left:30px;">Aprobacion Alto Valor Lote Automatico</a>
+			      </li> 	  			        
+            </ul>
+          </li>
+          -->
+          
+          
+            
+           <li class="nav-item nav-dropdown">
+            <a class="nav-link nav-dropdown-toggle" href="#">Seguridad</a>
+	            <ul class="nav-dropdown-items"> 	  
+	          	  <li class="nav-item">
+			         <a class="nav-link" th:href="@{/grupos/index}" style="padding-left:30px;">Grupos</a>
+			      </li> 	  			        
+            </ul>
+          </li>
+          
+           
+          
+        </ul>
+      </nav>
+      
+      

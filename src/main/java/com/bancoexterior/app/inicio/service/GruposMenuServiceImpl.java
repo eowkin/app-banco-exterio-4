@@ -18,7 +18,8 @@ public class GruposMenuServiceImpl implements IGruposMenuService{
 	
 	@Override
 	public void borrarRealcion(GruposMenuPk id) {
-		repo.deleteById(id);
+		if(repo.existsById(id))
+			repo.deleteById(id);
 		
 	}
 

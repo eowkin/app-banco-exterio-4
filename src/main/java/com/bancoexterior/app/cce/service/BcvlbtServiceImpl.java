@@ -2,6 +2,8 @@ package com.bancoexterior.app.cce.service;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,11 +20,14 @@ import com.bancoexterior.app.convenio.response.Resultado;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Service
 public class BcvlbtServiceImpl implements IBcvlbtService{
+	
+	private static final Logger LOGGER = LogManager.getLogger(BcvlbtServiceImpl.class);
+	
 	@Autowired
 	private IWSService wsService;
 	
@@ -58,12 +63,12 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 	@Override
 	public AprobacionesConsultasResponse listaTransaccionesPorAporbarAltoValorPaginacion(
 			AprobacionesConsultasRequest aprobacionesConsultasRequest) throws CustomException {
-		log.info(BCVLBTSERVICELISTALISTATRANSACCIONESPORAPROBARI);
+		LOGGER.info(BCVLBTSERVICELISTALISTATRANSACCIONESPORAPROBARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobacionesConsultasRequestJSON;
 		aprobacionesConsultasRequestJSON = new Gson().toJson(aprobacionesConsultasRequest);
-		log.info("aprobacionesConsultasRequestJSON: "+aprobacionesConsultasRequestJSON);
+		LOGGER.info("aprobacionesConsultasRequestJSON: "+aprobacionesConsultasRequestJSON);
 		wsrequest.setBody(aprobacionesConsultasRequestJSON);
 		//wsrequest.setUrl("http://172.19.50.104:9001/api/des/V1/lbtr/aprobaciones/consultas");
 		//wsrequest.setUrl("http://localhost:9001/api/des/V1/lbtr/aprobaciones/consultas");
@@ -71,14 +76,14 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 		retorno = wsService.post(wsrequest);
 		if (retorno.isExitoso()) {
 			if (retorno.getStatus() == 200) {
-				log.info(BCVLBTSERVICELISTALISTATRANSACCIONESPORAPROBARF);
+				LOGGER.info(BCVLBTSERVICELISTALISTATRANSACCIONESPORAPROBARF);
 				return respuesta2xxListaTransaccionesPorAporbarAltoValorPaginacion(retorno);
 			} else {
-				log.error(respuesta4xxListaTransaccionesPorAporbarAltoValorPaginacion(retorno));
+				LOGGER.error(respuesta4xxListaTransaccionesPorAporbarAltoValorPaginacion(retorno));
 				throw new CustomException(respuesta4xxListaTransaccionesPorAporbarAltoValorPaginacion(retorno));
 			}
 		} else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 			
 		}
@@ -94,7 +99,7 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 	        }
 			
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 		
@@ -105,7 +110,7 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return  resultado.getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -126,12 +131,12 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 		WSResponse retorno;
 		String aprobacionesConsultasRequestJSON;
 		aprobacionesConsultasRequestJSON = new Gson().toJson(aprobacionesConsultasRequest);
-		log.info("aprobacionesConsultasRequestJSON: "+aprobacionesConsultasRequestJSON);
+		LOGGER.info("aprobacionesConsultasRequestJSON: "+aprobacionesConsultasRequestJSON);
 		wsrequest.setBody(aprobacionesConsultasRequestJSON);
 		wsrequest.setUrl("http://172.19.50.104:9001/api/des/V1/lbtr/aprobaciones/consultas");
-		log.info("antes de llamarte WS en listaTransaccionesPorAporbarAltoValorPaginacion");
+		LOGGER.info("antes de llamarte WS en listaTransaccionesPorAporbarAltoValorPaginacion");
 		retorno = wsService.post(wsrequest);
-		log.info("retorno: "+retorno);
+		LOGGER.info("retorno: "+retorno);
 		if (retorno.isExitoso()) {
 			if (retorno.getStatus() == 200) {
 				return respuesta2xxBCVLBT(retorno);
@@ -158,7 +163,7 @@ public class BcvlbtServiceImpl implements IBcvlbtService{
 	        }
 			
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 		

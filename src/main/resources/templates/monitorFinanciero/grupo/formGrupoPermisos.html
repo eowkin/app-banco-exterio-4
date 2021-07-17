@@ -42,7 +42,7 @@
 			          	<input type="hidden" th:field="*{fechaModificacion}">
 			            <label class="col-sm-5 col-form-label" for="nombreGrupo">Nombre del Grupo:</label>
 			            <div class="col-sm-6">
-			              <input type="text" class="form-control" id="nombreGrupo" name="nombreGrupo" th:field="*{nombreGrupo}" placeholder="Nombre del Grupo" maxlength="200" required="required"> 
+			              <input type="text" class="form-control" id="nombreGrupo" name="nombreGrupo" th:field="*{nombreGrupo}" placeholder="Nombre del Grupo" maxlength="200" disabled="disabled"> 
 			            </div>
 			          </div>
 			          <div  class="alert alert-success"  role="alert">Permisos Menu</div>
@@ -50,8 +50,8 @@
 			            <div class="col-sm-6">
 					            <table class="table table-striped table-hover">
 					            <thead>
-					            	<th>Nombre</th>
-					                <th>Cod. Usuario</th>
+					            	<th>Menu</th>
+					                <th>Permiso</th>
 					            </thead>
 					            <tbody>
 					              <tr th:each = "menu: ${listaMenu}">
@@ -68,7 +68,7 @@
 			          
 			          <div class="card-footer">
 			        	<button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-circle-o"></i> Aceptar</button>
-			        	<button type="reset" class="btn btn-sm btn-danger"><i class="fa fa-ban"></i> Cancelar</button>
+			        	<a   class="btn btn-sm btn-danger" role="button" th:href="@{/grupos/index}"><i class="fa fa-ban"></i>Cancelar</a>
 			      	  </div>
 			        </form>
 			      </div>

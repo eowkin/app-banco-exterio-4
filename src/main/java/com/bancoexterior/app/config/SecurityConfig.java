@@ -20,13 +20,13 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Value("${ldap.domain}")
+	@Value("${${app.ambiente}"+".ldap.domain}")
 	private String ldapDomain;
 
-	@Value("${ldap.url}")
+	@Value("${${app.ambiente}"+".ldap.url}")
 	private String ldapUrl;
 	
-	@Value("${ldap.base.dn}")
+	@Value("${${app.ambiente}"+".ldap.base.dn}")
 	private String ldapBaseDn;
 	
 	

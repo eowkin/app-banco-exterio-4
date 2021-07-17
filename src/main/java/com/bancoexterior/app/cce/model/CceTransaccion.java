@@ -13,8 +13,7 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

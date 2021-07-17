@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,12 +17,15 @@ import com.bancoexterior.app.cce.model.CceTransaccion;
 import com.bancoexterior.app.cce.repository.ICceTransaccionRepository;
 import com.bancoexterior.app.util.Mapper;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Service
 public class CceTransaccionServiceImpl implements ICceTransaccionService{
 
+	private static final Logger LOGGER = LogManager.getLogger(CceTransaccionServiceImpl.class);
+	
+	
 	//@Autowired 
 	private ICceTransaccionRepository repo;
 	
@@ -68,15 +73,15 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 	@Override
 	public List<CceTransaccionDto> consultaMovimientosConFechas(String codTransaccion, String bancoDestino,
 			String numeroIdentificacion, String fechaDesde, String fechaHasta) {
-		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASI);
+		LOGGER.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASI);
 		
 		fechaDesde = fechaDesde +" 00:00:00";
 		fechaHasta = fechaHasta +" 23:59:00";
-		log.info("codTransaccion: "+codTransaccion);
-		log.info("bancoDestino: "+bancoDestino);
-		log.info("numeroIdentificacion: "+numeroIdentificacion);
-		log.info("fechaDesde: "+fechaDesde);
-		log.info("fechaHasta: "+fechaHasta);
+		LOGGER.info("codTransaccion: "+codTransaccion);
+		LOGGER.info("bancoDestino: "+bancoDestino);
+		LOGGER.info("numeroIdentificacion: "+numeroIdentificacion);
+		LOGGER.info("fechaDesde: "+fechaDesde);
+		LOGGER.info("fechaHasta: "+fechaHasta);
 		
 		List<CceTransaccion> listaCceTransacciones = repo.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion, fechaDesde, fechaHasta);
 		List<CceTransaccionDto> listaCceTransaccionesDto = new ArrayList<>();
@@ -84,7 +89,7 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 			CceTransaccionDto cceTransaccionDto = mapper.map(cceTransaccion, CceTransaccionDto.class);
 			listaCceTransaccionesDto.add(cceTransaccionDto);
 		}
-		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASF);
+		LOGGER.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASF);
 		return listaCceTransaccionesDto;
 	}
 
@@ -93,8 +98,8 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 		fechaDesde = fechaDesde +" 00:00:00";
 		fechaHasta = fechaHasta +" 23:59:00";
 		
-		log.info("fechaDesde: "+fechaDesde);
-		log.info("fechaHasta: "+fechaHasta);
+		LOGGER.info("fechaDesde: "+fechaDesde);
+		LOGGER.info("fechaHasta: "+fechaHasta);
 		
 		
 		List<CceTransaccion> listaCceTransacciones = repo.consultaMovimientosConFechasPrueba(fechaDesde, fechaHasta);
@@ -115,16 +120,16 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 	@Override
 	public Page<CceTransaccion> consultaMovimientosConFechas(String codTransaccion, String bancoDestino,
 			String numeroIdentificacion, String fechaDesde, String fechaHasta, Pageable page) {
-		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEI);
+		LOGGER.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEI);
 		
 		fechaDesde = fechaDesde +" 00:00:00";
 		fechaHasta = fechaHasta +" 23:59:00";
-		log.info("codTransaccion: "+codTransaccion);
-		log.info("bancoDestino: "+bancoDestino);
-		log.info("numeroIdentificacion: "+numeroIdentificacion);
-		log.info("fechaDesde: "+fechaDesde);
-		log.info("fechaHasta: "+fechaHasta);
-		log.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEF);
+		LOGGER.info("codTransaccion: "+codTransaccion);
+		LOGGER.info("bancoDestino: "+bancoDestino);
+		LOGGER.info("numeroIdentificacion: "+numeroIdentificacion);
+		LOGGER.info("fechaDesde: "+fechaDesde);
+		LOGGER.info("fechaHasta: "+fechaHasta);
+		LOGGER.info(CCETRANSACCIONSERVICECONSULTAMOVIMIENTOSCONFECHASPAGEF);
 		return repo.consultaMovimientosConFechas(codTransaccion, bancoDestino, numeroIdentificacion, fechaDesde, fechaHasta, page); 
 	}
 
@@ -132,13 +137,13 @@ public class CceTransaccionServiceImpl implements ICceTransaccionService{
 
 	@Override
 	public CceTransaccionDto findByEndtoendId(String endtoendId) {
-		log.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDI);
+		LOGGER.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDI);
 		CceTransaccion cceTransaccion = repo.findById(endtoendId).orElse(null);
 		if(cceTransaccion != null) {
-			log.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDF);
+			LOGGER.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDF);
 			return mapper.map(cceTransaccion, CceTransaccionDto.class);
 		}
-		log.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDF);
+		LOGGER.info(CCETRANSACCIONSERVICEFINDBYENDTOENDIDF);
 		return null;
 	}
 

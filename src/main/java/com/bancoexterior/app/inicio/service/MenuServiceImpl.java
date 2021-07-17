@@ -37,4 +37,10 @@ public class MenuServiceImpl implements IMenuService{
 		return repo.findAll();
 	}
 
+	@Override
+	public List<Menu> todoMenuNombreGrupoIn(List<String> valores) {
+		
+		return repo.menuNombreGrupoIn(valores);
+	}
+
 }

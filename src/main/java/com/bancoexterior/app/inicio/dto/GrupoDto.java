@@ -22,6 +22,8 @@ public class GrupoDto {
 	
 	private String codUsuario;
 	
+	private boolean flagActivo;
+	
 	private List<Menu> menus;
 	
 	private Date fechaModificacion;

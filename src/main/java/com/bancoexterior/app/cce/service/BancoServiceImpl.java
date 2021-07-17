@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,12 +21,14 @@ import com.bancoexterior.app.convenio.response.Resultado;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Service
 public class BancoServiceImpl implements IBancoService{
 
+	private static final Logger LOGGER = LogManager.getLogger(BancoServiceImpl.class);
+	
 	@Autowired
 	private IWSService wsService;
     
@@ -68,7 +72,7 @@ public class BancoServiceImpl implements IBancoService{
     
 	@Override
 	public List<Banco> listaBancos(BancoRequest bancoRequest) throws CustomException {
-		log.info(BANCOSERVICELISTABANCOSI);
+		LOGGER.info(BANCOSERVICELISTABANCOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String bancoRequestJSON;
@@ -80,14 +84,14 @@ public class BancoServiceImpl implements IBancoService{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(BANCOSERVICELISTABANCOSF);
+				LOGGER.info(BANCOSERVICELISTABANCOSF);
 	            return respuest2xxlistaBancos(retorno);
 			}else {
-				log.error(respuesta4xx(retorno));
+				LOGGER.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -101,7 +105,7 @@ public class BancoServiceImpl implements IBancoService{
 	        	return new ArrayList<>();
 	        }
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -113,7 +117,7 @@ public class BancoServiceImpl implements IBancoService{
 			return resultado.getDescripcion();
 			
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -127,7 +131,7 @@ public class BancoServiceImpl implements IBancoService{
 	        	return null;
 	        }
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
         
@@ -138,7 +142,7 @@ public class BancoServiceImpl implements IBancoService{
 
 	@Override
 	public Banco buscarBanco(BancoRequest bancoRequest) throws CustomException {
-		log.info(BANCOSERVICEBUSCARBANCOSI);
+		LOGGER.info(BANCOSERVICEBUSCARBANCOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String bancoRequestJSON;
@@ -149,14 +153,14 @@ public class BancoServiceImpl implements IBancoService{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(BANCOSERVICEBUSCARBANCOSF);
+				LOGGER.info(BANCOSERVICEBUSCARBANCOSF);
 	            return respuest2xxBanco(retorno);
 			}else {
-				log.error(respuesta4xx(retorno));
+				LOGGER.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}

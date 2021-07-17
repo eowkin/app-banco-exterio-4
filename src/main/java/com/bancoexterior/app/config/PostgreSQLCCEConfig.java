@@ -22,9 +22,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.bancoexterior.app.seguridad.MiCipher;
 
-import lombok.extern.slf4j.Slf4j;
 
-//@Slf4j
+
+
 //@Configuration
 //@EnableTransactionManagement
 //@EnableJpaRepositories(entityManagerFactoryRef = "adminEntityManagerFactory", transactionManagerRef = "adminTransactionManager", 
