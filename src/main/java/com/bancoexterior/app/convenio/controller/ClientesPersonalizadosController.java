@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +66,12 @@ public class ClientesPersonalizadosController {
 	@Value("${${app.ambiente}"+".clientesPersonalizados.numeroRegistroPage}")
     private int numeroRegistroPage;
 	
+	@Value("${${app.ambiente}"+".clientesPersonalizados.valorBD}")
+    private int valorBD;
+	
 	private static final String URLINDEX = "convenio/clientesPersonalizados/listaClientesPersonalizados";
+	
+	private static final String URLNOPERMISO = "error/403";
 	
 	private static final String URLINDEXLIMITESPERSONALIZADOS = "convenio/clientesPersonalizados/listaLimitesPersonalizados";
 	
@@ -96,6 +102,8 @@ public class ClientesPersonalizadosController {
 	private static final String LISTAERROR = "listaError";
 	
 	private static final String MENSAJE = "mensaje";
+	
+	private static final String NOTIENEPERMISO = "No tiene Permiso";
 	
 	private static final String MENSAJENORESULTADO = "La consulta no arrojo resultado.";
 	
@@ -168,8 +176,12 @@ public class ClientesPersonalizadosController {
 	
 	
 	@GetMapping("/index/{page}")
-	public String index(@PathVariable("page") int page,Model model, RedirectAttributes redirectAttributes) {
+	public String index(@PathVariable("page") int page,Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERINDEXI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		ClienteRequest clienteRequest = getClienteRequest();
 		clienteRequest.setNumeroPagina(page);
 		clienteRequest.setTamanoPagina(numeroRegistroPage);
@@ -215,9 +227,12 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/activar/{codigoIbs}/{page}")
 	public String activarWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
 
@@ -247,8 +262,12 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/desactivar/{codigoIbs}/{page}")
 	public String desactivarWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
 
 		ClienteRequest clienteRequest = getClienteRequest();
@@ -277,9 +296,12 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/edit/{codigoIbs}")
 	public String editarWs(@PathVariable("codigoIbs") String codigoIbs, 
-			ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
+			ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARI);
-
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
 
 		ClienteRequest clienteRequest = getClienteRequest();
@@ -306,8 +328,12 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/verLimites/{codigoIbs}")
 	public String verLimitesWs(@PathVariable("codigoIbs") String codigoIbs, 
-			ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
+			ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERVERLIMITESI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<LimitesPersonalizados> listaLimitesPersonalizados = new ArrayList<>();
 		
 		LimitesPersonalizadosRequest limitesPersonalizadosRequest = getLimitesPersonalizadosRequest();
@@ -369,9 +395,13 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/editLimiteCliente/{codigoIbs}/{codMoneda}/{tipoTransaccion}")
 	public String editarLimiteClienteWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("codMoneda") String codMoneda, 
-			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,Model model, RedirectAttributes redirectAttributes) {
+			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,Model model, 
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLEREDITARLIMITESI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		LimitesPersonalizados limitesPersonalizadosEdit = new LimitesPersonalizados();
 		LimitesPersonalizadosRequest limitesPersonalizadosRequest = getLimitesPersonalizadosRequest();
 		LimitesPersonalizados limitesP = new LimitesPersonalizados();
@@ -402,8 +432,12 @@ public class ClientesPersonalizadosController {
 	
 	@PostMapping("/guardarLimiteCliente")
 	public String guardarLimiteClienteWs(LimitesPersonalizados limitesPersonalizados, BindingResult result,
-			RedirectAttributes redirectAttributes, Model model) {
+			RedirectAttributes redirectAttributes, Model model, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARLIMITEI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<String> listaError = new ArrayList<>();
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
@@ -458,9 +492,14 @@ public class ClientesPersonalizadosController {
 	
 	
 	@GetMapping("/formLimiteClientePersonalizado/{codigoIbs}")
-	public String formLimiteClientePersonalizado(@PathVariable("codigoIbs") String codigoIbs,LimitesPersonalizados limitesPersonalizados,  Model model, RedirectAttributes redirectAttributes) {
+	public String formLimiteClientePersonalizado(@PathVariable("codigoIbs") String codigoIbs,LimitesPersonalizados limitesPersonalizados,  
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERFORMLIMITEI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Moneda> listaMonedas = new ArrayList<>();
 		ClientesPersonalizados clientesPersonalizadosEdit = new ClientesPersonalizados();
 
@@ -497,9 +536,13 @@ public class ClientesPersonalizadosController {
 	}
 	
 	@PostMapping("/saveLimiteCliente")
-	public String saveLimiteClienteWs(LimitesPersonalizados limitesPersonalizados, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+	public String saveLimiteClienteWs(LimitesPersonalizados limitesPersonalizados, BindingResult result, Model model, 
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSAVELIMITEI);
-
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		
 		List<Moneda> listaMonedas;
 		List<String> listaError = new ArrayList<>();
@@ -581,9 +624,13 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/activarLimiteCliente/{codigoIbs}/{codMoneda}/{tipoTransaccion}")
 	public String activarLimiteClienteWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("codMoneda") String codMoneda, 
-			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,Model model, RedirectAttributes redirectAttributes) {
+			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERACTIVARLIMITEI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		LimitesPersonalizados limitesPersonalizadosEdit = new LimitesPersonalizados();
 		
 		LimitesPersonalizadosRequest limitesPersonalizadosRequest = getLimitesPersonalizadosRequest();
@@ -613,8 +660,13 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/desactivarLimiteCliente/{codigoIbs}/{codMoneda}/{tipoTransaccion}")
 	public String desactivarLimiteClienteWs(@PathVariable("codigoIbs") String codigoIbs, @PathVariable("codMoneda") String codMoneda, 
-			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,Model model, RedirectAttributes redirectAttributes) {
+			@PathVariable("tipoTransaccion") String tipoTransaccion,LimitesPersonalizados limitesPersonalizados,
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERDESACTIVARLIMITEI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		LOGGER.info(codigoIbs);
 		LOGGER.info(codMoneda);
 		LOGGER.info(tipoTransaccion);
@@ -649,8 +701,12 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/search")
 	public String search(
 			@ModelAttribute("clientesPersonalizadosSearch") ClientesPersonalizados clientesPersonalizadosSearch,
-			Model model, RedirectAttributes redirectAttributes) {
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		ClienteRequest clienteRequest = getClienteRequest();
 		clienteRequest.setNumeroPagina(1);
 		clienteRequest.setTamanoPagina(numeroRegistroPage);
@@ -708,9 +764,12 @@ public class ClientesPersonalizadosController {
 	@GetMapping("/searchNroIdCliente")
 	public String searchNroIdCliente(
 			@ModelAttribute("clientesPersonalizadosSearch") ClientesPersonalizados clientesPersonalizadosSearch,
-			Model model, RedirectAttributes redirectAttributes) {
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHNROIDI);
-
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 	
 		ClienteRequest clienteRequest = getClienteRequest();
 		clienteRequest.setNumeroPagina(1);
@@ -775,8 +834,12 @@ public class ClientesPersonalizadosController {
 	
 	@GetMapping("/searchCrear")
 	public String searchCrear(ClientesPersonalizados clientesPersonalizados,
-			Model model, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+			Model model, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSEARCHCREARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		ClienteDatosBasicoRequest clienteDatosBasicoRequest = getClienteDatosBasicoRequest();
 		clienteDatosBasicoRequest.setIp(request.getRemoteAddr());
 		if(!clientesPersonalizados.getCodigoIbs().equals(""))
@@ -812,9 +875,12 @@ public class ClientesPersonalizadosController {
 	}	
 
 	@PostMapping("/guardar")
-	public String guardarWs(ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
+	public String guardarWs(ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERGUARDARI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		ClienteRequest clienteRequest = getClienteRequest();
 		clientesPersonalizados.setFlagActivo(true);
 		clienteRequest.setCliente(clientesPersonalizados);
@@ -835,9 +901,12 @@ public class ClientesPersonalizadosController {
 	
 	
 	@PostMapping("/save")
-	public String saveWs(ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes) {
+	public String saveWs(ClientesPersonalizados clientesPersonalizados, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(CLIENTESPERSONALIZADOSCONTROLLERSAVEI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		
 		ClienteRequest clienteRequest = getClienteRequest();
 		clientesPersonalizados.setFlagActivo(true);
@@ -862,15 +931,21 @@ public class ClientesPersonalizadosController {
 	
 	
 	@GetMapping("/formClientePersonalizado")
-	public String formClientePersonalizado(Model model) {
-
+	public String formClientePersonalizado(Model model, HttpSession httpSession) {
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		return URLFORMCLIENTESPERSONALIZADOS;
 	}
 	
 	
 	@GetMapping("/formClientePersonalizadoBuscar")
-	public String formClientePersonalizadoBuscar(ClientesPersonalizados clientesPersonalizados) {
-
+	public String formClientePersonalizadoBuscar(ClientesPersonalizados clientesPersonalizados, HttpSession httpSession) {
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		return URLFORMCLIENTESPERSONALIZADOSBUSCAR;
 	}
 	

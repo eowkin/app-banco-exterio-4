@@ -23,11 +23,10 @@
       <main class="main">
         <!-- Breadcrumb-->
         <ol class="breadcrumb">
-          <li class="breadcrumb-item">Home</li>
           <li class="breadcrumb-item">
-            <a href="#">Admin</a>
+            <a th:href="@{/}">Home</a>
           </li>
-          <li class="breadcrumb-item active">Dashboard</li>
+          <li class="breadcrumb-item active">Permisos</li>
           <!-- Breadcrumb Menu-->
    
         </ol>
@@ -47,16 +46,7 @@
                     <small class="text-muted">ERROR HTTP 403 - NO TIENE LOS PERMISOS PARA VER EL RECURSO SOLICITADO.</small>
                   </div>
                 </li>                                                                                                              
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                  <div>
-                    <small class="text-muted" th:text="'RECURSO: ' + ${path}"></small>
-                  </div>
-                </li>      
-                <li class="list-group-item d-flex justify-content-between lh-condensed">
-                  <div>
-                    <small class="text-muted" th:text="'FECHA: ' + ${#dates.format(timestamp, 'dd-MM-yyyy HH:mm')}"></small>
-                  </div>
-                </li>                                                                                                                 
+                                                                                                                                
               </ul>
               <a class="btn btn-primary" role="button" th:href="@{/}">Ir a Inicio</a>
             </div>			

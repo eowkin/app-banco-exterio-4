@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,8 +57,12 @@ public class TasaController {
 	@Value("${${app.ambiente}"+".canal}")
     private String canal;	
 	
+	@Value("${${app.ambiente}"+".tasa.valorBD}")
+    private int valorBD;
 	
 	private static final String URLINDEX = "convenio/tasa/listaTasas";
+	
+	private static final String URLNOPERMISO = "error/403";
 	
 	private static final String URLFORMTASA = "convenio/tasa/formTasa";
 	
@@ -75,6 +79,8 @@ public class TasaController {
 	private static final String REDIRECTINDEX = "redirect:/tasas/index";
 	
 	private static final String MENSAJE = "mensaje";
+	
+	private static final String NOTIENEPERMISO = "No tiene Permiso";
 
 	private static final String MENSAJECONSULTANOARROJORESULTADOS = "La consulta no arrojo resultado";
 	
@@ -99,9 +105,12 @@ public class TasaController {
 	private static final String TASACONTROLLERSAVEF = "[==== FIN Save Tasa - Controller ====]";
 	
 	@GetMapping("/index")
-	public String index(Model model, RedirectAttributes redirectAttributes) {
+	public String index(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(TASACONTROLLERINDEXI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Tasa> listaTasas = new ArrayList<>();
 		
 		TasaRequest tasaRequest = getTasaRequest();
@@ -132,47 +141,20 @@ public class TasaController {
 		
 	}	
 	
-	@GetMapping("/edit/{codMonedaOrigen}/{codMonedaDestino}/{tipoOperacion}")
-	public String editarWs(@PathVariable("codMonedaOrigen") String codMonedaOrigen, 
-			@PathVariable("codMonedaDestino") String codMonedaDestino, @PathVariable("tipoOperacion") Integer tipoOperacion,
-			Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
-		LOGGER.info(TASACONTROLLEREDITARI);
-		Tasa tasaEdit = new Tasa();
-		TasaRequest tasaRequest = getTasaRequest();
-		Tasa tasaBuscar = new Tasa();
-		tasaBuscar.setCodMonedaOrigen(codMonedaOrigen);
-		tasaBuscar.setCodMonedaDestino(codMonedaDestino);
-		tasaBuscar.setTipoOperacion(tipoOperacion);
-		tasaRequest.setTasa(tasaBuscar);
-		
-		try {
-			tasaEdit = tasaServiceApiRest.buscarTasa(tasaRequest);
-			if(tasaEdit != null) {
-				
-				model.addAttribute("tasa", tasaEdit);
-				LOGGER.info(TASACONTROLLEREDITARF);
-            	return URLFORMTASAEDIT;
-			}else {
-				redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
-				LOGGER.info(TASACONTROLLEREDITARF);
-				return REDIRECTINDEX;
-			}
-		} catch (CustomException e) {
-			LOGGER.error(e.getMessage());
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
-			return REDIRECTINDEX;
-		}
-		
-		
-		
-	}
+	
 	
 	
 	@GetMapping("/edit")
 	public String editarWsPrueba(@RequestParam("codMonedaOrigen") String codMonedaOrigen, 
 			@RequestParam("codMonedaDestino") String codMonedaDestino, @RequestParam("tipoOperacion") Integer tipoOperacion,
-			Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
+			Tasa tasa, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(TASACONTROLLEREDITARI);
+		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
 		Tasa tasaEdit = new Tasa();
 		TasaRequest tasaRequest = getTasaRequest();
 		Tasa tasaBuscar = new Tasa();
@@ -206,8 +188,14 @@ public class TasaController {
 	
 	
 	@PostMapping("/guardar")
-	public String guardarWs(Tasa tasa, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+	public String guardarWs(Tasa tasa, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(TASACONTROLLERGUARDARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
+		
 		List<String> listaError = new ArrayList<>();
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
@@ -249,8 +237,14 @@ public class TasaController {
 	}
 	
 	@GetMapping("/formTasa")
-	public String formTasa(Tasa tasa, Model model, RedirectAttributes redirectAttributes) {
+	public String formTasa(Tasa tasa, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(TASACONTROLLERFORMI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
+		
 		List<Moneda> listaMonedas = new ArrayList<>();
 		
 		MonedasRequest monedasRequest = getMonedasRequest();
@@ -274,8 +268,12 @@ public class TasaController {
 	}	
 	
 	@PostMapping("/save")
-	public String saveWs(Tasa tasa, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+	public String saveWs(Tasa tasa, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(TASACONTROLLERSAVEI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<String> listaError = new ArrayList<>();
 		List<Moneda> listaMonedas;
 		MonedasRequest monedasRequest = getMonedasRequest();

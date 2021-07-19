@@ -15,7 +15,6 @@ public class MenuServiceImpl implements IMenuService{
 	IMenuRepository repo;
 	
 	@Override
-	@Transactional(readOnly = true)
 	public List<Menu> todoMenu() {
 		return repo.menuOrdenado();
 	}

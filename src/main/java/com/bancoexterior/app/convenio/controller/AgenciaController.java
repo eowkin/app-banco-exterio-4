@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,8 +14,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,13 +46,16 @@ public class AgenciaController {
 	@Value("${${app.ambiente}"+".canal}")
     private String canal;	
 	
+	@Value("${${app.ambiente}"+".agencia.valorBD}")
+    private int valorBD;
+	
 	private static final String URLINDEX = "convenio/agencia/listaAgencias";
+	
+	private static final String URLNOPERMISO = "error/403";
 	
 	private static final String URLFORMAGENCIA = "convenio/agencia/formAgencia";
 	
 	private static final String URLFORMAGENCIABUSCAR = "convenio/agencia/formBuscarAgencia";
-	
-	private static final String URLFORMAGENCIAEDIT = "convenio/agencia/formAgenciaEdit";
 	
 	private static final String LISTAAGENCIAS = "listaAgencias";
 	
@@ -62,6 +64,8 @@ public class AgenciaController {
 	private static final String REDIRECTINDEX = "redirect:/agencias/index";
 	
 	private static final String MENSAJE = "mensaje";
+	
+	private static final String NOTIENEPERMISO = "No tiene Permiso";
 	
 	private static final String AGENCIA = "agencia";
 	
@@ -78,14 +82,6 @@ public class AgenciaController {
 	private static final String AGENCIACONTROLLERDESACTIVARI = "[==== INICIO Desactivar Agencia - Controller ====]";
 	
 	private static final String AGENCIACONTROLLERDESACTIVARF = "[==== FIN Desactivar Agencia - Controller ====]";
-	
-	private static final String AGENCIACONTROLLEREDITARI = "[==== INICIO Editar Agencia Consulta - Controller ====]";
-	
-	private static final String AGENCIACONTROLLEREDITARF = "[==== FIN Editar Agencia Consulta - Controller ====]";
-	
-	private static final String AGENCIACONTROLLERGUARDARI = "[==== INICIO Guardar Agencia - Controller ====]";
-	
-	private static final String AGENCIACONTROLLERGUARDARF = "[==== FIN Guardar Agencia - Controller ====]";
 	
 	private static final String AGENCIACONTROLLERFORMBUSCARI = "[==== INICIO FormBuscar Agencia - Controller ====]";
 	
@@ -108,9 +104,12 @@ public class AgenciaController {
 	private static final String AGENCIACONTROLLERSEACRHNOMBREF = "[==== FIN SearchNombre Agencia - Controller ====]";
 	
 	@GetMapping("/index")
-	public String index(Model model, RedirectAttributes redirectAttributes) {
+	public String index(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERINDEXI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		Agencia agencia = new Agencia();
@@ -138,9 +137,12 @@ public class AgenciaController {
 	
 	@GetMapping("/activar/{codAgencia}")
 	public String activarWs(@PathVariable("codAgencia") String codAgencia, Model model,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERACTIVARI);
-	
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		Agencia agenciaEdit = new Agencia(); 
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		Agencia agencia = new Agencia();
@@ -166,9 +168,12 @@ public class AgenciaController {
 	
 	@GetMapping("/desactivar/{codAgencia}")
 	public String desactivarWs(@PathVariable("codAgencia") String codAgencia, Model model,
-			RedirectAttributes redirectAttributes) {
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERDESACTIVARI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		Agencia agenciaEdit = new Agencia(); 
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		Agencia agencia = new Agencia();
@@ -192,67 +197,18 @@ public class AgenciaController {
 	}
 	
 	
-	@GetMapping("/edit/{codAgencia}")
-	public String editarWs(@PathVariable("codAgencia") String codAgencia, 
-			Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
-		LOGGER.info(AGENCIACONTROLLEREDITARI);
-		
-		Agencia agenciaEdit = new Agencia(); 
-		AgenciaRequest agenciaRequest = getAgenciaRequest();
-		Agencia agenciaBuscar = new Agencia();
-		agenciaBuscar.setFlagDivisa(true);
-		agenciaBuscar.setCodAgencia(agencia.getCodAgencia());
-		agenciaRequest.setAgencia(agenciaBuscar);
-		
-		try {
-			agenciaEdit = agenciaServiceApiRest.buscarAgencia(agenciaRequest);
-			if(agenciaEdit != null) {
-				model.addAttribute(AGENCIA, agenciaEdit);
-				LOGGER.info(AGENCIACONTROLLEREDITARF);
-				return URLFORMAGENCIAEDIT;
-			}else {
-				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-				return REDIRECTINDEX;
-			}
-		} catch (CustomException e) {
-			LOGGER.error(e.getMessage());
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
-			return REDIRECTINDEX;
-		}
-		
-		
-	}
 	
-	@PostMapping("/guardar")
-	public String guardarWs(Agencia agencia, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		LOGGER.info(AGENCIACONTROLLERGUARDARI);
-		
-		AgenciaRequest agenciaRequest = getAgenciaRequest();
-		agencia.setFlagActivo(true);
-		agencia.setFlagDivisa(true);
-		agenciaRequest.setAgencia(agencia);
 	
-		
-		try {
-			
-			String respuesta = agenciaServiceApiRest.actualizar(agenciaRequest);
-			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			LOGGER.info(respuesta);
-			LOGGER.info(AGENCIACONTROLLERGUARDARF);
-			return REDIRECTINDEX;
-		} catch (CustomException e) {
-			LOGGER.error(e.getMessage());
-			result.addError(new ObjectError("codMoneda", " Codigo :" +e.getMessage()));
-			return URLFORMAGENCIAEDIT;
-		}
-		
-	}
+	
 	
 	
 	@GetMapping("/formBuscarAgencia")
-	public String fromBuscarAgencia(Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
+	public String fromBuscarAgencia(Agencia agencia, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERFORMBUSCARI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		Agencia agenciaBuscar = new Agencia();
@@ -273,15 +229,21 @@ public class AgenciaController {
 	}
 	
 	@GetMapping("/formAgencia")
-	public String fromAgencia(Agencia agencia,  Model model) {
-		
+	public String fromAgencia(Agencia agencia,  Model model, HttpSession httpSession) {
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		return URLFORMAGENCIA;
 	}
 	
 	@GetMapping("/searchCrear")
-	public String searchCrear(Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
+	public String searchCrear(Agencia agencia, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERSEACRHCREARI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Agencia> listaAgencias = new ArrayList<>();
 		Agencia agenciaEdit = new Agencia(); 
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
@@ -330,9 +292,12 @@ public class AgenciaController {
 	
 	
 	@PostMapping("/save")
-	public String saveWs(Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
+	public String saveWs(Agencia agencia, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERSAVEI);
-	
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		agencia.setFlagActivo(true);
 		agencia.setFlagDivisa(true);
@@ -355,9 +320,12 @@ public class AgenciaController {
 	
 	@GetMapping("/search")
 	public String search(@ModelAttribute("agenciaSearch") Agencia agenciaSearch,
-			Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
+			Agencia agencia, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERSEACRHI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		Agencia agenciaBuscar = new Agencia();
@@ -394,9 +362,12 @@ public class AgenciaController {
 	
 	@GetMapping("/searchNombre")
 	public String searchNombre(@ModelAttribute("agenciaSearch") Agencia agenciaSearch,
-			Agencia agencia, Model model, RedirectAttributes redirectAttributes) {
+			Agencia agencia, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(AGENCIACONTROLLERSEACRHNOMBREI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Agencia> listaAgencias = new ArrayList<>();
 		AgenciaRequest agenciaRequest = getAgenciaRequest();
 		Agencia agenciaBuscar = new Agencia();

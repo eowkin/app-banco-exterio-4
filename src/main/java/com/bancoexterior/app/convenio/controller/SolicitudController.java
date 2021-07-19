@@ -12,6 +12,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,14 +53,16 @@ import com.bancoexterior.app.util.ConsultaExcelExporter;
 import com.bancoexterior.app.util.LibreriaUtil;
 
 
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
+
+
 @Controller
 @RequestMapping("/solicitudes")
 public class SolicitudController {
 		
+	private static final Logger LOGGER = LogManager.getLogger(SolicitudController.class);
+	
 	@Autowired
 	private IMovimientosApiRest movimientosApiRest;
 	
@@ -74,6 +80,16 @@ public class SolicitudController {
 	
 	@Value("${${app.ambiente}"+".movimientos.numeroRegistroPage}")
     private int numeroRegistroPage;
+	
+	@Value("${${app.ambiente}"+".movimientos.operaciones.valorBD}")
+    private int valorOperacionBD;
+	
+	@Value("${${app.ambiente}"+".movimientos.consultas.valorBD}")
+    private int valorConsultaBD;
+	
+	private static final String URLNOPERMISO = "error/403";
+	
+	private static final String NOTIENEPERMISO = "No tiene Permiso";
 	
 	private static final String VENTAACUMULADOUSD = "ventaAcumuladoUSD";
 	
@@ -228,8 +244,12 @@ public class SolicitudController {
 	private static final String SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF = "[==== FIN ListaConsultaSearchEstatusCompra Movimientos Consultas - Controller ====]";
 	
 	@GetMapping("/listaSolicitudesMovimientosPorAprobarVentas/{page}")
-	public String consultaMovimientoPorAprobarVenta(@PathVariable("page") int page,Model model) {
-		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASI);
+	public String consultaMovimientoPorAprobarVenta(@PathVariable("page") int page,Model model, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -283,7 +303,6 @@ public class SolicitudController {
 			
 			compraPorAprobarEUR = acumuladosPorAprobarCompra("EUR");
 			model.addAttribute(COMPRAPORAPROBAREUR, evaluarBigDecimalCompra(compraPorAprobarEUR));
-			log.info("compraPorAprobarEUR: "+compraPorAprobarEUR);
 			
 			montoBsTotalPorAprobarCompra =  compraPorAprobarEUR.getMontoBs().add(compraPorAprobarUSD.getMontoBs());
 			model.addAttribute(MONTOBSTOTALPORAPROBARCOMPRA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalPorAprobarCompra)));
@@ -331,7 +350,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 					
 					
@@ -340,7 +359,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARVENTASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 				}
 				
@@ -348,7 +367,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -383,8 +402,12 @@ public class SolicitudController {
 	
 	
 	@GetMapping("/listaSolicitudesMovimientosPorAprobarCompra/{page}")
-	public String consultaMovimientoPorAprobarCompra(@PathVariable("page") int page,Model model) {
-		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASI);
+	public String consultaMovimientoPorAprobarCompra(@PathVariable("page") int page,Model model, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -438,7 +461,6 @@ public class SolicitudController {
 			
 			compraPorAprobarEUR = acumuladosPorAprobarCompra("EUR");
 			model.addAttribute(COMPRAPORAPROBAREUR, evaluarBigDecimalCompra(compraPorAprobarEUR));
-			log.info("compraPorAprobarEUR: "+compraPorAprobarEUR);
 			
 			montoBsTotalPorAprobarCompra =  compraPorAprobarEUR.getMontoBs().add(compraPorAprobarUSD.getMontoBs());
 			model.addAttribute(MONTOBSTOTALPORAPROBARCOMPRA, libreriaUtil.formatNumber(evaluarBigDecimal(montoBsTotalPorAprobarCompra)));
@@ -483,7 +505,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 					
 					
@@ -492,7 +514,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSAPROBARCOMPRASF);
 					return URLLISTAMOVIMIENTOSPORAPROBARVENTA;
 				}
 				
@@ -500,7 +522,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -534,8 +556,12 @@ public class SolicitudController {
 	
 	
 	@GetMapping("/listaSolicitudesMovimientosVentas/{page}")
-	public String consultaMovimientoVenta(@PathVariable("page") int page,Model model) {
-		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASI);
+	public String consultaMovimientoVenta(@PathVariable("page") int page,Model model, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		
@@ -589,7 +615,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASF);
 					return URLLISTAMOVIMIENTOSVENTA;
 					
 					
@@ -598,7 +624,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSVENTASF);
 					return URLLISTAMOVIMIENTOSVENTA;
 				}
 				
@@ -606,7 +632,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -619,8 +645,12 @@ public class SolicitudController {
 	
 	
 	@GetMapping("/listaSolicitudesMovimientosCompras/{page}")
-	public String consultaMovimientoCompra(@PathVariable("page") int page,Model model) {
-		log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASI);
+	public String consultaMovimientoCompra(@PathVariable("page") int page,Model model, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		
@@ -674,7 +704,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASF);
 					return URLLISTAMOVIMIENTOSCOMPRA;
 					
 					
@@ -683,7 +713,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTAMOVIMIENTOSCOMPRASF);
 					return URLLISTAMOVIMIENTOSCOMPRA;
 				}
 				
@@ -691,7 +721,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -704,8 +734,12 @@ public class SolicitudController {
 	
 	@GetMapping("/procesarCompra/{codOperacion}/{page}")
 	public String procesarCompra(@PathVariable("codOperacion") String codOperacion, @PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes, Movimiento movimiento ) {
-		log.info(SOLICITUDCONTROLLERPROCESARCOMPRAI);
+			RedirectAttributes redirectAttributes, Movimiento movimiento, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERPROCESARCOMPRAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
@@ -725,7 +759,7 @@ public class SolicitudController {
 				movimientoProcesar.setPaginaActual(page);
 				model.addAttribute(PAGINAACTUAL, page);
 				model.addAttribute("movimiento", movimientoProcesar);
-				log.info(SOLICITUDCONTROLLERPROCESARCOMPRAF);
+				LOGGER.info(SOLICITUDCONTROLLERPROCESARCOMPRAF);
 				return URLFORMSOLICITUD;
 			}else {
 				String mensajeError = response.getResultado().getDescripcion();
@@ -733,7 +767,7 @@ public class SolicitudController {
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 			}	
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 		}
@@ -741,13 +775,17 @@ public class SolicitudController {
 	
 	@PostMapping("/guardarProcesarCompra")
 	public String guardarProcesarCompra(Movimiento movimiento, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes, HttpServletRequest request) {
-		log.info(SOLICITUDCONTROLLERGUARDARCOMPRAI);
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERGUARDARCOMPRAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<String> listaError = new ArrayList<>();
 		model.addAttribute(PAGINAACTUAL, movimiento.getPaginaActual());
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
-				log.info("Ocurrio un error: " + error.getDefaultMessage());
+				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 				if(error.getCode().equals("typeMismatch")) {
 					listaError.add("Los valores de los montos tasa debe ser numerico");
 				}
@@ -777,13 +815,13 @@ public class SolicitudController {
 		
 		try {
 			String respuesta = movimientosApiRest.aprobarCompra(aprobarRechazarRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			log.info(SOLICITUDCONTROLLERGUARDARCOMPRAF);
+			LOGGER.info(SOLICITUDCONTROLLERGUARDARCOMPRAF);
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+movimiento.getPaginaActual();
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR, e.getMessage()));
 			listaError.add(e.getMessage());
 			model.addAttribute(LISTAERROR, listaError);
@@ -794,9 +832,12 @@ public class SolicitudController {
 	
 	@GetMapping("/procesarVenta/{codOperacion}/{page}")
 	public String procesarVenta(@PathVariable("codOperacion") String codOperacion, @PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes, Movimiento movimiento ) {
-		log.info(SOLICITUDCONTROLLERPROCESARVENTAI);
-		
+			RedirectAttributes redirectAttributes, Movimiento movimiento, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERPROCESARVENTAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
 		
@@ -814,7 +855,7 @@ public class SolicitudController {
 				movimientoProcesar.setPaginaActual(page);
 				model.addAttribute(PAGINAACTUAL, page);
 				model.addAttribute("movimiento", movimientoProcesar);
-				log.info(SOLICITUDCONTROLLERPROCESARVENTAF);
+				LOGGER.info(SOLICITUDCONTROLLERPROCESARVENTAF);
 				return URLFORMSOLICITUDVENTA;
 			}else {
 				String mensajeError = response.getResultado().getCodigo() + " " + response.getResultado().getDescripcion();
@@ -826,7 +867,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERRORVENTA,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 		}
@@ -835,13 +876,17 @@ public class SolicitudController {
 	
 	@PostMapping("/guardarProcesarVenta")
 	public String guardarProcesarVenta(Movimiento movimiento, BindingResult result, Model model,
-			RedirectAttributes redirectAttributes, HttpServletRequest request) {
-		log.info(SOLICITUDCONTROLLERGUARDARVENTAI);
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERGUARDARVENTAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<String> listaError = new ArrayList<>();
 		model.addAttribute(PAGINAACTUAL, movimiento.getPaginaActual());
 		if (result.hasErrors()) {
 			for (ObjectError error : result.getAllErrors()) {
-				log.info("Ocurrio un error: " + error.getDefaultMessage());
+				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
 				if(error.getCode().equals("typeMismatch")) {
 					listaError.add("Los valores de los montos tasa debe ser numerico");
 				}
@@ -870,13 +915,13 @@ public class SolicitudController {
 		
 		try {
 			String respuesta = movimientosApiRest.aprobarVenta(aprobarRechazarRequest);
-			log.info(respuesta);
+			LOGGER.info(respuesta);
 			redirectAttributes.addFlashAttribute(MENSAJEVENTA, respuesta);
-			log.info(SOLICITUDCONTROLLERGUARDARVENTAF);
+			LOGGER.info(SOLICITUDCONTROLLERGUARDARVENTAF);
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+movimiento.getPaginaActual();
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR, e.getMessage()));
 			listaError.add(e.getMessage());
 			model.addAttribute(LISTAERROR, listaError);
@@ -888,9 +933,12 @@ public class SolicitudController {
 	@GetMapping("/rechazarCompra/{codOperacion}/{page}")
 	public String rechazarCompra(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info(SOLICITUDCONTROLLERRECHAZARCOMPRAI);
-		
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERRECHAZARCOMPRAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
 		
@@ -921,9 +969,9 @@ public class SolicitudController {
 				aprobarRechazarRequest.setEstatus(2);
 				
 				String respuesta = movimientosApiRest.rechazarCompra(aprobarRechazarRequest);
-				log.info(respuesta);
+				LOGGER.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-				log.info(SOLICITUDCONTROLLERRECHAZARCOMPRAF);
+				LOGGER.info(SOLICITUDCONTROLLERRECHAZARCOMPRAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 				
 				
@@ -933,7 +981,7 @@ public class SolicitudController {
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 		}
@@ -942,9 +990,12 @@ public class SolicitudController {
 	@GetMapping("/aprobarCompra/{codOperacion}/{page}")
 	public String aprobarCompra(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info(SOLICITUDCONTROLLERAPROBARCOMPRAI);
-		
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERAPROBARCOMPRAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
@@ -972,9 +1023,9 @@ public class SolicitudController {
 				aprobarRechazarRequest.setEstatus(1);
 				
 				String respuesta = movimientosApiRest.aprobarCompra(aprobarRechazarRequest);
-				log.info(respuesta);
+				LOGGER.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-				log.info(SOLICITUDCONTROLLERAPROBARCOMPRAF);
+				LOGGER.info(SOLICITUDCONTROLLERAPROBARCOMPRAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 				
 				
@@ -989,7 +1040,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARCOMPRA+page;
 		}
@@ -998,9 +1049,12 @@ public class SolicitudController {
 	@GetMapping("/rechazarVenta/{codOperacion}/{page}")
 	public String rechazarVenta(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info(SOLICITUDCONTROLLERRECHAZARVENTAI);
-		
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERRECHAZARVENTAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
 		
@@ -1029,9 +1083,9 @@ public class SolicitudController {
 				
 				
 				String respuesta = movimientosApiRest.rechazarVenta(aprobarRechazarRequest);
-				log.info(respuesta);
+				LOGGER.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJEVENTA, respuesta);
-				log.info(SOLICITUDCONTROLLERRECHAZARVENTAF);
+				LOGGER.info(SOLICITUDCONTROLLERRECHAZARVENTAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 				
 				
@@ -1045,7 +1099,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERRORVENTA,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 		}
@@ -1054,9 +1108,12 @@ public class SolicitudController {
 	@GetMapping("/aprobarVenta/{codOperacion}/{page}")
 	public String aprobarVenta(@PathVariable("codOperacion") String codOperacion, 
 			@PathVariable("page") int page, Model model,
-			RedirectAttributes redirectAttributes, HttpServletRequest request ) {
-		log.info(SOLICITUDCONTROLLERAPROBARVENTAI);
-		
+			RedirectAttributes redirectAttributes, HttpServletRequest request, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERAPROBARVENTAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorOperacionBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		Movimiento movimientoProcesar = new Movimiento();
 		try {
@@ -1084,9 +1141,9 @@ public class SolicitudController {
 				
 				
 				String respuesta = movimientosApiRest.aprobarVenta(aprobarRechazarRequest);
-				log.info(respuesta);
+				LOGGER.info(respuesta);
 				redirectAttributes.addFlashAttribute(MENSAJEVENTA, respuesta);
-				log.info(SOLICITUDCONTROLLERAPROBARVENTAF);
+				LOGGER.info(SOLICITUDCONTROLLERAPROBARVENTAF);
 				return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 				
 				
@@ -1099,7 +1156,7 @@ public class SolicitudController {
 			
 			
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERRORVENTA,e.getMessage());
 			return REDIRECTLISTAMOVIMIENTOSPORAPROBARVENTAS+page;
 		}
@@ -1111,9 +1168,12 @@ public class SolicitudController {
 	
 	@GetMapping("/precesarConsulta/export/excel")
     public String procesarExportToExcelConsulta(Movimiento movimiento, BindingResult result, Model model, 
-    		RedirectAttributes redirectAttributes, HttpServletResponse response){
-		log.info("exportToExcelConsulta");
-        
+    		RedirectAttributes redirectAttributes, HttpServletResponse response, HttpSession httpSession){
+		LOGGER.info("exportToExcelConsulta");
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<String> listaError = new ArrayList<>();
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
@@ -1176,7 +1236,7 @@ public class SolicitudController {
 				model.addAttribute(LISTAERROR, MENSAJENORESULTADO);
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			result.addError(new ObjectError(LISTAERROR,e.getMessage()));
 			 listaError.add(e.getMessage());
 			 model.addAttribute(LISTAERROR, listaError);			
@@ -1187,8 +1247,8 @@ public class SolicitudController {
 	
 	
     public void exportToExcelConsulta(List<Movimiento> listaMovimientos, HttpServletResponse response) {
-		log.info(SOLICITUDCONTROLLEREXPORTEXCELI);
-        
+    	LOGGER.info(SOLICITUDCONTROLLEREXPORTEXCELI);
+        	
 		
 		
 				response.setContentType("application/octet-stream");
@@ -1203,9 +1263,9 @@ public class SolicitudController {
 					excelExporter.export(response);
 					response.getOutputStream().flush();
 					 response.getOutputStream().close();
-					 log.info(SOLICITUDCONTROLLEREXPORTEXCELF);
+					 LOGGER.info(SOLICITUDCONTROLLEREXPORTEXCELF);
 				} catch (IOException e) {
-					log.error(e.getMessage());
+					LOGGER.error(e.getMessage());
 				}
 		
     }
@@ -1386,10 +1446,13 @@ public class SolicitudController {
 	
 	@GetMapping("/searchEstatus")
 	public String searchEstatus(@ModelAttribute("movimientoSearch") Movimiento movimientoSearch, 
-			Model model, RedirectAttributes redirectAttributes) {
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		
-		log.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAI);
-		
+		LOGGER.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -1496,7 +1559,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAF);
+					LOGGER.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 					
 					
@@ -1505,7 +1568,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAF);
+					LOGGER.info(SOLICITUDCONTROLLERSEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 				}
 				
@@ -1513,7 +1576,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1527,8 +1590,12 @@ public class SolicitudController {
 	
 	@GetMapping("/listaSolicitudesMovimientosVentasPage")
 	public String consultaMovimientoVentaSearchEstatus(@RequestParam("page") int page,@RequestParam("estatus") int estatus, 
-			@RequestParam("fechaDesde") String fechaDesde, @RequestParam("fechaHasta") String fechaHasta,Model model) {
-		log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAI);
+			@RequestParam("fechaDesde") String fechaDesde, @RequestParam("fechaHasta") String fechaHasta,Model model, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -1634,7 +1701,7 @@ public class SolicitudController {
 					}
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 					
 					
@@ -1643,7 +1710,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSVENTAF);
 					return URLLISTAMOVIMIENTOSVENTASEARCHESTATUS;
 				}
 				
@@ -1651,7 +1718,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERROR, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1667,10 +1734,13 @@ public class SolicitudController {
 	
 	@GetMapping("/searchEstatusCompra")
 	public String searchEstatusCompra(@ModelAttribute("movimientoSearch") Movimiento movimientoSearch, 
-			Model model, RedirectAttributes redirectAttributes) {
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		
-		log.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAI);
-		
+		LOGGER.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		List<Movimiento> listaMovimientosVenta = new ArrayList<>();
@@ -1744,7 +1814,7 @@ public class SolicitudController {
 					model.addAttribute(ESTATUS, movimientoSearch.getEstatus());
 					model.addAttribute(FECHADESDE, movimientoSearch.getFechas().getFechaDesde());
 					model.addAttribute(FECHAHASTA, movimientoSearch.getFechas().getFechaHasta());
-					log.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAF);
+					LOGGER.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 					
 					
@@ -1753,7 +1823,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAF);
+					LOGGER.info(SOLICITUDCONTROLLERSEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 				}
 				
@@ -1761,7 +1831,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERRORCOMPRA, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1775,8 +1845,12 @@ public class SolicitudController {
 	
 	@GetMapping("/listaSolicitudesMovimientosComprasPage")
 	public String consultaMovimientoCompraSearchEstatus(@RequestParam("page") int page,@RequestParam("estatus") int estatus,
-			@RequestParam("fechaDesde") String fechaDesde, @RequestParam("fechaHasta") String fechaHasta,Model model) {
-		log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAI);
+			@RequestParam("fechaDesde") String fechaDesde, @RequestParam("fechaHasta") String fechaHasta,Model model, HttpSession httpSession) {
+		LOGGER.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		MovimientosRequest movimientosRequest = getMovimientosRequest();
 		
 		
@@ -1847,7 +1921,7 @@ public class SolicitudController {
 					model.addAttribute(ESTATUS, estatus);
 					model.addAttribute(FECHADESDE, fechaDesde);
 					model.addAttribute(FECHAHASTA, fechaHasta);
-					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 					
 					
@@ -1856,7 +1930,7 @@ public class SolicitudController {
 					datosPaginacionCompra.setTotalPaginas(0);
 					model.addAttribute(LISTAMOVIMIENTOSCOMPRA, listaMovimientosCompra);
 					model.addAttribute(DATOSPAGINACIONCOMPRA, datosPaginacionCompra);
-					log.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF);
+					LOGGER.info(SOLICITUDCONTROLLERLISTACONSULTASEARCHESTATUSCOMPRAF);
 					return URLLISTAMOVIMIENTOSCOMPRASEARCHESTATUS;
 				}
 				
@@ -1864,7 +1938,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			model.addAttribute(MENSAJEERRORCOMPRA, e.getMessage());
 			model.addAttribute(LISTAMOVIMIENTOSVENTA, listaMovimientosVenta);
 			model.addAttribute(DATOSPAGINACIONVENTA, datosPaginacionVenta);
@@ -1876,8 +1950,11 @@ public class SolicitudController {
 	}
 	
 	@GetMapping("/formSolicitudGenerarReporte")
-	public String formSolicitudGenerarReporte(Movimiento movimiento, Model model, RedirectAttributes redirectAttributes) {
-		
+	public String formSolicitudGenerarReporte(Movimiento movimiento, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorConsultaBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Moneda> listaMonedas = new ArrayList<>();
 		
 		MonedasRequest monedasRequest = getMonedasRequest();
@@ -1890,7 +1967,7 @@ public class SolicitudController {
 			model.addAttribute(LISTAMONEDAS, listaMonedas);
 			return URLFORMSOLICITUDGENERARREPORTE;
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
 			return "redirect:/solicitudes/listaSolicitudesMovimientosVentas/1";
 		}
@@ -1919,21 +1996,21 @@ public class SolicitudController {
         	Date fechaDate2 = formato.parse(fecha(new Date()));
         	
         	if ( fechaDate1.before(fechaDate2) ){
-        	    log.info("La fechaLiquidacion es menor que la actual");
+        		LOGGER.info("La fechaLiquidacion es menor que la actual");
         		return false;
         	}else{
         	     if ( fechaDate2.before(fechaDate1) ){
-        	    	 log.info("La fechaActual es menor que la fechaLiquidacion");
+        	    	 LOGGER.info("La fechaActual es menor que la fechaLiquidacion");
         	    	 return true;
         	     }else{
-        	    	 log.info("La fechaActual es igual que la fechaLiquidacion");
+        	    	 LOGGER.info("La fechaActual es igual que la fechaLiquidacion");
         	    	 return true;
         	     } 
         	}
         } 
         catch (ParseException ex) 
         {
-            log.error(ex.getMessage());
+        	LOGGER.error(ex.getMessage());
         }
         
         return false;
@@ -1950,21 +2027,21 @@ public class SolicitudController {
         	Date fechaDate2 = formato.parse(fechaHasta);
         	
         	if ( fechaDate2.before(fechaDate1) ){
-        	    log.info("La fechaHasta es menor que la fechaDesde");
+        		LOGGER.info("La fechaHasta es menor que la fechaDesde");
         		return false;
         	}else{
         	     if ( fechaDate1.before(fechaDate2) ){
-        	    	 log.info("La fechaDesde es menor que la fechaHasta");
+        	    	 LOGGER.info("La fechaDesde es menor que la fechaHasta");
         	    	 return true;
         	     }else{
-        	    	 log.info("La fechaDesde es igual que la fechaHasta");
+        	    	 LOGGER.info("La fechaDesde es igual que la fechaHasta");
         	    	 return true;
         	     } 
         	}
         } 
         catch (ParseException ex) 
         {
-        	log.error(ex.getMessage());
+        	LOGGER.error(ex.getMessage());
         }
         
         return false;
@@ -1991,7 +2068,7 @@ public class SolicitudController {
 				return REDIRECTINICIO;
 			}
 		} catch (CustomException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return REDIRECTINICIO;
 		}
 	}

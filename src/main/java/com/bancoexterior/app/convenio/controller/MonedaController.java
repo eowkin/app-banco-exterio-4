@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
+import javax.servlet.http.HttpSession;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,12 +16,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -49,13 +47,14 @@ public class MonedaController {
 	private LibreriaUtil libreriaUtil; 
 	
 	@Value("${${app.ambiente}"+".canal}")
-    private String canal;	
+    private String canal;
+	
+	@Value("${${app.ambiente}"+".moneda.valorBD}")
+    private int valorBD;
 
 	private static final String URLINDEX = "convenio/moneda/listaMonedas";
 	
-	private static final String URLFORMMONEDA = "convenio/moneda/formMoneda";
-	
-	private static final String URLFORMMONEDAEDIT = "convenio/moneda/formMonedaEdit";
+	private static final String URLNOPERMISO = "error/403";
 	
 	private static final String LISTAMONEDAS = "listMonedas";
 	
@@ -64,6 +63,8 @@ public class MonedaController {
 	private static final String REDIRECTINDEX = "redirect:/monedas/index";
 	
 	private static final String MENSAJE = "mensaje";
+	
+	private static final String NOTIENEPERMISO = "No tiene Permiso";
 	
 	private static final String MENSAJECONSULTANOARROJORESULTADOS = "La consulta no arrojo resultado";
 	
@@ -79,18 +80,6 @@ public class MonedaController {
 	
 	private static final String MONEDACONTROLLERDESACTIVARF = "[==== FIN Desactivar Moneda - Controller ====]";
 	
-	private static final String MONEDACONTROLLEREDITARI = "[==== INICIO Editar Moneda Consulta - Controller ====]";
-	
-	private static final String MONEDACONTROLLEREDITARF = "[==== FIN Editar Moneda Consulta - Controller ====]";
-	
-	private static final String MONEDACONTROLLERGUARDARI = "[==== INICIO Guardar Moneda - Controller ====]";
-	
-	private static final String MONEDACONTROLLERGUARDARF = "[==== FIN Guardar Moneda - Controller ====]";
-	
-	private static final String MONEDACONTROLLERSAVEI = "[==== INICIO Save Moneda - Controller ====]";
-	
-	private static final String MONEDACONTROLLERSAVEF = "[==== FIN Save Moneda - Controller ====]";
-	
 	private static final String MONEDACONTROLLERSEARHCODIGOI = "[==== INICIO SearchCodigo Moneda - Controller ====]";
 	
 	private static final String MONEDACONTROLLERSEARHCODIGOF = "[==== FIN SearchCodigo Moneda - Controller ====]";
@@ -98,8 +87,14 @@ public class MonedaController {
 	private static final String INDEX = "/index";
 	
 	@GetMapping(INDEX)
-	public String indexWs(Model model, RedirectAttributes redirectAttributes) {
+	public String indexWs(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(MONEDACONTROLLERINDEXI);
+		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda moneda = new Moneda();
 		monedasRequest.setMoneda(moneda);
@@ -126,8 +121,13 @@ public class MonedaController {
 	}
 	
 	@GetMapping("/activar/{codMoneda}")
-	public String activarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes) {
+	public String activarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(MONEDACONTROLLERACTIVARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
 		Moneda monedaEdit = new Moneda();
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda monedaBuscar = new Moneda();
@@ -152,8 +152,12 @@ public class MonedaController {
 	}	
 	
 	@GetMapping("/desactivar/{codMoneda}")
-	public String desactivarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes) {
+	public String desactivarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(MONEDACONTROLLERDESACTIVARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		Moneda monedaEdit = new Moneda();
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda monedaBuscar = new Moneda();
@@ -176,101 +180,18 @@ public class MonedaController {
 		return REDIRECTINDEX;
 	}
 	
-	@GetMapping("/edit/{codMoneda}")
-	public String editarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes) {
-		LOGGER.info(MONEDACONTROLLEREDITARI);
-		Moneda monedaEdit = new Moneda();
-		MonedasRequest monedasRequest = getMonedasRequest();
-		Moneda monedaBuscar = new Moneda();
-		monedaBuscar.setCodMoneda(codMoneda);
-		monedasRequest.setMoneda(monedaBuscar);
-		try {
-			monedaEdit = monedaServiceApiRest.buscarMoneda(monedasRequest);
-			if(monedaEdit != null) {
-				model.addAttribute("moneda", monedaEdit);
-				LOGGER.info(MONEDACONTROLLEREDITARF);
-        		return URLFORMMONEDAEDIT;
-			}else {
-				redirectAttributes.addFlashAttribute(MENSAJE, MENSAJECONSULTANOARROJORESULTADOS);
-				LOGGER.info(MONEDACONTROLLEREDITARF);
-				return REDIRECTINDEX;
-			}
-		} catch (CustomException e) {
-			LOGGER.error(e.getMessage());
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
-			return REDIRECTINDEX;
-		}
-	
-	}	
-	
-	@PostMapping("/guardar")
-	public String guardarWs(Moneda moneda, BindingResult result,  RedirectAttributes redirectAttributes) {
 		
-		LOGGER.info(MONEDACONTROLLERGUARDARI);	
-		MonedasRequest monedasRequest = getMonedasRequest();
-		monedasRequest.setMoneda(moneda);
-		
-		
-		try {
-			String respuesta = monedaServiceApiRest.actualizar(monedasRequest);
-			LOGGER.info(respuesta);
-			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			LOGGER.info(MONEDACONTROLLERGUARDARF);
-			return REDIRECTINDEX;
-		} catch (CustomException e) {
-			LOGGER.error(e.getMessage());
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
-			return URLFORMMONEDAEDIT;
-		}
-		
-		
-		
-	}
-	
-	@PostMapping("/save")
-	public String saveWs(@Valid  Moneda moneda, BindingResult result, RedirectAttributes redirectAttributes) {
-		
-		LOGGER.info(MONEDACONTROLLERSAVEI);
-		if (result.hasErrors()) {
-			for (ObjectError error : result.getAllErrors()) {
-				LOGGER.info("Ocurrio un error: " + error.getDefaultMessage());
-			}
-		
-			return URLFORMMONEDA;
-		}
-		
-		MonedasRequest monedasRequest = getMonedasRequest();
-		moneda.setFlagActivo(true);
-		monedasRequest.setMoneda(moneda);
-		
-		
-		try {
-			String respuesta = monedaServiceApiRest.crear(monedasRequest);
-			LOGGER.info(respuesta);
-			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
-			LOGGER.info(MONEDACONTROLLERSAVEF);
-			return REDIRECTINDEX;
-		} catch (CustomException e) {
-			LOGGER.error(e.getMessage());
-			result.addError(new ObjectError("codMoneda", e.getMessage()));
-			return URLFORMMONEDA;
-		}
-		
-	}
-	
-	@GetMapping("/formMoneda")
-	public String formMoneda(Moneda moneda, Model model) {
-		
-		return URLFORMMONEDA;
-	}	
 	
 	
 	
 	@GetMapping("/searchCodigo")
 	public String searchCodigo(@ModelAttribute("monedaSearch") Moneda monedaSearch,
-			Model model, RedirectAttributes redirectAttributes) {
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(MONEDACONTROLLERSEARHCODIGOI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		
 		
 		MonedasRequest monedasRequest = getMonedasRequest();

@@ -1,9 +1,9 @@
 package com.bancoexterior.app.convenio.controller;
 
 import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,7 +22,7 @@ import com.bancoexterior.app.inicio.model.Grupo;
 import com.bancoexterior.app.inicio.model.Menu;
 import com.bancoexterior.app.inicio.service.IMenuService;
 
-import jdk.internal.org.jline.utils.Log;
+
 
 import com.bancoexterior.app.inicio.service.IGrupoService;
 

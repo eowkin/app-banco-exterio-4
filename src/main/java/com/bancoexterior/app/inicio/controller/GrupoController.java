@@ -2,10 +2,14 @@ package com.bancoexterior.app.inicio.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -28,13 +32,16 @@ import com.bancoexterior.app.inicio.model.Menu;
 import com.bancoexterior.app.inicio.service.IGrupoService;
 import com.bancoexterior.app.inicio.service.IGruposMenuService;
 import com.bancoexterior.app.inicio.service.IMenuService;
+import com.bancoexterior.app.util.LibreriaUtil;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Controller
 @RequestMapping("/grupos")
 public class GrupoController {
+	
+	private static final Logger LOGGER = LogManager.getLogger(GrupoController.class);
 
 	@Autowired
 	private IGrupoService grupoServicio;
@@ -43,47 +50,98 @@ public class GrupoController {
 	private IMenuService menuServicio;
 	
 	@Autowired
+	private LibreriaUtil libreriaUtil;
+	
+	@Value("${${app.ambiente}"+".grupos.valorBD}")
+    private int valorBD;
+	
+	@Autowired
 	private IGruposMenuService gruposMenuService;
+	
+	private static final String URLNOPERMISO = "error/403";
+	
+	private static final String NOTIENEPERMISO = "No tiene Permiso";
 	
 	private static final String MENSAJE = "mensaje";
 	
 	private static final String MENSAJEERROR = "mensajeError";
 	
+	private static final String MENSAJEOPERACIONEXITOSA = "Operacion Exitosa";
+	
+	private static final String MENSAJEOPERACIONFALLIDA = "Operacion Fallida";
+	
 	private static final String REDIRECTINDEX = "redirect:/grupos/index";
 	
 	private static final String MENSAJECONSULTANOARROJORESULTADOS = "La consulta no arrojo resultado";
 	
+	private static final String GRUPOCONTROLLERINDEXI = "[==== INICIO Index Grupo Consultas - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERINDEXF = "[==== FIN Index Grupo Consultas - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERFORMI = "[==== INICIO Form Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERFORMF = "[==== FIN Form Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLEREDITI = "[==== INICIO Edit Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLEREDITF = "[==== FIN Edit Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERSAVEI = "[==== INICIO Save Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERSAVEF = "[==== FIN Save Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERGUARDARI = "[==== INICIO Guardar Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERGUARDARF = "[==== FIN Guardar Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERPERMISOSI = "[==== INICIO Permisos Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERPERMISOSF = "[==== FIN Permisos Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERGUARDARPERMISOSI = "[==== INICIO Guardar Permisos Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERGUARDARPERMISOSF = "[==== FIN Guardar Permisos Grupo - Controller ====]";
+	
 	@GetMapping("/index")
-	public String index(Model model, RedirectAttributes redirectAttributes) {
-		
+	public String index(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLERINDEXI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<Grupo> listaGrupos = grupoServicio.findAll();
 		model.addAttribute("listaGrupos", listaGrupos);
-		
+		LOGGER.info(GRUPOCONTROLLERINDEXF);
 		
 		return "monitorFinanciero/grupo/listaGrupos";
 	}
 	
 	@GetMapping("/formGrupo")
-	public String formGrupo(GrupoDto grupoDto) {
-		log.info("formGrupo");
+	public String formGrupo(GrupoDto grupoDto, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLERFORMI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		LOGGER.info(GRUPOCONTROLLERFORMF);
 		return "monitorFinanciero/grupo/formGrupo";
 	}
 	
 	@GetMapping("/edit")
-	public String editGrupo(@RequestParam("idGrupo") int idGrupo, Model model, RedirectAttributes redirectAttributes) {
-		log.info("editGrupo");
-		
+	public String editGrupo(@RequestParam("idGrupo") int idGrupo, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLEREDITI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		GrupoDto grupoEdit = grupoServicio.findById(idGrupo); 
 		if(grupoEdit != null) {
-			log.info("grupoEditId :" +grupoEdit.getIdGrupo());
-			log.info("grupoEditNombre :" +grupoEdit.getNombreGrupo());
-			log.info("grupoEditCodUsuario :" +grupoEdit.getCodUsuario());
-			log.info("grupoEditFechaIngreso :" +grupoEdit.getFechaIngreso());
-			log.info("grupoEdit :" +grupoEdit.getFechaModificacion());
 			model.addAttribute("grupoDto", grupoEdit);
+			LOGGER.info(GRUPOCONTROLLEREDITF);
 			return "monitorFinanciero/grupo/formEditGrupo";
 		}else {
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJECONSULTANOARROJORESULTADOS);
+			LOGGER.info(GRUPOCONTROLLEREDITF);
 			return REDIRECTINDEX;
 		}
 		
@@ -91,88 +149,90 @@ public class GrupoController {
 	
 	
 	@PostMapping("/save")
-	public String save(GrupoDto grupoDto, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
-		log.info("grupo: "+grupoDto.getNombreGrupo());
+	public String save(GrupoDto grupoDto, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLERSAVEI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		grupoDto.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
 		grupoDto.setFlagActivo(true);
 		GrupoDto grupoSave =   grupoServicio.save(grupoDto);
 		if(grupoSave != null) {
-			redirectAttributes.addFlashAttribute(MENSAJE, "Operacion Exitosa");
+			redirectAttributes.addFlashAttribute(MENSAJE, MENSAJEOPERACIONEXITOSA);
 		}else {
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, "Operacion Fallida");
+			redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJEOPERACIONFALLIDA);
 		}
+		LOGGER.info(GRUPOCONTROLLERSAVEF);
 		return REDIRECTINDEX;
 	}
 	
 	@PostMapping("/guardar")
-	public String guardar(GrupoDto grupoDto, Model model, RedirectAttributes redirectAttributes) {
-		log.info("getNombreGrupo(): "+grupoDto.getNombreGrupo());
-		log.info("getIdGrupo(): "+grupoDto.getIdGrupo());
-		log.info("getFechaIngreso(): "+grupoDto.getFechaIngreso());
-		
+	public String guardar(GrupoDto grupoDto, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLERGUARDARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		grupoDto.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
 		GrupoDto grupoSave =   grupoServicio.save(grupoDto);
 		if(grupoSave != null) {
-			redirectAttributes.addFlashAttribute(MENSAJE, "Operacion Exitosa");
+			redirectAttributes.addFlashAttribute(MENSAJE, MENSAJEOPERACIONEXITOSA);
 		}else {
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, "Operacion Fallida");
+			redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJEOPERACIONFALLIDA);
 		}
+		LOGGER.info(GRUPOCONTROLLERGUARDARF);
 		return REDIRECTINDEX;
 	}
 	
 	@GetMapping("/permisos")
-	public String permisos(@RequestParam("idGrupo") int idGrupo, GrupoDto grupoDto, Model model, RedirectAttributes redirectAttributes) {
-		
-		log.info("permisos");
-		
-		GrupoDto grupoEdit = grupoServicio.findById(idGrupo); 
-		grupoEdit.getMenus().size();
-		List<Menu> listaMenu = menuServicio.findAll();
-		for (Menu menu : listaMenu) {
-			log.info("menu: "+menu.getNombre());
+	public String permisos(@RequestParam("idGrupo") int idGrupo, GrupoDto grupoDto, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLERPERMISOSI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
 		}
-		
+		GrupoDto grupoEdit = grupoServicio.findById(idGrupo); 
 		if(grupoEdit != null) {
-			log.info("grupoEditId :" +grupoEdit.getIdGrupo());
-			log.info("grupoEditNombre :" +grupoEdit.getNombreGrupo());
-			log.info("grupoEditCodUsuario :" +grupoEdit.getCodUsuario());
-			log.info("grupoEditFechaIngreso :" +grupoEdit.getFechaIngreso());
-			log.info("grupoEdit.getFechaModificacion() :" +grupoEdit.getFechaModificacion());
+			LOGGER.info(grupoEdit.getMenus().size());
+			List<Menu> listaMenu = menuServicio.findAll();
+			//List<Menu> listaMenu = menuServicio.todoMenu();
+			for (Menu menu : listaMenu) {
+				LOGGER.info(menu.getNombre());
+			}
 			model.addAttribute("grupoDto", grupoEdit);
 			model.addAttribute("listaMenu", listaMenu);
-			
+			LOGGER.info(GRUPOCONTROLLERPERMISOSF);
 			return "monitorFinanciero/grupo/formGrupoPermisos";
 		}else {
 			redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJECONSULTANOARROJORESULTADOS);
+			LOGGER.info(GRUPOCONTROLLERPERMISOSF);
 			return REDIRECTINDEX;
 		}
 	}
 	
 	@PostMapping("/guardarPermisos")
-	public String guardarPermisos(GrupoDto grupoDto, Model model, RedirectAttributes redirectAttributes) {
-		log.info("guardarPermisos");
-		log.info("getIdGrupo(): "+grupoDto.getIdGrupo());
-		log.info("getNombreGrupo(): "+grupoDto.getNombreGrupo());
-		log.info("grupoDto.getCodUsuario(): "+grupoDto.getCodUsuario());
-		log.info("getFechaIngreso(): "+grupoDto.getFechaIngreso());
-		log.info("grupoDto.getFechaModificacion(): "+grupoDto.getFechaModificacion());
-		log.info("grupoDto.getMenus(): "+grupoDto.getMenus());
+	public String guardarPermisos(GrupoDto grupoDto, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		
-		
+		LOGGER.info(GRUPOCONTROLLERGUARDARPERMISOSI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		GruposMenu gruposMenu = new GruposMenu();
 		GruposMenuPk id = new GruposMenuPk();
 		id.setIdGrupoPk(grupoDto.getIdGrupo());
 		
-		log.info("_[---------Lista Actual-----------]");
+		LOGGER.info("_[---------Lista Actual-----------]");
 		GrupoDto grupoEdit = grupoServicio.findById(grupoDto.getIdGrupo());
 		List<Menu> listaActual = grupoEdit.getMenus();
 		List<Menu> listaMenu = grupoDto.getMenus();
 		if(listaActual.isEmpty()){
-			log.info("_[---------No tiene Menu Actual-----------]");
+			LOGGER.info("_[---------No tiene Menu Actual-----------]");
 			if(listaMenu.isEmpty()){
-				log.info("_[---------No selecciono Menu Lista Selecionada, No hago nada-----------]");
+				LOGGER.info("_[---------No selecciono Menu Lista Selecionada, No hago nada-----------]");
 			}else {
-				log.info("_[---------Si selecciono Menu Lista Selecionada, Voy a Incluir-----------]");
+				LOGGER.info("_[---------Si selecciono Menu Lista Selecionada, Voy a Incluir-----------]");
 				for (Menu menu : listaMenu) {
 					id.setIdMenuPk(menu.getIdMenu());
 					gruposMenu.setIdPk(id);
@@ -182,36 +242,34 @@ public class GrupoController {
 			}
 			
 		}else {
-			log.info("_[---------Si tiene Menu Actual, voy a borrar-----------]");
+			LOGGER.info("_[---------Si tiene Menu Actual, voy a borrar-----------]");
 			
-			for (Menu menu : listaActual) {
-				log.info("menu.getIdMenu(): "+menu.getIdMenu());
-				log.info("menu.getNombre(): "+menu.getNombre());
-				log.info("menu.getDireccion(): "+menu.getDireccion());
-				log.info("menu.getNivel(): "+menu.getNivel());
-				log.info("menu.getOrden(): "+menu.getOrden());
+			if(listaMenu.isEmpty()){
+				LOGGER.info("_[---------No selecciono Menu Lista Selecionada, Solo borro-----------]");
+				for (Menu menu : listaActual) {
+					id.setIdMenuPk(menu.getIdMenu());
+					gruposMenuService.borrarRealcion(id);
+				}
+			}else {
+				LOGGER.info("_[---------Si selecciono Menu Lista Selecionada, Borro y Incluyo la nueva lista de Permiso-----------]");
+				for (Menu menu : listaActual) {
+					id.setIdMenuPk(menu.getIdMenu());
+					gruposMenuService.borrarRealcion(id);
+				}
 				
-				
+				for (Menu menu : listaMenu) {
+					id.setIdMenuPk(menu.getIdMenu());
+					gruposMenu.setIdPk(id);
+					gruposMenu.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
+					gruposMenuService.guardarGrupoMenus(gruposMenu);
+				}
 			}
 			
 			
-			for (Menu menu : listaActual) {
-				id.setIdMenuPk(menu.getIdMenu());
-				log.info("id.getIdGrupoPk(): "+id.getIdGrupoPk());
-				log.info("id.getIdMenuPk(): "+id.getIdMenuPk());
-				gruposMenuService.borrarRealcion(id);
-			}
-			
-			for (Menu menu : listaMenu) {
-				id.setIdMenuPk(menu.getIdMenu());
-				gruposMenu.setIdPk(id);
-				gruposMenu.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
-				gruposMenuService.guardarGrupoMenus(gruposMenu);
-			}
 		}
 		
-		
-		redirectAttributes.addFlashAttribute(MENSAJE, "Operacion Exitosa");
+		LOGGER.info(GRUPOCONTROLLERGUARDARPERMISOSF);
+		redirectAttributes.addFlashAttribute(MENSAJE, MENSAJEOPERACIONEXITOSA);
 		return REDIRECTINDEX;
 		
 		
@@ -230,13 +288,6 @@ public class GrupoController {
 	}
 	
 	
-	/*
-	 * @InitBinder public void initBinder1(WebDataBinder binder) { SimpleDateFormat
-	 * dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	 * 
-	 * binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat,
-	 * true)); }
-	 */
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
 		SimpleDateFormat dataFormat = new SimpleDateFormat("dd-MM-yyyy");

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,9 +52,14 @@ public class LimitesGeneralesController {
 	private LibreriaUtil libreriaUtil; 
 	
 	@Value("${${app.ambiente}"+".canal}")
-    private String canal;	
+    private String canal;
+	
+	@Value("${${app.ambiente}"+".limitesGenerales.valorBD}")
+    private int valorBD;
 	
 	private static final String URLINDEX = "convenio/limitesGenerales/listaLimitesGenerales";
+	
+	private static final String URLNOPERMISO = "error/403";
 	
 	private static final String URLFORMLIMITESGENERALES = "convenio/limitesGenerales/formLimitesGenerales";
 	
@@ -74,6 +80,8 @@ public class LimitesGeneralesController {
 	private static final String REDIRECTINDEX = "redirect:/limitesGenerales/index";
 	
 	private static final String MENSAJE = "mensaje";
+	
+	private static final String NOTIENEPERMISO = "No tiene Permiso";
 	
 	private static final String MENSAJENORESULTADO = "La consulta no arrojo resultado.";
 	
@@ -114,8 +122,13 @@ public class LimitesGeneralesController {
 	private static final String LIMITESGENERALESCONTROLLERSEARCHF = "[==== FIN Search LimitesGenerales Consultas - Controller ====]";
 	
 	@GetMapping("/index")
-	public String index(Model model, RedirectAttributes redirectAttributes) {
+	public String index(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLERINDEXI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
 		limiteRequest.setLimite(limite);
@@ -141,8 +154,13 @@ public class LimitesGeneralesController {
 	
 	@GetMapping("/activar/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
 	public String activarWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
-			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
+			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, 
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLERACTIVARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest();
 		LimitesGenerales limite = new LimitesGenerales();
@@ -168,8 +186,13 @@ public class LimitesGeneralesController {
 	
 	@GetMapping("/desactivar/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
 	public String desactivarWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
-			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
+			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model,
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLERDESACTIVARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
@@ -196,8 +219,13 @@ public class LimitesGeneralesController {
 	
 	@GetMapping("/detalle")
 	public String detalleWs1(@RequestParam("codMoneda") String codMoneda, @RequestParam("tipoTransaccion") String tipoTransaccion,
-			@RequestParam("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
+			@RequestParam("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, 
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLERDETALLEI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
@@ -233,41 +261,17 @@ public class LimitesGeneralesController {
 	}
 	
 	
-	@GetMapping("/detalle/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
-	public String detalleWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
-			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
-		LOGGER.info(LIMITESGENERALESCONTROLLERDETALLEI);
-		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
-		LimiteRequest limiteRequest = getLimiteRequest(); 
-		LimitesGenerales limite = new LimitesGenerales();
-		limite.setCodMoneda(codMoneda);
-		limite.setTipoTransaccion(tipoTransaccion);
-		limite.setTipoCliente(tipoCliente);
-		limiteRequest.setLimite(limite);
-		
-		try {
-			limitesGeneralesEdit = limitesGeneralesServiceApirest.buscarLimitesGenerales(limiteRequest);
-			if(limitesGeneralesEdit != null) {
-				model.addAttribute(LIMITESGENERALES, limitesGeneralesEdit);
-				LOGGER.info(LIMITESGENERALESCONTROLLERDETALLEF);
-            	return URLFORMLIMITESGENERALESDETALLE;
-			}else {
-				redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJENORESULTADO);
-				return REDIRECTINDEX;
-			}
-		} catch (CustomException e) {
-			LOGGER.error(e.getMessage());
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, e.getMessage());
-			return REDIRECTINDEX;
-		}
-		
 	
-	}
 	
 	@GetMapping("/edit/{codMoneda}/{tipoTransaccion}/{tipoCliente}")
 	public String editarWs(@PathVariable("codMoneda") String codMoneda, @PathVariable("tipoTransaccion") String tipoTransaccion,
-			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model, RedirectAttributes redirectAttributes) {
+			@PathVariable("tipoCliente") String tipoCliente, LimitesGenerales limitesGenerales ,Model model,
+			RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLEREDITARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		LimitesGenerales limitesGeneralesEdit = new LimitesGenerales();
 		LimiteRequest limiteRequest = getLimiteRequest(); 
 		LimitesGenerales limite = new LimitesGenerales();
@@ -295,8 +299,12 @@ public class LimitesGeneralesController {
 	
 	@PostMapping("/guardar")
 	public String guardarWs(LimitesGenerales limitesGenerales, BindingResult result,
-			RedirectAttributes redirectAttributes, Model model) {
+			RedirectAttributes redirectAttributes, Model model, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLERGUARDARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<String> listaError = new ArrayList<>();
 		
 		if (result.hasErrors()) {
@@ -351,9 +359,14 @@ public class LimitesGeneralesController {
 	
 	
 	@GetMapping("/formLimitesGenerales")
-	public String formLimitesGenerales(LimitesGenerales limitesGenerales,  Model model, RedirectAttributes redirectAttributes) {
+	public String formLimitesGenerales(LimitesGenerales limitesGenerales,  Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		
 		LOGGER.info(LIMITESGENERALESCONTROLLERFORMI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
 		List<Moneda> listaMonedas = new ArrayList<>();
 		MonedasRequest monedasRequest = getMonedasRequest();
 		Moneda moneda = new Moneda();
@@ -373,8 +386,12 @@ public class LimitesGeneralesController {
 	}
 	
 	@PostMapping("/save")
-	public String saveWs(LimitesGenerales limitesGenerales, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+	public String saveWs(LimitesGenerales limitesGenerales, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLERSAVEI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<String> listaError = new ArrayList<>();
 		List<Moneda> listaMonedas;
 		MonedasRequest monedasRequest = getMonedasRequest();
@@ -455,9 +472,12 @@ public class LimitesGeneralesController {
 	
 	@GetMapping("/search")
 	public String search(@ModelAttribute("limitesGeneralesSearch") LimitesGenerales limitesGeneralesSearch, 
-			Model model, RedirectAttributes redirectAttributes) {
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(LIMITESGENERALESCONTROLLERSEARCHI);
-		
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
 		List<LimitesGenerales> listaLimitesGenerales = new ArrayList<>();
 		
 		LimiteRequest limiteRequest = getLimiteRequest(); 

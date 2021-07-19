@@ -8,20 +8,28 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
-import com.bancoexterior.app.cce.controller.CceTransaccionController;
+
 import com.bancoexterior.app.cce.model.BCVLBT;
+import com.bancoexterior.app.inicio.model.Menu;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Component
 public class LibreriaUtil {
+	
+	private static final Logger LOGGER = LogManager.getLogger(LibreriaUtil.class);
 	
 	//public static final String NUMEROFORMAT                       = "#.##0,00";
     public static final String NUMEROFORMAT                       = "#,##0.00";
@@ -228,21 +236,21 @@ public class LibreriaUtil {
         	Date fechaDate2 = formato.parse(fechaHasta);
         	
         	if ( fechaDate2.before(fechaDate1) ){
-        	    log.info("La fechaHasta es menor que la fechaDesde");
+        		LOGGER.info("La fechaHasta es menor que la fechaDesde");
         		return false;
         	}else{
         	     if ( fechaDate1.before(fechaDate2) ){
-        	    	 log.info("La fechaDesde es menor que la fechaHasta");
+        	    	 LOGGER.info("La fechaDesde es menor que la fechaHasta");
         	    	 return true;
         	     }else{
-        	    	 log.info("La fechaDesde es igual que la fechaHasta");
+        	    	 LOGGER.info("La fechaDesde es igual que la fechaHasta");
         	    	 return true;
         	     } 
         	}
         } 
         catch (ParseException ex) 
         {
-        	log.error(ex.getMessage());
+        	LOGGER.error(ex.getMessage());
         }
         
         return false;
@@ -252,14 +260,14 @@ public class LibreriaUtil {
 		
 		String[] arrOfFechaD = fechaHoraDesde.split("T");
         for (String a: arrOfFechaD)
-            log.info(a);
+        	LOGGER.info(a);
         
         String fechaDesde = arrOfFechaD[0];
         String horaDesde = arrOfFechaD[1];
         
         String[] arrOfFechaH = fechaHoraHasta.split("T");
         for (String a: arrOfFechaH)
-        	log.info(a);
+        	LOGGER.info(a);
         String fechaHasta = arrOfFechaH[0];
         String horaHasta = arrOfFechaH[1];
         
@@ -272,10 +280,10 @@ public class LibreriaUtil {
 	}
     
     public boolean isHoraValidaDesdeHasta(String fechaDesde, String fechaHasta,String horaDesde, String horaHasta) {
-		log.info("isHoraValidaDesdeHasta");
+    	LOGGER.info("isHoraValidaDesdeHasta");
 		String[] arrOfHoraD = horaDesde.split(":");
         for (String a: arrOfHoraD)
-            log.info(a);
+        	LOGGER.info(a);
         
         String hDesde = arrOfHoraD[0];
         //int hDesdeInt = Integer.valueOf(hDesde).intValue();
@@ -285,7 +293,7 @@ public class LibreriaUtil {
         
         String[] arrOfHoraH = horaHasta.split(":");
         for (String a: arrOfHoraH)
-            log.info(a);
+        	LOGGER.info(a);
         
         String hHasta = arrOfHoraH[0];
         int hHastaInt = Integer.valueOf(hHasta).intValue();
@@ -293,7 +301,7 @@ public class LibreriaUtil {
         int minutoHastaInt = Integer.valueOf(minutoHasta).intValue();
         
 		if(isFechaDesdeHastaIgual(fechaDesde, fechaHasta)) {
-			log.info("isFechaDesdeHastaIgual");
+			LOGGER.info("isFechaDesdeHastaIgual");
 			if(hDesdeInt == hHastaInt) {
 				if(minutoDesdeInt == minutoHastaInt) {
 					return true;
@@ -327,21 +335,21 @@ public class LibreriaUtil {
         	Date fechaDate2 = formato.parse(fechaHasta);
         	
         	if ( fechaDate2.before(fechaDate1) ){
-        	    log.info("La fechaHasta es menor que la fechaDesde");
+        		LOGGER.info("La fechaHasta es menor que la fechaDesde");
         		return false;
         	}else{
         	     if ( fechaDate1.before(fechaDate2) ){
-        	    	 log.info("La fechaDesde es menor que la fechaHasta");
+        	    	 LOGGER.info("La fechaDesde es menor que la fechaHasta");
         	    	 return false;
         	     }else{
-        	    	 log.info("La fechaDesde es igual que la fechaHasta");
+        	    	 LOGGER.info("La fechaDesde es igual que la fechaHasta");
         	    	 return true;
         	     } 
         	}
         } 
         catch (ParseException ex) 
         {
-        	log.error(ex.getMessage());
+        	LOGGER.error(ex.getMessage());
         }
         
         return false;
@@ -359,7 +367,7 @@ public class LibreriaUtil {
 		BigDecimal montoAprobacionesLotes = new BigDecimal(0.00);
 		
 		for (BCVLBT bcvlbt : listaBCVLBTPorAprobarLotes) {
-			log.info("montoLote: "+bcvlbt.getMonto());
+			LOGGER.info("montoLote: "+bcvlbt.getMonto());
 			montoAprobacionesLotes = montoAprobacionesLotes.add(bcvlbt.getMonto());
 		}
 		
@@ -374,7 +382,7 @@ public class LibreriaUtil {
 		
 		for (BCVLBT bcvlbt : listaBCVLBTPorAprobarLotes) {
 			if(bcvlbt.isSeleccionado()) {
-				log.info("montoLote: "+bcvlbt.getMonto());
+				LOGGER.info("montoLote: "+bcvlbt.getMonto());
 				montoAprobarOperacionesSeleccionadas = montoAprobarOperacionesSeleccionadas.add(bcvlbt.getMonto());
 			}
 				
@@ -388,6 +396,27 @@ public class LibreriaUtil {
 			return true;
 		else 
 			return false;
+		
+	}
+	
+	public boolean isPermisoMenu(HttpSession httpSession, int valor) {
+		List<Menu> listaMenu = (List<Menu>)httpSession.getAttribute("listaMenu");
+		List<Integer> listaMenuInt = new ArrayList<>();
+		boolean permiso = false;
+		if(listaMenu != null) {
+			for (Menu menu : listaMenu) {
+				LOGGER.info(menu.getNombre());
+				listaMenuInt.add(menu.getIdMenu());
+			}
+			
+			for (Integer intMenu : listaMenuInt) {
+				if(intMenu == valor)
+					permiso = true;
+			}
+			return permiso;
+		}else {
+			return permiso;
+		}
 		
 	}
 }

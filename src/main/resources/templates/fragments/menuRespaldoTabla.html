@@ -1,0 +1,34 @@
+<nav th:fragment="menu-principal" class="sidebar-nav">
+        
+        <ul class="nav">
+          
+          <li class="nav-item nav-dropdown" th:each="menu : ${#httpSession.getAttribute('listaMenu')}" th:if="${menu.nivel}==1" >
+            <a class="nav-link nav-dropdown-toggle" href="#">[[${menu.nombre}]]</a>
+	            <ul class="nav-dropdown-items"> 
+	            	
+	            	<li  th:each="subMenu : ${menu.menuHijos}"   th:class="${#lists.size(subMenu.menuHijos)>0} ? 'nav-item nav-dropdown' : 'nav-item'"  >
+					         <a th:class="${subMenu.direccion}!=NULL ? 'nav-link' : 'nav-link nav-dropdown-toggle'" th:href="${subMenu.direccion}!=NULL ? ${subMenu.direccion} : '#'"  style="padding-left:30px;">[[${subMenu.nombre}]]</a>
+					         
+					         
+					         	<ul th:if="${#lists.size(subMenu.menuHijos)>0}"   class="nav-dropdown-items">
+					         		
+					         		<li  th:each="submenu : ${subMenu.menuHijos}"       class="nav-item"   >
+		                				<a class="nav-link"  th:href="${submenu.direccion}!=NULL ? ${submenu.direccion} : '#'" style="padding-left:40px;">[[${submenu.nombre}]]</a>
+		              				</li>
+					         	
+					         	</ul>
+					         
+					</li>
+	            	
+	            			
+			    
+			    </ul>
+          </li>
+           
+          
+           
+          
+        </ul>
+      </nav>
+      
+      
