@@ -14,7 +14,7 @@
 		    </PatternLayout>
         </Console>
         
-		<RollingFile name="FileAppender" fileName="/app/monitor/logs/app-banco-exterior-monitor.log" 
+		<RollingFile name="FileAppender" fileName="/app/logs/app-banco-exterior-monitor.log" 
 		             filePattern="logs/app-banco-exterior-monitor-%d{yyyy-MM-dd}-%i.log">
 		    <PatternLayout>
 		        <Pattern>${LOG_PATTERN_FILE}</Pattern>
