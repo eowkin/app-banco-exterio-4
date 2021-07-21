@@ -405,7 +405,6 @@ public class LibreriaUtil {
 		boolean permiso = false;
 		if(listaMenu != null) {
 			for (Menu menu : listaMenu) {
-				LOGGER.info(menu.getNombre());
 				listaMenuInt.add(menu.getIdMenu());
 			}
 			

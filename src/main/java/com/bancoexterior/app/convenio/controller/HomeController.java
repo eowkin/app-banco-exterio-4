@@ -42,16 +42,35 @@ public class HomeController {
 	@Autowired
 	private IAuditoriaService auditoriaService;
 	
+	private static final String HOMECONTROLLERMOSTRARI = "[==== INICIO Mostrar Home - Controller ====]";
+	
+	private static final String HOMECONTROLLERMOSTRARF = "[==== FIN Mostrar Home - Controller ====]";
+	
+	private static final String HOMEFUNCIONBUSCARLISTAMENUINI = "[==== INICIO Funcion Buscar Lista Menu In Home - Controller ====]";
+	
+	private static final String HOMEFUNCIONBUSCARLISTAMENUINF = "[==== FIN Funcion Buscar Lista Menu In Home - Controller ====]";
+	
+	private static final String HOMEFUNCIONBUSCARLISTAMENUMOSTRARI = "[==== INICIO Funcion Buscar Lista Menu Mostrar Home - Controller ====]";
+	
+	private static final String HOMEFUNCIONBUSCARLISTAMENUMOSTRARF = "[==== FIN Funcion Buscar Lista Menu Mostrar Home - Controller ====]";
+	
+	private static final String HOMEFUNCIONVALIDARLISTAMENUI = "[==== INICIO Funcion Validar Lista Menu Home - Controller ====]";
+	
+	private static final String HOMEFUNCIONVALIDARLISTAMENUF = "[==== FIN Funcion Validar Lista Menu Home - Controller ====]";
+	
+	private static final String MENUNOASIGNADO = "[==== No tiene menu asigando ====]";
+	
+	private static final String URLINDEX = "index";
+	
+	private static final String URLREDIRECTLOGOUT = "redirect:/logout";
+	
+	
 	@GetMapping("/inicio")
 	public String mostrarHome(Authentication auth, HttpSession httpSession, HttpServletRequest request) {
-		LOGGER.info("siempre me llama mostarHome");
-		LOGGER.info("[------------Menu por role--------------]");
-	    String username = auth.getName();
-	    
-	    
-	    LOGGER.info("username: "+ username);
+		LOGGER.info(HOMECONTROLLERMOSTRARI);
+		
 	    List<Integer> listaInMenu = bucarListaMenuIn(auth);
-	    //List<Integer> listaInMenu = bucarListaMenuInPrueba();
+	    
 	    
 	    if(!listaInMenu.isEmpty()) {
 			List<Menu> listaMenu = buscarListaMenuMostrar(listaInMenu);
@@ -59,20 +78,24 @@ public class HomeController {
 		    	if(validarListaMenu(listaMenu)) {
 		    		auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(), "Login", "Iniciar Sesion", "N/A", true, "Inicio de Sesion", request.getRemoteAddr());
 		    		httpSession.setAttribute("listaMenu", listaMenu);
-					return "index";
+		    		LOGGER.info(HOMECONTROLLERMOSTRARF);
+					return URLINDEX;
 		    	}else {
-		    		LOGGER.info("[-----no tiene menu asignado-----]");
-					return "redirect:/logout";
+		    		LOGGER.info(MENUNOASIGNADO);
+		    		LOGGER.info(HOMECONTROLLERMOSTRARF);
+					return URLREDIRECTLOGOUT;
 		    	}
 		    	
 				
 		    }else{
-		    	LOGGER.info("[-----no tiene menu asignado-----]");
-				return "redirect:/logout";
+		    	LOGGER.info(MENUNOASIGNADO);
+		    	LOGGER.info(HOMECONTROLLERMOSTRARF);
+				return URLREDIRECTLOGOUT;
 		    }
 		}else {
-			LOGGER.info("[-----no tiene menu asignado-----]");
-			return "redirect:/logout";	
+			LOGGER.info(MENUNOASIGNADO);
+			LOGGER.info(HOMECONTROLLERMOSTRARF);
+			return URLREDIRECTLOGOUT;	
 		}  
 	    
 	    
@@ -87,22 +110,22 @@ public class HomeController {
 	}
 	
 	public List<Menu> buscarListaMenuMostrar(List<Integer> listaInMenu){
+		LOGGER.info(HOMEFUNCIONBUSCARLISTAMENUMOSTRARI);
 		List<Menu> listaMenu = serviceMenu.todoMenuRoleIn(listaInMenu);;
-		LOGGER.info("[-----Si tiene menu asignado-----]");
+		
 		
 	    if(!listaMenu.isEmpty()) {
-	    	
-	    	LOGGER.info("[-----------------------]");
-	    	LOGGER.info("Sin imprimir hijos");
+	    	LOGGER.info("[-----Si tiene menu asignado-----]");
 			for (Menu menu : listaMenu) {
 				LOGGER.info(menu.getNombre());
 				menu.setMenuHijos(buscarHijos(listaMenu, menu.getIdMenu()));
 			}
 			
-			
+			LOGGER.info(HOMEFUNCIONBUSCARLISTAMENUMOSTRARF);
 			return listaMenu;
 	    }else{
-	    	LOGGER.info("[-----no tiene menu asignado-----]");
+	    	LOGGER.info("[-----No tiene menu asignado-----]");
+	    	LOGGER.info(HOMEFUNCIONBUSCARLISTAMENUMOSTRARF);
 			return listaMenu;
 	    }
 	}
@@ -145,29 +168,21 @@ public class HomeController {
 	}
 	
 	public List<Integer> bucarListaMenuIn(Authentication auth){
-		 List<Integer> listaInMenu = new ArrayList<>(); 
+		LOGGER.info(HOMEFUNCIONBUSCARLISTAMENUINI); 
+		List<Integer> listaInMenu = new ArrayList<>(); 
 		 List<Menu> listaMenus; 
 		 for (GrantedAuthority rol : auth.getAuthorities()) {
-			 LOGGER.info("Grupo: "+ rol.getAuthority());
-			 	//Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
 			 	Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(rol.getAuthority(), true);
-				LOGGER.info("Luego de Buscar Menu");
-				LOGGER.info("grupo: "+ grupo);
-				
 				if(grupo != null) {
-					LOGGER.info("grupo distinto de null ");
 					listaMenus = grupo.getMenus();
-					LOGGER.info("listaMenus.size(): "+ listaMenus.size());
 					if(!listaMenus.isEmpty()) {
 						for (Menu menu : listaMenus) {
-							LOGGER.info("añadi a listaInMenu:"+menu.getIdMenu());
-							LOGGER.info(menu.getNombre());
 							listaInMenu.add(menu.getIdMenu());
 						}
 					}	
 				}
 			}
-		 
+		 LOGGER.info(HOMEFUNCIONBUSCARLISTAMENUINF);
 		 return listaInMenu;
 	}
 	
@@ -183,20 +198,14 @@ public class HomeController {
 		 
 		 
 		 for (String string : stringGrupos) {
-			 LOGGER.info("Grupo: "+ string);
-				//Grupo grupo = serviceGrupo.findByNombre(string);
-				Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(string, true);
-				LOGGER.info("Luego de Buscar Menu");
-				LOGGER.info("grupo: "+ grupo);
+			
 				
+				Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(string, true);
+								
 				if(grupo != null) {
-					LOGGER.info("grupo distinto de null ");
 					listaMenus = grupo.getMenus();
-					LOGGER.info("listaMenus.size(): "+ listaMenus.size());
 					if(!listaMenus.isEmpty()) {
 						for (Menu menu : listaMenus) {
-							LOGGER.info("añadi a listaInMenu:"+menu.getIdMenu());
-							LOGGER.info(menu.getNombre());
 							listaInMenu.add(menu.getIdMenu());
 						}
 					}	
@@ -211,18 +220,11 @@ public class HomeController {
 		 List<String> listaInMenu = new ArrayList<>(); 
 		 List<Menu> listaMenus; 
 		 for (GrantedAuthority rol : auth.getAuthorities()) {
-			 LOGGER.info("Grupo: "+ rol.getAuthority());
-				//Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
-			 	Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(rol.getAuthority(), true);
-				LOGGER.info("Luego de Buscar Menu");
-				LOGGER.info("grupo: "+ grupo);
+			  	Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(rol.getAuthority(), true);
 				
 				if(grupo != null) {
-					LOGGER.info("grupo distinto de null ");
 					listaMenus = grupo.getMenus();
-					LOGGER.info("listaMenus.size(): "+ listaMenus.size());
 					if(!listaMenus.isEmpty()) {
-						LOGGER.info("añadi a lista :"+grupo.getNombreGrupo());
 						listaInMenu.add(grupo.getNombreGrupo());
 					}	
 				}
@@ -232,6 +234,7 @@ public class HomeController {
 	}
 	
 	public boolean validarListaMenu(List<Menu> listaMenu) {
+		LOGGER.info(HOMEFUNCIONVALIDARLISTAMENUI);
 		boolean validoRaiz = false;
 		boolean validoLink = false;
 		for (Menu menu : listaMenu) {
@@ -265,7 +268,7 @@ public class HomeController {
 					
 				}
 			}
-		
+		LOGGER.info(HOMEFUNCIONVALIDARLISTAMENUF);
 		if(validoRaiz && validoLink)
 			return true;
 		else
