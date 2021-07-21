@@ -97,9 +97,9 @@
 		            <table class="table table-striped table-hover">
 		              <thead>
 		                <tr>
-		                  <th>Cod. Operacion</th>
 		                  <th>Rif/CI</th> 
 		                  <th>Fecha Operacion</th>
+		                  <th>Fecha Liquidacion</th>
 		                  <th>Cuenta en divisas</th>
 		                  <th>Cuenta en Bolivares</th>
 		                  <th>Cod. Moneda</th>
@@ -110,9 +110,9 @@
 		              </thead>
 		              <tbody>
 		                <tr th:each = "movimiento: ${listaMovimientosVenta}">
-		                  <td th:text="${movimiento.codOperacion}"></td>
 		                  <td th:text="${movimiento.nroIdCliente}"></td>
 		                  <td th:text="${movimiento.fechaOperacion}"></td>
+		                  <td th:text="${movimiento.fechaPacto}"></td>
 		                  <td th:text="${movimiento.cuentaDivisa}"></td>
 		                  <td th:text="${movimiento.cuentaNacional}"></td>
 		                  <td th:text="${movimiento.codMoneda}"></td>
@@ -212,9 +212,9 @@
 		            <table class="table table-striped table-hover">
 		              <thead>
 		                <tr>
-		                  <th>Cod. Operacion</th>
 		                  <th>Rif/CI</th>
 		                  <th>Fecha Operacion</th>
+		                  <th>Fecha Liquidacion</th>
 		                  <th>Cuenta en divisas</th>
 		                  <th>Cuenta en Bolivares</th>
 		                  <th>Cod. Moneda</th>
@@ -225,9 +225,9 @@
 		              </thead>
 		              <tbody>
 		                <tr th:each = "movimientoCompra: ${listaMovimientosCompra}">
-		                  <td th:text="${movimientoCompra.codOperacion}"></td>
 		                  <td th:text="${movimientoCompra.nroIdCliente}"></td>
 		                  <td th:text="${movimientoCompra.fechaOperacion}"></td>
+		                  <td th:text="${movimientoCompra.fechaPacto}"></td>
 		                  <td th:text="${movimientoCompra.cuentaDivisa}"></td>
 		                  <td th:text="${movimientoCompra.cuentaNacional}"></td>
 		                  <td th:text="${movimientoCompra.codMoneda}"></td>

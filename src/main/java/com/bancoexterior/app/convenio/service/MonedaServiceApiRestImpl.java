@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,14 +23,14 @@ import com.bancoexterior.app.convenio.response.Resultado;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
+
+
 @Service
 public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
-		
+	private static final Logger LOGGER = LogManager.getLogger(MonedaServiceApiRestImpl.class);	
     
     @Autowired
 	private IWSService wsService;
@@ -82,7 +84,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public List<Moneda> listaMonedas(MonedasRequest monedasRequest) throws CustomException {
-		log.info(MONEDASERVICELISTAMONEDASI);
+		LOGGER.info(MONEDASERVICELISTAMONEDASI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
@@ -92,14 +94,14 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MONEDASERVICELISTAMONEDASF);
+				LOGGER.info(MONEDASERVICELISTAMONEDASF);
 	            return respuesta2xxlistaMonedas(retorno);
 			}else {
-				log.error(respuesta4xx(retorno));
+				LOGGER.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -109,7 +111,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			MonedaResponse monedaResponse = mapper.jsonToClass(retorno.getBody(), MonedaResponse.class);
 			return monedaResponse.getMonedas();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ArrayList<>();
 		}
        
@@ -119,7 +121,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public boolean existe(MonedasRequest monedasRequest) throws CustomException {
-		log.info(MONEDASERVICEEXISTEMONEDAI);  
+		LOGGER.info(MONEDASERVICEEXISTEMONEDAI);  
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
@@ -129,14 +131,14 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MONEDASERVICEEXISTEMONEDAF);
+				LOGGER.info(MONEDASERVICEEXISTEMONEDAF);
 				return respuesta2xxExiste(retorno);
 			}else {
-				log.error(respuesta4xx(retorno));
+				LOGGER.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -147,7 +149,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			MonedaResponse monedaResponse = mapper.jsonToClass(retorno.getBody(), MonedaResponse.class);
 			return monedaResponse.getResultado().getCodigo().equals("0000") ? true:false;
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return false;
 		}
 
@@ -159,14 +161,14 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			return resultado.getDescripcion();
 			
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
 	public Moneda buscarMoneda(MonedasRequest monedasRequest) throws CustomException {
-		log.info(MONEDASERVICEBUSCARMONEDAI);
+		LOGGER.info(MONEDASERVICEBUSCARMONEDAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
@@ -176,14 +178,14 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MONEDASERVICEBUSCARMONEDAF);
+				LOGGER.info(MONEDASERVICEBUSCARMONEDAF);
 				return respuest2xxBuscarMoneda(retorno);
 			}else {
-				log.error(respuesta4xx(retorno));
+				LOGGER.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -199,7 +201,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 	        	return null;
 	        }
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
         
@@ -207,7 +209,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public String actualizar(MonedasRequest monedasRequest) throws CustomException{
-		log.info(MONEDASERVICEACTUALIZARMONEDAI);
+		LOGGER.info(MONEDASERVICEACTUALIZARMONEDAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
@@ -217,15 +219,15 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 		retorno = wsService.put(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MONEDASERVICEACTUALIZARMONEDAF);
+				LOGGER.info(MONEDASERVICEACTUALIZARMONEDAF);
 				return respuesta2xxActualizarCrear(retorno);
 				
 			}else {
-				log.error(respuesta4xx(retorno));
+				LOGGER.error(respuesta4xx(retorno));
 				throw new CustomException(respuesta4xx(retorno));	
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -236,7 +238,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
        
@@ -250,7 +252,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 
 	@Override
 	public String crear(MonedasRequest monedasRequest) throws CustomException {
-		log.info(MONEDASERVICECREARMONEDAI);
+		LOGGER.info(MONEDASERVICECREARMONEDAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String monedasRequestJSON;
@@ -260,15 +262,15 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MONEDASERVICECREARMONEDAF);
+				LOGGER.info(MONEDASERVICECREARMONEDAF);
 				return respuesta2xxActualizarCrear(retorno);
 				
 			}else {
-				log.error(respuesta4xxCrear(retorno));
+				LOGGER.error(respuesta4xxCrear(retorno));
 				throw new CustomException(respuesta4xxCrear(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -278,7 +280,7 @@ public class MonedaServiceApiRestImpl implements IMonedaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}

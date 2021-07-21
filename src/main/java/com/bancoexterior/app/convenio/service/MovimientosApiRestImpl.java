@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,12 +24,15 @@ import com.bancoexterior.app.convenio.response.Resultado;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Service
 public class MovimientosApiRestImpl implements IMovimientosApiRest{
 
+	private static final Logger LOGGER = LogManager.getLogger(MovimientosApiRestImpl.class);
+	
+	
 	@Autowired
 	private IWSService wsService;
     
@@ -106,7 +111,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	
 	@Override
 	public MovimientosResponse consultarMovimientosPorAprobar(MovimientosRequest movimientosRequest) throws CustomException {
-		log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARI);
+		LOGGER.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
@@ -116,14 +121,14 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARF);
+				LOGGER.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARF);
 				return respuesta2xxConsultarMovimientosPorAprobar(retorno);
 			}else {
-				log.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
+				LOGGER.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 				throw new CustomException(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -133,7 +138,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		try {
 			return mapper.jsonToClass(retorno.getBody(), MovimientosResponse.class);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
        
@@ -144,7 +149,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado() .getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -153,7 +158,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	@Override
 	public MovimientosResponse consultarMovimientosPorAprobarVenta(MovimientosRequest movimientosRequest)
 			throws CustomException {
-		log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAI);
+		LOGGER.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
@@ -163,14 +168,14 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAF);
+				LOGGER.info(MOVIMIENTOSSERVICECONSULTARPORAPROBARVENTAF);
 				return respuesta2xxConsultarMovimientosPorAprobar(retorno);
 			}else {
-				log.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
+				LOGGER.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 				throw new CustomException(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -180,7 +185,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	
 	@Override
 	public MovimientosResponse consultarMovimientos(MovimientosRequest movimientosRequest) throws CustomException {
-		log.info(MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSI);
+		LOGGER.info(MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
@@ -190,21 +195,21 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSF);
+				LOGGER.info(MOVIMIENTOSSERVICECONSULTARMOVIMIENTOSF);
 				return respuesta2xxConsultarMovimientosPorAprobar(retorno);
 			}else {
-				log.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
+				LOGGER.error(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 				throw new CustomException(respuesta4xxConsultarMovimientosPorAprobar(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
 
 	@Override
 	public String rechazarCompra(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
-		log.info(MOVIMIENTOSSERVICERECHAZARCOMPRAI);
+		LOGGER.info(MOVIMIENTOSSERVICERECHAZARCOMPRAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
@@ -214,21 +219,21 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICERECHAZARCOMPRAF);
+				LOGGER.info(MOVIMIENTOSSERVICERECHAZARCOMPRAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);
 			}else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
-					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
+					LOGGER.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
-						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
+						LOGGER.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -246,7 +251,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
             	return resultado.getDescripcion();
             }
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -257,7 +262,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			return response.getResultado().getDescripcion();
 			
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -268,7 +273,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			Resultado resultado = aprobarRechazarResponse.getResultado();
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 		
@@ -276,7 +281,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 	
 	@Override
 	public String aprobarCompra(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
-		log.info(MOVIMIENTOSSERVICEAPROBARCOMPRAI);
+		LOGGER.info(MOVIMIENTOSSERVICEAPROBARCOMPRAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
@@ -286,21 +291,21 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICEAPROBARCOMPRAF);
+				LOGGER.info(MOVIMIENTOSSERVICEAPROBARCOMPRAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);
 			}else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
-					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
+					LOGGER.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
-						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
+						LOGGER.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -308,7 +313,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 
 	@Override
 	public String rechazarVenta(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
-		log.info(MOVIMIENTOSSERVICERECHAZARVENTAI);
+		LOGGER.info(MOVIMIENTOSSERVICERECHAZARVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
@@ -318,21 +323,21 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICERECHAZARVENTAF);
+				LOGGER.info(MOVIMIENTOSSERVICERECHAZARVENTAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);
 			}else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
-					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
+					LOGGER.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
-						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
+						LOGGER.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -340,7 +345,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 
 	@Override
 	public String aprobarVenta(AprobarRechazarRequest aprobarRechazarRequest) throws CustomException {
-		log.info(MOVIMIENTOSSERVICEAPROBARVENTAI);
+		LOGGER.info(MOVIMIENTOSSERVICEAPROBARVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String aprobarRechazarRequestJSON;
@@ -350,21 +355,21 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICEAPROBARVENTAF);
+				LOGGER.info(MOVIMIENTOSSERVICEAPROBARVENTAF);
 				return respuesta2xxRechazarAprobarCompraVenta(retorno);		 
 		     }else {
 				if (retorno.getStatus() == 422 || retorno.getStatus() == 400) {
-					log.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
+					LOGGER.error(respuesta4xxRechazarAprobarCompraVenta(retorno));
 					throw new CustomException(respuesta4xxRechazarAprobarCompraVenta(retorno));
 				}else {
 					if (retorno.getStatus() == 500) {
-						log.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
+						LOGGER.error(respuesta5xxRechazarAprobarCompraVenta(retorno));
 						throw new CustomException(respuesta5xxRechazarAprobarCompraVenta(retorno));
 					}
 				}
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;
@@ -372,7 +377,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 
 	@Override
 	public List<Movimiento> getListaMovimientos(MovimientosRequest movimientosRequest) throws CustomException {
-		log.info(MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSI);
+		LOGGER.info(MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String movimientosRequestJSON;
@@ -382,14 +387,14 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSF);
+				LOGGER.info(MOVIMIENTOSSERVICEGETLISTAMOVIMIENTOSF);
 				return respuesta2xxGetListaMovimientos(retorno);
 	       	}else {
-	       		log.error(respuesta4xxGetListaMovimientos(retorno));
+	       		LOGGER.error(respuesta4xxGetListaMovimientos(retorno));
 	       		throw new CustomException(respuesta4xxGetListaMovimientos(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -400,7 +405,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
         	return movimientosResponse.getMovimientos();
         	
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ArrayList<>();
 		}
        
@@ -411,7 +416,7 @@ public class MovimientosApiRestImpl implements IMovimientosApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado() .getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}

@@ -2,6 +2,8 @@ package com.bancoexterior.app.convenio.service;
 
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,13 +19,15 @@ import com.bancoexterior.app.convenio.response.Response;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
 
-@Slf4j
+
+
 @Service
 public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 
+	private static final Logger LOGGER = LogManager.getLogger(AcumuladosServiceApiRestImpl.class);
+	
 	@Autowired
 	private IWSService wsService;
     
@@ -70,7 +74,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 
 	@Override
 	public AcumuladoResponse consultarAcumuladosDiariosBanco(AcumuladoRequest acumuladoRequest) throws CustomException {
-		log.info(ACUMULADOSSERVICECONSULTARDIARIOSBANCOI);
+		LOGGER.info(ACUMULADOSSERVICECONSULTARDIARIOSBANCOI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String acumuladoRequestJSON;
@@ -80,14 +84,14 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(ACUMULADOSSERVICECONSULTARDIARIOSBANCOF);
+				LOGGER.info(ACUMULADOSSERVICECONSULTARDIARIOSBANCOF);
 				return respuesta2xxConsultarAcumuladosDiariosBanco(retorno);
 			}else {
-				log.error(respuesta4xxConsultarAcumuladosDiariosBanco(retorno));
+				LOGGER.error(respuesta4xxConsultarAcumuladosDiariosBanco(retorno));
 				throw new CustomException(respuesta4xxConsultarAcumuladosDiariosBanco(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -96,7 +100,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 		 try {
 			 return mapper.jsonToClass(retorno.getBody(), AcumuladoResponse.class);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;	
 		}
 	}
@@ -106,7 +110,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado() .getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -114,7 +118,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 	@Override
 	public AcumuladoCompraVentaResponse consultarAcumuladosCompraVenta(AcumuladoRequest acumuladoRequest)
 			throws CustomException {
-		log.info(ACUMULADOSSERVICECONSULTARCOMPRAVENTAI);
+		LOGGER.info(ACUMULADOSSERVICECONSULTARCOMPRAVENTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String acumuladoRequestJSON;
@@ -124,14 +128,14 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(ACUMULADOSSERVICECONSULTARCOMPRAVENTAF);
+				LOGGER.info(ACUMULADOSSERVICECONSULTARCOMPRAVENTAF);
 				return respuesta2xxconsultarConsultarAcumuladosCompraVenta(retorno);
 	        }else {
-	        	log.error(respuesta4xxConsultarAcumuladosCompraVenta(retorno));
+	        	LOGGER.error(respuesta4xxConsultarAcumuladosCompraVenta(retorno));
 				throw new CustomException(respuesta4xxConsultarAcumuladosCompraVenta(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		
@@ -141,7 +145,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 		try {
 			return mapper.jsonToClass(retorno.getBody(), AcumuladoCompraVentaResponse.class);
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -152,7 +156,7 @@ public class AcumuladosServiceApiRestImpl implements IAcumuladosServiceApiRest{
 			return response.getResultado().getDescripcion();
 			
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}

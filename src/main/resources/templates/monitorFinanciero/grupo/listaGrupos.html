@@ -54,6 +54,7 @@
 			                <th>Fecha Modificacion</th>
 			                <th>Permiso Menu</th>
 			                <th>Editar</th>
+			                <th>Activar/Inactivar</th>
 			              </tr>
 			            </thead>
 			            <tbody>
@@ -61,12 +62,31 @@
 			                <td th:text="${grupo.nombreGrupo}"></td>
 			                <td th:text="${grupo.codUsuario}"></td>
 			                <td th:text="${#dates.format(grupo.fechaModificacion, 'dd-MM-yyyy')}"></td>
-			               	<td>
+			               	<td th:if="${grupo.flagActivo}">
 			               		<a  class="btn btn-success" th:href="@{/grupos/permisos(idGrupo=${grupo.idGrupo}) }" role="button" title="Permisos."><i class="fa fa-refresh" aria-hidden="true"></i></a>
 		                  	</td>
-		                  	<td>
+		                  	<td th:unless="${grupo.flagActivo}">
+		                  		<button type="submit" class="btn btn-success" disabled="disabled"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+		                  	</td>
+		                  	<td th:if="${grupo.flagActivo}">
 		                  		<a  class="btn btn-primary" th:href="@{/grupos/edit(idGrupo=${grupo.idGrupo}) }" role="button" title="Editar el registro."><i class="fa fa-pencil" aria-hidden="true"></i></a>
 		                  	</td>
+		                  	<td th:unless="${grupo.flagActivo}">
+		                  		<button type="submit" class="btn btn-primary" disabled="disabled"><i class="fa fa-pencil" aria-hidden="true"></i></button>
+		                  	</td>
+		                  	
+		                  	<td th:if="${grupo.flagActivo}"  align="center">
+		                  	<label class="switch switch-pill switch-primary">
+								  <input th:onclick="|window.location.href='@{/grupos/desactivar/{idGrupo} (idGrupo=${grupo.idGrupo}) }'|" type="checkbox" class="switch-input" checked>
+								  <span class="switch-slider"></span>
+								</label>
+			              </td>
+		                  <td th:unless="${grupo.flagActivo}" align="center"> 
+		                  	<label class="switch switch-pill switch-secondary">
+								  <input th:onclick="|window.location.href='@{/grupos/activar/{idGrupo} (idGrupo=${grupo.idGrupo}) }'|" type="checkbox" class="switch-input" checked>
+								  <span class="switch-slider"></span>
+							</label>
+		                   </td>
 			              </tr>
 			            </tbody>
 			          </table> 

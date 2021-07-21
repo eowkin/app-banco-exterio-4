@@ -81,6 +81,9 @@ public class SolicitudController {
 	@Value("${${app.ambiente}"+".movimientos.numeroRegistroPage}")
     private int numeroRegistroPage;
 	
+	@Value("${${app.ambiente}"+".movimientos.origen}")
+    private String valorOrigen;
+	
 	@Value("${${app.ambiente}"+".movimientos.operaciones.valorBD}")
     private int valorOperacionBD;
 	
@@ -806,7 +809,7 @@ public class SolicitudController {
 		
 		AprobarRechazarRequest aprobarRechazarRequest = getAprobarRechazarRequest();
 		aprobarRechazarRequest.setIp(request.getRemoteAddr());
-		aprobarRechazarRequest.setOrigen("01");
+		aprobarRechazarRequest.setOrigen(valorOrigen);
 		aprobarRechazarRequest.setCodSolicitud(movimiento.getCodOperacion());
 		aprobarRechazarRequest.setTipoPacto(movimiento.getTipoPacto());
 		aprobarRechazarRequest.setTasa(movimiento.getTasaOperacion());
@@ -906,7 +909,7 @@ public class SolicitudController {
 		
 		AprobarRechazarRequest aprobarRechazarRequest = getAprobarRechazarRequest();
 		aprobarRechazarRequest.setIp(request.getRemoteAddr());
-		aprobarRechazarRequest.setOrigen("01");
+		aprobarRechazarRequest.setOrigen(valorOrigen);
 		aprobarRechazarRequest.setCodSolicitud(movimiento.getCodOperacion());
 		aprobarRechazarRequest.setTipoPacto(movimiento.getTipoPacto());
 		aprobarRechazarRequest.setTasa(movimiento.getTasaOperacion());
@@ -961,7 +964,7 @@ public class SolicitudController {
 				
 				AprobarRechazarRequest aprobarRechazarRequest = getAprobarRechazarRequest();
 				aprobarRechazarRequest.setIp(request.getRemoteAddr());
-				aprobarRechazarRequest.setOrigen("01");
+				aprobarRechazarRequest.setOrigen(valorOrigen);
 				aprobarRechazarRequest.setCodSolicitud(codOperacion);
 				aprobarRechazarRequest.setTipoPacto(movimientoProcesar.getTipoPacto());
 				aprobarRechazarRequest.setTasa(movimientoProcesar.getTasaCliente());
@@ -1015,7 +1018,7 @@ public class SolicitudController {
 				
 				AprobarRechazarRequest aprobarRechazarRequest = getAprobarRechazarRequest();
 				aprobarRechazarRequest.setIp(request.getRemoteAddr());
-				aprobarRechazarRequest.setOrigen("01");
+				aprobarRechazarRequest.setOrigen(valorOrigen);
 				aprobarRechazarRequest.setCodSolicitud(codOperacion);
 				aprobarRechazarRequest.setTipoPacto(movimientoProcesar.getTipoPacto());
 				aprobarRechazarRequest.setTasa(movimientoProcesar.getTasaCliente());
@@ -1074,7 +1077,7 @@ public class SolicitudController {
 				
 				AprobarRechazarRequest aprobarRechazarRequest = getAprobarRechazarRequest();
 				aprobarRechazarRequest.setIp(request.getRemoteAddr());
-				aprobarRechazarRequest.setOrigen("01");
+				aprobarRechazarRequest.setOrigen(valorOrigen);
 				aprobarRechazarRequest.setCodSolicitud(codOperacion);
 				aprobarRechazarRequest.setTipoPacto(movimientoProcesar.getTipoPacto());
 				aprobarRechazarRequest.setTasa(movimientoProcesar.getTasaCliente());
@@ -1132,7 +1135,7 @@ public class SolicitudController {
 				
 				AprobarRechazarRequest aprobarRechazarRequest = getAprobarRechazarRequest();
 				aprobarRechazarRequest.setIp(request.getRemoteAddr());
-				aprobarRechazarRequest.setOrigen("01");
+				aprobarRechazarRequest.setOrigen(valorOrigen);
 				aprobarRechazarRequest.setCodSolicitud(codOperacion);
 				aprobarRechazarRequest.setTipoPacto(movimientoProcesar.getTipoPacto());
 				aprobarRechazarRequest.setTasa(movimientoProcesar.getTasaCliente());

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,14 @@ import com.bancoexterior.app.convenio.response.Resultado;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Service
 public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 
+	private static final Logger LOGGER = LogManager.getLogger(AgenciaServiceApiRestImpl.class);
+	
 	@Autowired
 	private IWSService wsService;
 	
@@ -73,7 +77,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
     
 	@Override
 	public List<Agencia> listaAgencias(AgenciaRequest agenciaRequest) throws CustomException {
-		log.info(AGENCIASERVICELISTAI);
+		LOGGER.info(AGENCIASERVICELISTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
@@ -83,14 +87,14 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(AGENCIASERVICELISTAF);
+				LOGGER.info(AGENCIASERVICELISTAF);
 				return respuesta2xxListaAgencias(retorno);
 			}else {
-				log.error(respuesta4xxListaAgencias(retorno));
+				LOGGER.error(respuesta4xxListaAgencias(retorno));
 				throw new CustomException(respuesta4xxListaAgencias(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -100,7 +104,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 			AgenciaResponse agenciaResponse = mapper.jsonToClass(retorno.getBody(), AgenciaResponse.class);
 	        return agenciaResponse.getListaAgencias();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -111,14 +115,14 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
 	
 	@Override
 	public Agencia buscarAgencia(AgenciaRequest agenciaRequest) throws CustomException {
-		log.info(AGENCIASERVICEBUSCARI);
+		LOGGER.info(AGENCIASERVICEBUSCARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
@@ -128,14 +132,14 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(AGENCIASERVICEBUSCARF);
+				LOGGER.info(AGENCIASERVICEBUSCARF);
 				return respuesta2xxBuscarAgencia(retorno);
 			}else {
-				log.error(respuesta4xxListaAgencias(retorno));
+				LOGGER.error(respuesta4xxListaAgencias(retorno));
 				throw new CustomException(respuesta4xxListaAgencias(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -149,7 +153,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	        	return null;
 	        }
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
         
@@ -158,7 +162,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	
 	@Override
 	public String actualizar(AgenciaRequest agenciaRequest) throws CustomException {
-		log.info(AGENCIASERVICEACTUALIZARI);
+		LOGGER.info(AGENCIASERVICEACTUALIZARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
@@ -168,14 +172,14 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 		retorno = wsService.put(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(AGENCIASERVICEACTUALIZARF);
+				LOGGER.info(AGENCIASERVICEACTUALIZARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
-				log.error(respuesta4xxActualizarCrear(retorno));
+				LOGGER.error(respuesta4xxActualizarCrear(retorno));
 				throw new CustomException(respuesta4xxActualizarCrear(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -185,7 +189,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 		
@@ -197,7 +201,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();		
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -205,7 +209,7 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 	
 	@Override
 	public String crear(AgenciaRequest agenciaRequest) throws CustomException {
-		log.info(AGENCIASERVICECREARI);
+		LOGGER.info(AGENCIASERVICECREARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String agenciaRequestJSON;
@@ -215,22 +219,22 @@ public class AgenciaServiceApiRestImpl implements IAgenciaServiceApiRest{
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(AGENCIASERVICECREARF);
+				LOGGER.info(AGENCIASERVICECREARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
 				if (retorno.getStatus() == 422) {
-					log.error(respuesta4xxActualizarCrear(retorno));
+					LOGGER.error(respuesta4xxActualizarCrear(retorno));
 					throw new CustomException(respuesta4xxActualizarCrear(retorno));
 					
 				}else {
 					if (retorno.getStatus() == 400 || retorno.getStatus() == 600) {
-						log.error(respuesta4xxListaAgencias(retorno));
+						LOGGER.error(respuesta4xxListaAgencias(retorno));
 						throw new CustomException(respuesta4xxListaAgencias(retorno));
 					}
 				}
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 		return null;

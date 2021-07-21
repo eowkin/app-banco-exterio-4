@@ -72,4 +72,21 @@ public class GrupoServiceImpl implements IGrupoService{
 		
 	}
 
+	@Override
+	public void updateNombreGrupo(String nombreGrupo, String codUsuario, int id) {
+		repo.updateNombreGrupo(nombreGrupo, codUsuario,id);
+		
+	}
+
+	@Override
+	public void updateActivarDesactivarGrupo(boolean flagActivo, String codUsuario, int id) {
+		repo.updateEditarFlagGrupo(flagActivo, codUsuario,id);
+		
+	}
+
+	@Override
+	public Grupo findByNombreAndFlagActivo(String nombre, boolean flagActivo) {
+		return repo.findByNombreGrupoAndFlagActivo(nombre, flagActivo);
+	}
+
 }

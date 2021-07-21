@@ -27,6 +27,7 @@ import com.bancoexterior.app.convenio.dto.MonedasRequest;
 import com.bancoexterior.app.convenio.exception.CustomException;
 import com.bancoexterior.app.convenio.model.Moneda;
 import com.bancoexterior.app.convenio.service.IMonedaServiceApiRest;
+import com.bancoexterior.app.inicio.service.IAuditoriaService;
 import com.bancoexterior.app.util.LibreriaUtil;
 
 
@@ -42,6 +43,8 @@ public class MonedaController {
 	@Autowired
 	private IMonedaServiceApiRest monedaServiceApiRest;
 	
+	@Autowired
+	private IAuditoriaService auditoriaService;
 	
 	@Autowired
 	private LibreriaUtil libreriaUtil; 
@@ -87,7 +90,7 @@ public class MonedaController {
 	private static final String INDEX = "/index";
 	
 	@GetMapping(INDEX)
-	public String indexWs(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+	public String indexWs(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession, HttpServletRequest request) {
 		LOGGER.info(MONEDACONTROLLERINDEXI);
 		
 		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
@@ -107,7 +110,8 @@ public class MonedaController {
 					moneda2.setFechaModificacion(arrOfStr[0]);
 				}
 			}
-			
+			//auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(),
+					//"Monedas", "Index", "0000", true, "Operacion Exitosa: Consulta", request.getRemoteAddr());
 			model.addAttribute(LISTAMONEDAS, listMonedas);
 	    	
 		} catch (CustomException e) {
@@ -121,7 +125,8 @@ public class MonedaController {
 	}
 	
 	@GetMapping("/activar/{codMoneda}")
-	public String activarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+	public String activarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes,
+			HttpSession httpSession, HttpServletRequest request) {
 		LOGGER.info(MONEDACONTROLLERACTIVARI);
 		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
 			LOGGER.info(NOTIENEPERMISO);
@@ -141,6 +146,8 @@ public class MonedaController {
 			monedasRequest.setMoneda(monedaEdit);
 			String respuesta = monedaServiceApiRest.actualizar(monedasRequest);
 			LOGGER.info(respuesta);
+			auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(),
+					"Monedas", "activar", "0000", true, respuesta+" Moneda:"+codMoneda, request.getRemoteAddr());
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 			
 		} catch (CustomException e) {
@@ -152,7 +159,8 @@ public class MonedaController {
 	}	
 	
 	@GetMapping("/desactivar/{codMoneda}")
-	public String desactivarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+	public String desactivarWs(@PathVariable("codMoneda") String codMoneda, Moneda moneda, Model model, RedirectAttributes redirectAttributes,
+			HttpSession httpSession, HttpServletRequest request) {
 		LOGGER.info(MONEDACONTROLLERDESACTIVARI);
 		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
 			LOGGER.info(NOTIENEPERMISO);
@@ -171,6 +179,8 @@ public class MonedaController {
 			monedasRequest.setMoneda(monedaEdit);
 			String respuesta = monedaServiceApiRest.actualizar(monedasRequest);
 			LOGGER.info(respuesta);
+			auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(),
+					"Monedas", "desactivar", "0000", true, respuesta+" Moneda:"+codMoneda, request.getRemoteAddr());
 			redirectAttributes.addFlashAttribute(MENSAJE, respuesta);
 		} catch (CustomException e) {
 			LOGGER.error(e.getMessage());
@@ -186,7 +196,7 @@ public class MonedaController {
 	
 	@GetMapping("/searchCodigo")
 	public String searchCodigo(@ModelAttribute("monedaSearch") Moneda monedaSearch,
-			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession, HttpServletRequest request) {
 		LOGGER.info(MONEDACONTROLLERSEARHCODIGOI);
 		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
 			LOGGER.info(NOTIENEPERMISO);
@@ -209,6 +219,13 @@ public class MonedaController {
 						String[] arrOfStr = moneda2.getFechaModificacion().split(" ", 2);
 						moneda2.setFechaModificacion(arrOfStr[0]);
 					}
+				}
+				if(!monedaSearch.getCodMoneda().equals("")) {
+					auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(),
+							"Monedas", "searchCodigo", "0000", true," Moneda:"+monedaSearch.getCodMoneda().toUpperCase(), request.getRemoteAddr());
+				}else {
+					auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(),
+							"Monedas", "searchCodigo", "0000", true," Moneda:", request.getRemoteAddr());
 				}
 				
 				model.addAttribute(LISTAMONEDAS, listMonedas);

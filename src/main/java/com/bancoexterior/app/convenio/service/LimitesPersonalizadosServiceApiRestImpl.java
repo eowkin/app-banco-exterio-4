@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,11 +23,14 @@ import com.bancoexterior.app.convenio.response.Resultado;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
-@Slf4j
+
+
+
 @Service
 public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonalizadosServiceApiRest{
 
+	private static final Logger LOGGER = LogManager.getLogger(LimitesPersonalizadosServiceApiRestImpl.class);
+	
 	@Autowired
 	private IWSService wsService;
 	
@@ -75,7 +80,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	public List<LimitesPersonalizados> listaLimitesPersonalizados(
 			LimitesPersonalizadosRequest limitesPersonalizadosRequest) throws CustomException {
 		
-		log.info(LIMITESPERSONALIZADOSSERVICELISTAI);
+		LOGGER.info(LIMITESPERSONALIZADOSSERVICELISTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
@@ -86,14 +91,14 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 		
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(LIMITESPERSONALIZADOSSERVICELISTAF);
+				LOGGER.info(LIMITESPERSONALIZADOSSERVICELISTAF);
 				return respuesta2xxListaLimitesPersonalizados(retorno);
 			}else {
-				log.error(respuesta4xxListaLimitesPersonalizados(retorno));
+				LOGGER.error(respuesta4xxListaLimitesPersonalizados(retorno));
 				throw new CustomException(respuesta4xxListaLimitesPersonalizados(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -103,7 +108,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			LimitesPersonalizadosResponse limiteResponse = mapper.jsonToClass(retorno.getBody(), LimitesPersonalizadosResponse.class);
 			return limiteResponse.getLimitesPersonalizados();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -114,7 +119,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
@@ -122,7 +127,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	@Override
 	public LimitesPersonalizados buscarLimitesPersonalizados(LimitesPersonalizadosRequest limitesPersonalizadosRequest)
 			throws CustomException {
-		log.info(LIMITESPERSONALIZADOSSERVICEBUSCARI);
+		LOGGER.info(LIMITESPERSONALIZADOSSERVICEBUSCARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
@@ -132,14 +137,14 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(LIMITESPERSONALIZADOSSERVICEBUSCARF);
+				LOGGER.info(LIMITESPERSONALIZADOSSERVICEBUSCARF);
 				return respuesta2xxBuscarLimitesPersonalizados(retorno);
 			}else {
-				log.error(respuesta4xxListaLimitesPersonalizados(retorno));
+				LOGGER.error(respuesta4xxListaLimitesPersonalizados(retorno));
 				throw new CustomException(respuesta4xxListaLimitesPersonalizados(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -153,7 +158,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	        	return null;
 	        }
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
         
@@ -161,7 +166,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 	
 	@Override
 	public String actualizar(LimitesPersonalizadosRequest limitesPersonalizadosRequest) throws CustomException {
-		log.info(LIMITESPERSONALIZADOSSERVICEACTUALIZARI);
+		LOGGER.info(LIMITESPERSONALIZADOSSERVICEACTUALIZARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
@@ -171,14 +176,14 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 		retorno = wsService.put(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(LIMITESPERSONALIZADOSSERVICEACTUALIZARF);
+				LOGGER.info(LIMITESPERSONALIZADOSSERVICEACTUALIZARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
-				log.error(respuesta4xxActualizarCrear(retorno));
+				LOGGER.error(respuesta4xxActualizarCrear(retorno));
 				throw new CustomException(respuesta4xxActualizarCrear(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -188,7 +193,7 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 		
@@ -199,14 +204,14 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
 	
 	@Override
 	public String crear(LimitesPersonalizadosRequest limitesPersonalizadosRequest) throws CustomException {
-		log.info(LIMITESPERSONALIZADOSSERVICECREARI);
+		LOGGER.info(LIMITESPERSONALIZADOSSERVICECREARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limitesPersonalizadosRequestJSON;
@@ -216,14 +221,14 @@ public class LimitesPersonalizadosServiceApiRestImpl implements ILimitesPersonal
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(LIMITESPERSONALIZADOSSERVICECREARF);
+				LOGGER.info(LIMITESPERSONALIZADOSSERVICECREARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
-				log.error(respuesta4xxActualizarCrear(retorno));
+				LOGGER.error(respuesta4xxActualizarCrear(retorno));
 				throw new CustomException(respuesta4xxActualizarCrear(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}

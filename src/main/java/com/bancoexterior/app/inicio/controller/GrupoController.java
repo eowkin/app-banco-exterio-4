@@ -19,6 +19,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -102,6 +103,12 @@ public class GrupoController {
 	
 	private static final String GRUPOCONTROLLERGUARDARPERMISOSF = "[==== FIN Guardar Permisos Grupo - Controller ====]";
 	
+	private static final String GRUPOCONTROLLERACTIVARI = "[==== INICIO Activar Grupo - Controller ====]";
+	
+	private static final String GRUPOCONTROLLERACTIVARF = "[==== FIN Activar Grupo - Controller ====]";
+	
+	
+	
 	@GetMapping("/index")
 	public String index(Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
 		LOGGER.info(GRUPOCONTROLLERINDEXI);
@@ -147,6 +154,41 @@ public class GrupoController {
 		
 	}
 	
+	@GetMapping("/activar/{idGrupo}")
+	public String activarWs(@PathVariable("idGrupo") int idGrupo, Grupo grupo, 
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLERACTIVARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
+		
+		grupoServicio.updateActivarDesactivarGrupo(true, SecurityContextHolder.getContext().getAuthentication().getName(),idGrupo);
+		redirectAttributes.addFlashAttribute(MENSAJE, MENSAJEOPERACIONEXITOSA);
+		
+		LOGGER.info(GRUPOCONTROLLERACTIVARF);
+		return REDIRECTINDEX;
+	}
+			
+	
+	@GetMapping("/desactivar/{idGrupo}")
+	public String desactivarWs(@PathVariable("idGrupo") int idGrupo, Grupo grupo, 
+			Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
+		LOGGER.info(GRUPOCONTROLLERACTIVARI);
+		if(!libreriaUtil.isPermisoMenu(httpSession, valorBD)) {
+			LOGGER.info(NOTIENEPERMISO);
+			return URLNOPERMISO;
+		}
+		
+		
+		grupoServicio.updateActivarDesactivarGrupo(false, SecurityContextHolder.getContext().getAuthentication().getName(),idGrupo);
+		redirectAttributes.addFlashAttribute(MENSAJE, MENSAJEOPERACIONEXITOSA);
+		
+		LOGGER.info(GRUPOCONTROLLERACTIVARF);
+		return REDIRECTINDEX;
+	}
+	
 	
 	@PostMapping("/save")
 	public String save(GrupoDto grupoDto, BindingResult result, Model model, RedirectAttributes redirectAttributes, HttpSession httpSession) {
@@ -155,6 +197,7 @@ public class GrupoController {
 			LOGGER.info(NOTIENEPERMISO);
 			return URLNOPERMISO;
 		}
+		grupoDto.setNombreGrupo(grupoDto.getNombreGrupo().trim());
 		grupoDto.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
 		grupoDto.setFlagActivo(true);
 		GrupoDto grupoSave =   grupoServicio.save(grupoDto);
@@ -174,13 +217,8 @@ public class GrupoController {
 			LOGGER.info(NOTIENEPERMISO);
 			return URLNOPERMISO;
 		}
-		grupoDto.setCodUsuario(SecurityContextHolder.getContext().getAuthentication().getName());
-		GrupoDto grupoSave =   grupoServicio.save(grupoDto);
-		if(grupoSave != null) {
-			redirectAttributes.addFlashAttribute(MENSAJE, MENSAJEOPERACIONEXITOSA);
-		}else {
-			redirectAttributes.addFlashAttribute(MENSAJEERROR, MENSAJEOPERACIONFALLIDA);
-		}
+		grupoServicio.updateNombreGrupo(grupoDto.getNombreGrupo(), SecurityContextHolder.getContext().getAuthentication().getName(),grupoDto.getIdGrupo());
+		redirectAttributes.addFlashAttribute(MENSAJE, MENSAJEOPERACIONEXITOSA);
 		LOGGER.info(GRUPOCONTROLLERGUARDARF);
 		return REDIRECTINDEX;
 	}

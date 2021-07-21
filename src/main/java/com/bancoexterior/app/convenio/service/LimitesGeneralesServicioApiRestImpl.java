@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,12 +22,14 @@ import com.bancoexterior.app.convenio.response.Resultado;
 import com.bancoexterior.app.util.Mapper;
 import com.google.gson.Gson;
 
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
+
+
 @Service
 public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesServiceApirest{
 
+	private static final Logger LOGGER = LogManager.getLogger(LimitesGeneralesServicioApiRestImpl.class);
+	
 	@Autowired
 	private IWSService wsService;
 	
@@ -75,7 +79,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 	
 	@Override
 	public List<LimitesGenerales> listaLimitesGenerales(LimiteRequest limiteRequest) throws CustomException {
-		log.info(LIMITESGENERALESSERVICELISTAI);
+		LOGGER.info(LIMITESGENERALESSERVICELISTAI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
@@ -86,14 +90,14 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 		
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(LIMITESGENERALESSERVICELISTAF);
+				LOGGER.info(LIMITESGENERALESSERVICELISTAF);
 				return respuesta2xxListaLimitesGenerales(retorno);
 			}else {
-				log.error(respuesta4xxListaLimitesGenerales(retorno));
+				LOGGER.error(respuesta4xxListaLimitesGenerales(retorno));
 				throw new CustomException(respuesta4xxListaLimitesGenerales(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -103,7 +107,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			LimiteResponse limiteResponse = mapper.jsonToClass(retorno.getBody(), LimiteResponse.class);
 			return limiteResponse.getLimites();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return new ArrayList<>();
 		}
         
@@ -114,14 +118,14 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			Resultado resultado = mapper.jsonToClass(retorno.getBody(), Resultado.class);
 			return resultado.getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
 
 	@Override
 	public LimitesGenerales buscarLimitesGenerales(LimiteRequest limiteRequest) throws CustomException {
-		log.info(LIMITESGENERALESSERVICEBUSCARI);
+		LOGGER.info(LIMITESGENERALESSERVICEBUSCARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
@@ -132,14 +136,14 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 		
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(LIMITESGENERALESSERVICEBUSCARF);
+				LOGGER.info(LIMITESGENERALESSERVICEBUSCARF);
 				return respuesta2xxbuscarLimitesGenerales(retorno);
 			}else {
-				log.error(respuesta4xxbuscarLimitesGenerales(retorno));
+				LOGGER.error(respuesta4xxbuscarLimitesGenerales(retorno));
 				throw new CustomException(respuesta4xxbuscarLimitesGenerales(retorno));	
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}
@@ -153,7 +157,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 	        	return null;
 	        }
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
         
@@ -166,14 +170,14 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			return response.getResultado().getDescripcion();
 			
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 	}
 	
 	@Override
 	public String actualizar(LimiteRequest limiteRequest) throws CustomException {
-		log.info(LIMITESGENERALESSERVICEACTUALIZARI);
+		LOGGER.info(LIMITESGENERALESSERVICEACTUALIZARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
@@ -183,14 +187,14 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 		retorno = wsService.put(wsrequest);
 			if(retorno.isExitoso()) {
 				if(retorno.getStatus() == 200) {
-					log.info(LIMITESGENERALESSERVICEACTUALIZARF);
+					LOGGER.info(LIMITESGENERALESSERVICEACTUALIZARF);
 					return respuesta2xxActualizarCrear(retorno);
 				}else {
-					log.error(respuesta4xxbuscarLimitesGenerales(retorno));
+					LOGGER.error(respuesta4xxbuscarLimitesGenerales(retorno));
 					throw new CustomException(respuesta4xxbuscarLimitesGenerales(retorno));
 				}
 			}else {
-				log.error(ERRORMICROCONEXION);
+				LOGGER.error(ERRORMICROCONEXION);
 				throw new CustomException(ERRORMICROCONEXION);
 			}	
 	}
@@ -200,7 +204,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 			Response response = mapper.jsonToClass(retorno.getBody(), Response.class);
 			return response.getResultado().getDescripcion();
 		} catch (IOException e) {
-			log.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 			return null;
 		}
 		
@@ -209,7 +213,7 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 	
 	@Override
 	public String crear(LimiteRequest limiteRequest) throws CustomException {
-		log.info(LIMITESGENERALESSERVICECREARI);
+		LOGGER.info(LIMITESGENERALESSERVICECREARI);
 		WSRequest wsrequest = getWSRequest();
 		WSResponse retorno;
 		String limiteRequestJSON;
@@ -219,14 +223,14 @@ public class LimitesGeneralesServicioApiRestImpl implements ILimitesGeneralesSer
 		retorno = wsService.post(wsrequest);
 		if(retorno.isExitoso()) {
 			if(retorno.getStatus() == 200) {
-				log.info(LIMITESGENERALESSERVICECREARF);
+				LOGGER.info(LIMITESGENERALESSERVICECREARF);
 				return respuesta2xxActualizarCrear(retorno);
 			}else {
-				log.error(respuesta4xxbuscarLimitesGenerales(retorno));
+				LOGGER.error(respuesta4xxbuscarLimitesGenerales(retorno));
 				throw new CustomException(respuesta4xxbuscarLimitesGenerales(retorno));
 			}
 		}else {
-			log.error(ERRORMICROCONEXION);
+			LOGGER.error(ERRORMICROCONEXION);
 			throw new CustomException(ERRORMICROCONEXION);
 		}
 	}

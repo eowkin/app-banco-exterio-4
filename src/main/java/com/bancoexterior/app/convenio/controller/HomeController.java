@@ -50,8 +50,9 @@ public class HomeController {
 	    
 	    
 	    LOGGER.info("username: "+ username);
-	    List<Integer> listaInMenu = bucarListaMenuIn(auth);
-	   
+	    //List<Integer> listaInMenu = bucarListaMenuIn(auth);
+	    List<Integer> listaInMenu = bucarListaMenuInPrueba();
+	    
 	    if(!listaInMenu.isEmpty()) {
 			List<Menu> listaMenu = buscarListaMenuMostrar(listaInMenu);
 		    if(!listaMenu.isEmpty()) {
@@ -147,7 +148,43 @@ public class HomeController {
 		 List<Menu> listaMenus; 
 		 for (GrantedAuthority rol : auth.getAuthorities()) {
 			 LOGGER.info("Grupo: "+ rol.getAuthority());
-				Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+				//Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+			 	Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+				LOGGER.info("Luego de Buscar Menu");
+				LOGGER.info("grupo: "+ grupo);
+				
+				if(grupo != null) {
+					LOGGER.info("grupo distinto de null ");
+					listaMenus = grupo.getMenus();
+					LOGGER.info("listaMenus.size(): "+ listaMenus.size());
+					if(!listaMenus.isEmpty()) {
+						for (Menu menu : listaMenus) {
+							LOGGER.info("añadi a listaInMenu:"+menu.getIdMenu());
+							LOGGER.info(menu.getNombre());
+							listaInMenu.add(menu.getIdMenu());
+						}
+					}	
+				}
+			}
+		 
+		 return listaInMenu;
+	}
+	
+	public List<Integer> bucarListaMenuInPrueba(){
+		 List<Integer> listaInMenu = new ArrayList<>(); 
+		 List<Menu> listaMenus;
+		 List<String> stringGrupos = new ArrayList<>();
+		 stringGrupos.add("app_MF_Mod_GestDivisasConsulta");
+		 stringGrupos.add("app_MF_Mod_GestDivisasAprob");
+		 stringGrupos.add("app_MF_Mod_GestDivisasSeguridad");
+		 stringGrupos.add("app_MF_Mod_GestDivisasParam");
+		 
+		 
+		 
+		 for (String string : stringGrupos) {
+			 LOGGER.info("Grupo: "+ string);
+				//Grupo grupo = serviceGrupo.findByNombre(string);
+				Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(string, true);
 				LOGGER.info("Luego de Buscar Menu");
 				LOGGER.info("grupo: "+ grupo);
 				
@@ -174,7 +211,8 @@ public class HomeController {
 		 List<Menu> listaMenus; 
 		 for (GrantedAuthority rol : auth.getAuthorities()) {
 			 LOGGER.info("Grupo: "+ rol.getAuthority());
-				Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+				//Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+			 	Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(rol.getAuthority(), true);
 				LOGGER.info("Luego de Buscar Menu");
 				LOGGER.info("grupo: "+ grupo);
 				

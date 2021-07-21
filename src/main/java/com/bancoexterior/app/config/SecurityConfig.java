@@ -1,6 +1,7 @@
 package com.bancoexterior.app.config;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import com.bancoexterior.app.inicio.service.IAuditoriaService;
 
 
 
@@ -29,7 +32,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${${app.ambiente}"+".ldap.base.dn}")
 	private String ldapBaseDn;
 	
-	
+	@Autowired
+	private IAuditoriaService auditoriaService;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -49,7 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().formLogin().loginPage("/login").failureUrl("/login-error").defaultSuccessUrl("/inicio").permitAll()
 		.usernameParameter("username")
 	    .passwordParameter("password")
-	    .successHandler(new CustomAuthenticationSuccessHandler())
+	    .successHandler(new CustomAuthenticationSuccessHandler(auditoriaService))
 	    .and()
 	    //.logout().permitAll();
 		 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).clearAuthentication(true)
