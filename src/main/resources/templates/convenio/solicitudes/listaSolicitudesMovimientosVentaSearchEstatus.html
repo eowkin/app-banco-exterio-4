@@ -96,27 +96,29 @@
 		            <table class="table table-striped table-hover">
 		              <thead>
 		                <tr>
-		                  <th>Cod. Operacion</th>
 		                  <th>Rif/CI</th>
-		                  <th>Fecha Operacion</th>
 		                  <th>Cuenta en divisas</th>
 		                  <th>Cuenta en Bolivares</th>
 		                  <th>Cod. Moneda</th>
 		                  <th>Monto Divisa</th>
 		                  <th>Monto Bs</th>
+		                  <th>Referencia</th>
+		                  <th>Fecha Operacion</th>
+		                  <th>Fecha Liquidacion</th>
 		                  <th>Estatus</th>
 		                </tr>
 		              </thead>
 		              <tbody>
 		                <tr th:each = "movimiento: ${listaMovimientosVenta}">
-		                  <td th:text="${movimiento.codOperacion}"></td>
 		                  <td th:text="${movimiento.nroIdCliente}"></td>
-		                  <td th:text="${movimiento.fechaOperacion}"></td>
 		                  <td th:text="${movimiento.cuentaDivisa}"></td>
 		                  <td th:text="${movimiento.cuentaNacional}"></td>
 		                  <td th:text="${movimiento.codMoneda}"></td>
 		                  <td th:text="${movimiento.montoDivisaString}"></td>
 		                  <td th:text="${movimiento.montoBsOperacionString}"></td>
+		                  <td th:text="${movimiento.codigoIbs}"></td>
+		                  <td th:text="${movimiento.fechaOperacion}"></td>
+		                  <td th:text="${movimiento.fechaPacto}"></td>
 		                  <td>
 		                  	<span th:if="${movimiento.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimiento.estatus == 1}">Aprobada Automática</span>
@@ -211,27 +213,29 @@
 		            <table class="table table-striped table-hover">
 		              <thead>
 		                <tr>
-		                  <th>Cod. Operacion</th>
 		                  <th>Rif/CI</th>
-		                  <th>Fecha Operacion</th>
 		                  <th>Cuenta en divisas</th>
 		                  <th>Cuenta en Bolivares</th>
 		                  <th>Cod. Moneda</th>
 		                  <th>Monto Divisa</th>
 		                  <th>Monto Bs</th>
+		                  <th>Referencia</th>
+		                  <th>Fecha Operacion</th>
+		                  <th>Fecha Liquidacion</th>
 		                  <th>Estatus</th>
 		                </tr>
 		              </thead>
 		              <tbody>
 		                <tr th:each = "movimientoCompra: ${listaMovimientosCompra}">
-		                  <td th:text="${movimientoCompra.codOperacion}"></td>
 		                  <td th:text="${movimientoCompra.nroIdCliente}"></td>
-		                  <td th:text="${movimientoCompra.fechaOperacion}"></td>
 		                  <td th:text="${movimientoCompra.cuentaDivisa}"></td>
 		                  <td th:text="${movimientoCompra.cuentaNacional}"></td>
 		                  <td th:text="${movimientoCompra.codMoneda}"></td>
 		                  <td th:text="${movimientoCompra.montoDivisaString}"></td>
 		                  <td th:text="${movimientoCompra.montoBsOperacionString}"></td>
+		                  <td th:text="${movimientoCompra.codigoIbs}"></td>
+		                  <td th:text="${movimientoCompra.fechaOperacion}"></td>
+		                  <td th:text="${movimientoCompra.fechaPacto}"></td>
 		                  <td>
 		                  	<span th:if="${movimientoCompra.estatus == 0}">Por Aprobar</span>
 		                  	<span th:if="${movimientoCompra.estatus == 1}">Aprobada Automática</span>

@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -24,7 +26,9 @@ import com.bancoexterior.app.inicio.service.IAuditoriaService;
 @Controller
 public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 	
-	@Value("${${app.ambiente}"+".SESSION_TIMEOUT}")
+	private static final Logger LOGGER = LogManager.getLogger(CustomAuthenticationSuccessHandler.class);
+	
+	@Value("${${app.ambiente}"+".timeout}")
     private  int  timeoout;
 	
 	private IAuditoriaService auditoriaService;
@@ -45,8 +49,10 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		
 		
 		HttpSession session = request.getSession();
-	    session.setMaxInactiveInterval(timeoout);
-	    auditoriaService.save(authentication.getName(), "Login", "Iniciar Sesion", "N/A", true, "Inicio de Sesion", request.getRemoteAddr());
+		LOGGER.info("timeoout: "+timeoout);
+		session.setMaxInactiveInterval(timeoout);
+		//session.setMaxInactiveInterval(180);
+	    //auditoriaService.save(authentication.getName(), "Login", "Iniciar Sesion", "N/A", true, "Inicio de Sesion", request.getRemoteAddr());
 	    response.sendRedirect(String.valueOf(request.getContextPath()) + "/inicio");
 	}
 

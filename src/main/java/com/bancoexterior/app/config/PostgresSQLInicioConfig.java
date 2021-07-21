@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -85,8 +84,6 @@ public class PostgresSQLInicioConfig {
     @Bean(name = "userDataSource")
 	public DataSource userDatasource() {
 		
-    	//log.info("UsuarioEncriptMonitor: "+MiCipher.encrypt("BE2848D", sconfigDesKey.trim()));
-    	//log.info("claveEncriptMonitor: "+MiCipher.encrypt("nUsMvLS*RV%s", sconfigDesKey.trim()));
     	
     	db.setUsername(MiCipher.decrypt(usuario.trim(), sconfigDesKey.trim()));
         db.setPassword(MiCipher.decrypt(clave.trim(), sconfigDesKey.trim()));

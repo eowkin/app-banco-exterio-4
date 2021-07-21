@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.bancoexterior.app.inicio.model.Grupo;
 import com.bancoexterior.app.inicio.model.Menu;
 import com.bancoexterior.app.inicio.service.IMenuService;
-
-
-
+import com.bancoexterior.app.inicio.service.IAuditoriaService;
 import com.bancoexterior.app.inicio.service.IGrupoService;
 
 
@@ -40,23 +39,25 @@ public class HomeController {
 	@Autowired 
 	private IGrupoService serviceGrupo;
 
-	
+	@Autowired
+	private IAuditoriaService auditoriaService;
 	
 	@GetMapping("/inicio")
-	public String mostrarHome(Authentication auth, HttpSession httpSession) {
+	public String mostrarHome(Authentication auth, HttpSession httpSession, HttpServletRequest request) {
 		LOGGER.info("siempre me llama mostarHome");
 		LOGGER.info("[------------Menu por role--------------]");
 	    String username = auth.getName();
 	    
 	    
 	    LOGGER.info("username: "+ username);
-	    //List<Integer> listaInMenu = bucarListaMenuIn(auth);
-	    List<Integer> listaInMenu = bucarListaMenuInPrueba();
+	    List<Integer> listaInMenu = bucarListaMenuIn(auth);
+	    //List<Integer> listaInMenu = bucarListaMenuInPrueba();
 	    
 	    if(!listaInMenu.isEmpty()) {
 			List<Menu> listaMenu = buscarListaMenuMostrar(listaInMenu);
 		    if(!listaMenu.isEmpty()) {
 		    	if(validarListaMenu(listaMenu)) {
+		    		auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(), "Login", "Iniciar Sesion", "N/A", true, "Inicio de Sesion", request.getRemoteAddr());
 		    		httpSession.setAttribute("listaMenu", listaMenu);
 					return "index";
 		    	}else {
@@ -148,8 +149,8 @@ public class HomeController {
 		 List<Menu> listaMenus; 
 		 for (GrantedAuthority rol : auth.getAuthorities()) {
 			 LOGGER.info("Grupo: "+ rol.getAuthority());
-				//Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
-			 	Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+			 	//Grupo grupo = serviceGrupo.findByNombre(rol.getAuthority());
+			 	Grupo grupo = serviceGrupo.findByNombreAndFlagActivo(rol.getAuthority(), true);
 				LOGGER.info("Luego de Buscar Menu");
 				LOGGER.info("grupo: "+ grupo);
 				
@@ -290,6 +291,8 @@ public class HomeController {
 	public String logout(HttpServletRequest request){
 		
 		LOGGER.info("entre por logout");
+		auditoriaService.save(SecurityContextHolder.getContext().getAuthentication().getName(), "Logout", "Fin Sesion", "N/A", true, "Finalizar de Sesion", request.getRemoteAddr());
+		
 		SecurityContextLogoutHandler logoutHandler = new SecurityContextLogoutHandler();
 		logoutHandler.logout(request, null, null);
 		return "redirect:/";
